@@ -23,7 +23,7 @@
 #define __PHY_VARS_H__
 
 #include "PHY/types.h"
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 
 char* namepointer_chMag ;
 char fmageren_name2[512];
@@ -41,7 +41,7 @@ int16_t *primary_synch2_time;
 //PHY_VARS *PHY_vars;
 #ifndef OCP_FRAMEWORK
 PHY_VARS_UE ***PHY_vars_UE_g;
-RAN_CONTEXT_t RC;
+
 
 //PHY_VARS_eNB ***PHY_vars_eNB_g;
 //PHY_VARS_RN **PHY_vars_RN_g;

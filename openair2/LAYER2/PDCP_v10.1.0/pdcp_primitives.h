@@ -32,6 +32,7 @@
 #ifndef PDCP_PRIMITIVES_H
 #define PDCP_PRIMITIVES_H
 
+#include "pdcp.h"
 /*
  * 3GPP TS 36.323 V10.1.0 (2011-03)
  */
@@ -175,7 +176,7 @@ boolean_t pdcp_serialize_user_plane_data_pdu_with_short_sn_buffer(unsigned char*
  * @param bitmap Received/Missing sequence number bitmap
  * @param pdu A status report header
  * @return TRUE on success, FALSE otherwise
- */
+/ */
 boolean_t pdcp_serialize_control_pdu_for_pdcp_status_report(unsigned char* pdu_buffer, \
     uint8_t bitmap[512], pdcp_control_pdu_for_pdcp_status_report* pdu);
 

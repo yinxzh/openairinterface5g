@@ -30,7 +30,7 @@
 * \warning
 */
 //#include "defs.h"
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 
 void generate_pilots(PHY_VARS_eNB *eNB,
                      int32_t **txdataF,

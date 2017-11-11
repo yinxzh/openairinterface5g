@@ -14,7 +14,7 @@
 
 //#include <math.h>
 //#include "PHY/defs.h"
-#include "PHY/defs_NB_IoT.h" // not can be replaced by impl_defs_lte_NB_IoT & impl_defs_top_NB_IoT if "msg" function is not used
+#include "PHY/defs_L1_NB_IoT.h" // not can be replaced by impl_defs_lte_NB_IoT & impl_defs_top_NB_IoT if "msg" function is not used
 //#include "defs.h"
 //#include "PHY/extern_NB_IoT.h"
 //#include "PHY/impl_defs_lte_NB_IoT.h"

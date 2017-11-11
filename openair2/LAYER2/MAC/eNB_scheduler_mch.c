@@ -30,11 +30,8 @@
  */
 
 #include "assertions.h"
-#include "PHY/defs.h"
-#include "PHY/extern.h"
-
-#include "SCHED/defs.h"
-#include "SCHED/extern.h"
+#include "common/ran_context.h"
+#include "extern.h"
 
 #include "LAYER2/MAC/defs.h"
 #include "LAYER2/MAC/proto.h"
@@ -60,7 +57,6 @@
 #define ENABLE_MAC_PAYLOAD_DEBUG
 #define DEBUG_eNB_SCHEDULER 1
 
-extern RAN_CONTEXT_t RC;
 
 #if defined(Rel10) || defined(Rel14)
 int8_t get_mbsfn_sf_alloction (module_id_t module_idP, uint8_t CC_id, uint8_t mbsfn_sync_area)

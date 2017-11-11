@@ -30,7 +30,8 @@
 * \warning
 */
 
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
+#include "PHY/defs_L1_NB_IoT.h"
 #include "PHY/TOOLS/alaw_lut.h"
 
 #include "time_utils.h"

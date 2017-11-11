@@ -17,7 +17,7 @@
 #ifndef __LTE_REFSIG_DEFS_NB_IOT__H__
 #define __LTE_REFSIG_DEFS_NB_IOT__H__
 
-#include "PHY/defs_NB_IoT.h"
+#include "PHY/defs_L1_NB_IoT.h"
 
 /** @ingroup _PHY_REF_SIG
  * @{

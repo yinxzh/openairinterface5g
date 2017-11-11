@@ -30,7 +30,7 @@
 * \warning
 */
 //#include "defs.h"
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 
 
 int generate_mbsfn_pilot(PHY_VARS_eNB *eNB,

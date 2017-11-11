@@ -28,7 +28,8 @@
 #include "assertions.h"
 #include "msc.h"
 #include "PHY/types.h"
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
+#include "PHY/defs_L1_NB_IoT.h"
 #include "SIMULATION/ETH_TRANSPORT/proto.h"
 
 #if defined(ENABLE_ITTI)

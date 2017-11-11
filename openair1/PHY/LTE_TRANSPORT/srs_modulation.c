@@ -29,7 +29,7 @@
 * \note
 * \warning
 */
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 #include "extern.h"
 #include "UTIL/LOG/log.h"
 

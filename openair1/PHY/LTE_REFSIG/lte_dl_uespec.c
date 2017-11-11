@@ -36,7 +36,7 @@
 #endif
 
 #include "defs.h"
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 #include "log.h"
 
 //extern unsigned int lte_gold_table[3][20][2][14];

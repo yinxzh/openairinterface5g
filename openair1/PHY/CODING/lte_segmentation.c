@@ -24,7 +24,7 @@
    author: raymond.knopp@eurecom.fr
    date: 21.10.2009
 */
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 #include "SCHED/extern.h"
 
 //#define DEBUG_SEGMENTATION

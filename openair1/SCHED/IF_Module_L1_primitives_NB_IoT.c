@@ -6,7 +6,7 @@
 #include "../SCHED/defs_NB_IoT.h"
 #include "assertions.h"
 //#include "PHY/defs.h"
-#include "PHY/defs_NB_IoT.h"
+#include "PHY/defs_L!_NB_IoT.h"
 //#include "PHY/extern.h"
 #include "PHY/extern_NB_IoT.h"
 //#include "PHY/vars.h"

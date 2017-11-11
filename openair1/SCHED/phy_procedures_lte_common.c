@@ -29,7 +29,7 @@
 * \note
 * \warning
 */
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 #include "PHY/extern.h"
 #include "SCHED/defs.h"
 #include "SCHED/extern.h"
@@ -898,7 +898,7 @@ LTE_DL_FRAME_PARMS* get_lte_frame_parms(module_id_t Mod_id, uint8_t  CC_id)
   return(&RC.eNB[Mod_id][CC_id]->frame_parms);
 
 }
-
+/*
 MU_MIMO_mode *get_mu_mimo_mode (module_id_t Mod_id, uint8_t  CC_id, rnti_t rnti)
 {
   int8_t UE_id = find_ue( rnti, RC.eNB[Mod_id][CC_id] );
@@ -909,6 +909,7 @@ MU_MIMO_mode *get_mu_mimo_mode (module_id_t Mod_id, uint8_t  CC_id, rnti_t rnti)
   return &RC.eNB[Mod_id][CC_id]->mu_mimo_mode[UE_id];
 }
 
+*/
 
 int is_srs_occasion_common(LTE_DL_FRAME_PARMS *frame_parms,int frame_tx,int subframe_tx)
 {

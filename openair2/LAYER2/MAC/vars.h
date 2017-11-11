@@ -35,7 +35,7 @@
 #ifdef USER_MODE
 //#include "stdio.h"
 #endif //USER_MODE
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 #include "defs.h"
 #include "COMMON/mac_rrc_primitives.h"
 

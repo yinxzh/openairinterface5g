@@ -36,7 +36,7 @@
 #include <string.h>
 #include <sys/ioctl.h>
 #include <dlfcn.h>
-#include "openair1/PHY/defs.h"
+#include "openair1/PHY/defs_L1.h"
 #define LOAD_MODULE_SHLIB_MAIN
 
 #include "common/config/config_userapi.h"

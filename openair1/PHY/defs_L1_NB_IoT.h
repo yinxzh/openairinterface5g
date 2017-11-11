@@ -139,6 +139,7 @@ static inline void* malloc16_clear( size_t size )
 #include <pthread.h>
 
 #include "targets/ARCH/COMMON/common_lib.h"
+#include "targets/COMMON/openairinterface5g_limits.h"
 
 #define NUM_DCI_MAX_NB_IoT 32
 
@@ -146,7 +147,7 @@ static inline void* malloc16_clear( size_t size )
 
 #define NB_BANDS_MAX_NB_IoT 8
 
-#include "defs_common.h"
+#include "defs_ru.h"
 
 #ifdef OCP_FRAMEWORK
 #include <enums.h>

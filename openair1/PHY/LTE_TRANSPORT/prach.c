@@ -30,7 +30,7 @@
  * \warning
  */
 #include "PHY/sse_intrin.h"
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 #include "PHY/extern.h"
 //#include "prach.h"
 #include "PHY/LTE_TRANSPORT/if4_tools.h"

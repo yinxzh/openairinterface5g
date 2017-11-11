@@ -34,7 +34,7 @@
 #include "extern.h"
 #include "assertions.h"
 #include "PHY_INTERFACE/extern.h"
-#include "PHY/defs.h"
+//#include "PHY/defs_L1.h"
 #include "SCHED/defs.h"
 #include "LAYER2/PDCP_v10.1.0/pdcp.h"
 #include "RRC/LITE/defs.h"

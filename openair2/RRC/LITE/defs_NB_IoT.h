@@ -43,6 +43,7 @@
 //#include "PHY/defs_NB_IoT.h"
 #include "COMMON/platform_constants.h"
 #include "COMMON/platform_types.h"
+#include "targets/COMMON/openairinterface5g_limits.h"
 
 #include "COMMON/mac_rrc_primitives.h"
 //#include "LAYER2/MAC/defs.h"
@@ -572,7 +573,7 @@ typedef struct UE_RRC_INST_NB_IoT_s {
 } UE_RRC_INST_NB_IoT;
 
 
-#include "proto_NB_IoT.h" //should be put here otherwise compilation error
+//#include "proto_NB_IoT.h" //should be put here otherwise compilation error
 
 #endif
 /** @} */

@@ -31,7 +31,7 @@
 */
 #ifndef __LTE_TRANSPORT_DEFS__H__
 #define __LTE_TRANSPORT_DEFS__H__
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 #include "PHY/impl_defs_lte.h"
 #include "dci.h"
 #include "mdci.h"

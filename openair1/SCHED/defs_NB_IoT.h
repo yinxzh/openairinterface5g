@@ -4,7 +4,7 @@
 #define __openair_SCHED_NB_IOT_H__
 
 //#include "PHY/defs.h"
-#include "PHY/defs_NB_IoT.h"
+#include "PHY/defs_L1_NB_IoT.h"
 #include "nfapi_interface.h"
 
 

@@ -20,7 +20,7 @@
  */
 
 #include "PHY/types.h"
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 #include "PHY/extern.h"
 
 #include "UTIL/LOG/vcd_signal_dumper.h"

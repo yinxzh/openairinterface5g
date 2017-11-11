@@ -24,7 +24,7 @@
 #endif
 #include "defs.h"
 #include "SCHED/defs.h"
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 #include "filt96_32.h"
 #include "T.h"
 //#define DEBUG_CH

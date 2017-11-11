@@ -19,7 +19,7 @@
  *      contact@openairinterface.org
  */
 
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 #include "PHY/impl_defs_lte.h"
 
 //#define DEBUG_PC 0

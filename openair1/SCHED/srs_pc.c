@@ -30,7 +30,7 @@
  * \warning
  */
 
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 #include "PHY/LTE_TRANSPORT/proto.h"
 #include "PHY/extern.h"
 

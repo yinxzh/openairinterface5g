@@ -37,13 +37,16 @@
 #include <string.h>
 #endif
 
-#include "collection/tree.h"
-#include "rrc_types.h"
-#include "PHY/defs.h"
-#include "LAYER2/RLC/rlc.h"
-
 #include "COMMON/platform_constants.h"
 #include "COMMON/platform_types.h"
+#include "targets/COMMON/openairinterface5g_limits.h"
+
+
+#include "collection/tree.h"
+#include "rrc_types.h"
+#include "PHY/defs_L1.h"
+#include "LAYER2/RLC/rlc.h"
+
 
 #include "LAYER2/MAC/defs.h"
 
@@ -352,7 +355,7 @@ typedef struct SRB_INFO_TABLE_ENTRY_s {
   SRB_INFO Srb_info;
   uint8_t Active;
   uint8_t Status;
-  uint32_t Next_check_frame; 
+  uint32_t Next_check_frame;
 } SRB_INFO_TABLE_ENTRY;
 
 typedef struct MEAS_REPORT_LIST_s {

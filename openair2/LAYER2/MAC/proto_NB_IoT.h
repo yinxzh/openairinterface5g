@@ -103,24 +103,22 @@ uint32_t from_earfcn_NB_IoT(int eutra_bandP,uint32_t dl_earfcn, float m_dl);
 
 int32_t get_uldl_offset_NB_IoT(int eutra_band);
 
-void config_mib_fapi_NB_IoT(
-		int                     rntiP,
-        int                     physCellId,
-        uint8_t                 eutra_band,
-        int                     Ncp,
-        int                     Ncp_UL,
-        int                     p_eNB,
-        int                     p_rx_eNB,
-        int                     dl_CarrierFreq,
-        int                     ul_CarrierFreq,
-        long                    *eutraControlRegionSize,
-        BCCH_BCH_Message_NB_t   *mib_NB_IoT
-        );
-
-void config_sib2_fapi_NB_IoT(
-                        int physCellId,
-                        RadioResourceConfigCommonSIB_NB_r13_t   *radioResourceConfigCommon
-                        );
+void config_mib_fapi_NB_IoT(module_id_t             Mod_idP,
+			    int                     physCellId,
+			    uint8_t                 eutra_band,
+			    int                     Ncp,
+			    int                     Ncp_UL,
+			    int                     p_eNB,
+			    int                     p_rx_eNB,
+			    int                     dl_CarrierFreq,
+			    int                     ul_CarrierFreq,
+			    long                    *eutraControlRegionSize,
+			    BCCH_BCH_Message_NB_t   *mib_NB_IoT
+			    );
+void config_sib2_fapi_NB_IoT(module_id_t Mod_idP,
+			     int physCellId,
+			     RadioResourceConfigCommonSIB_NB_r13_t   *radioResourceConfigCommon
+			     );
 
 void rrc_mac_config_req_NB_IoT(
     module_id_t                             Mod_idP,

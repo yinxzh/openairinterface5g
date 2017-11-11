@@ -77,7 +77,7 @@
 
 #include "BCCH-DL-SCH-Message.h"
 
-#include "PHY/defs.h"
+//#include "PHY/defs.h"
 
 #include "MeasObjectToAddModList.h"
 #include "ReportConfigToAddModList.h"

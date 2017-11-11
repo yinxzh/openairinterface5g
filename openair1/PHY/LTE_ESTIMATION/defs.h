@@ -22,7 +22,7 @@
 #ifndef __LTE_ESTIMATION_DEFS__H__
 #define __LTE_ESTIMATION_DEFS__H__
 
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 /*
 #ifdef EMOS
 #include "SCHED/phy_procedures_emos.h"

@@ -34,12 +34,16 @@
 #define __RAN_CONTEXT_H__
 
 #include <pthread.h>
+#include "targets/COMMON/openairinterface5g_limits.h"
 #include "COMMON/platform_constants.h"
-#include "PHY/defs.h"
-#include "PHY/types.h"
-#include "PHY/impl_defs_top.h"
-#include "PHY/impl_defs_lte.h"
+#include "PHY/defs_ru.h"
+#include "PHY/defs_L1.h"
+#include "PHY/defs_L1_NB_IoT.h"
+//#include "PHY/types.h"
+//#include "PHY/impl_defs_top.h"
+//#include "PHY/impl_defs_lte.h"
 #include "RRC/LITE/defs.h"
+#include "RRC/LITE/defs_NB_IoT.h"
 
 #include "gtpv1u.h"
 #include "NwGtpv1u.h"
@@ -73,7 +77,7 @@ typedef struct {
   /// L1 context variables
   struct PHY_VARS_eNB_s ***eNB;
   /// NB_IoT L1 context variables
-  struct PHY_VARS_eNB_s ***L1_NB_IoT;
+  struct PHY_VARS_eNB_NB_IoT_s **L1_NB_IoT;
   /// RRC context variables
   struct eNB_RRC_INST_s **rrc;
   /// NB_IoT RRC context variables
@@ -81,7 +85,7 @@ typedef struct {
   /// MAC context variables
   struct eNB_MAC_INST_s **mac;
   /// NB_IoT MAC context variables
-  struct eNB_MAC_INST_s **nb_iot_mac;
+  struct eNB_MAC_INST_NB_IoT_s **nb_iot_mac;
   /// GTPu descriptor 
   gtpv1u_data_t *gtpv1u_data_g;
   /// RU descriptors. These describe what each radio unit is supposed to do and contain the necessary functions for fronthaul interfaces

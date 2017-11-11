@@ -28,7 +28,7 @@
 #include <stdint.h>
 
 #ifndef MR_MAIN
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 #include "PHY/extern.h"
 #include "defs.h"
 #else

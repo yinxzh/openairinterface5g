@@ -29,7 +29,7 @@ This section deals with basic functions for OFDM Modulation.
 
 */
 
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 #include "UTIL/LOG/log.h"
 #include "UTIL/LOG/vcd_signal_dumper.h"
 

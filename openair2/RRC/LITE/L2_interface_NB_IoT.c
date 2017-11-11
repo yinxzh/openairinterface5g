@@ -27,7 +27,7 @@
  * \email: raymond.knopp@eurecom.fr
  */
 //#include "PHY/defs.h"
-#include "PHY/defs_NB_IoT.h"
+#include "PHY/defs_L1_NB_IoT.h"
 #include "openair2/LAYER2/MAC/proto_NB_IoT.h"
 #include "openair2/LAYER2/MAC/extern_NB_IoT.h"
 //#include "PHY/INIT/defs_NB_IoT.h"
@@ -54,7 +54,7 @@
 #include "openair2/PHY_INTERFACE/IF_Module_NB_IoT.h"
 #include "openair1/SCHED/IF_Module_L1_primitives_NB_IoT.h"
 #include "openair3/GTPV1-U/gtpv1u.h"
-
+#include "extern.h"
 #if defined(ENABLE_ITTI)
 # include "intertask_interface.h"
 #endif
@@ -145,53 +145,53 @@ int8_t mac_rrc_data_req_eNB_NB_IoT(
     ///MIB
     if( flag == 1 )
     {
-        if (eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].sizeof_MIB_NB_IoT == 255)
+        if (RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].sizeof_MIB_NB_IoT == 255)
         {
             printf("[eNB %d] MAC Request for MIB-NB and MIB-NB not initialized\n",Mod_idP);
             // exit here
         }
 
-        memcpy(&buffer_pP[0],eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].MIB_NB_IoT,eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].sizeof_MIB_NB_IoT);
+        memcpy(&buffer_pP[0],RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].MIB_NB_IoT,RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].sizeof_MIB_NB_IoT);
 
-        return (eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].sizeof_MIB_NB_IoT);
+        return (RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].sizeof_MIB_NB_IoT);
     }
     ///SIB1
     else if( flag == 2 )
     {
-        if (eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].sizeof_SIB1_NB_IoT == 255)
+        if (RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].sizeof_SIB1_NB_IoT == 255)
         {
             printf("[eNB %d] MAC Request for SIB1-NB and SIB1-NB_IoT not initialized\n",Mod_idP);
             // exit here
         }
 
-        memcpy(&buffer_pP[0],eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].SIB1_NB_IoT,eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].sizeof_SIB1_NB_IoT);
+        memcpy(&buffer_pP[0],RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].SIB1_NB_IoT,RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].sizeof_SIB1_NB_IoT);
 
-        return (eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].sizeof_SIB1_NB_IoT);
+        return (RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].sizeof_SIB1_NB_IoT);
     }
     ///SIB23
     else if( flag == 3 )
     {
-        if (eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].sizeof_SIB23_NB_IoT == 255)
+        if (RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].sizeof_SIB23_NB_IoT == 255)
         {
             printf("[eNB %d] MAC Request for SIB23-NB and SIB23-NB_IoT not initialized\n",Mod_idP);
             // exit here
         }
 
-        memcpy(&buffer_pP[0],eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].SIB23_NB_IoT,eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].sizeof_SIB23_NB_IoT);
-        return(eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].sizeof_SIB23_NB_IoT);
+        memcpy(&buffer_pP[0],RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].SIB23_NB_IoT,RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].sizeof_SIB23_NB_IoT);
+        return(RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].sizeof_SIB23_NB_IoT);
     }
     ///Msg4 transmission (RRCConnectionSetup)
     else
     {
         printf("[eNB %d] Frame %d CCCH request (Srb_id %d)\n",Mod_idP,frameP, Srb_id);
 
-        if(eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].Srb0.Active==0)
+        if(RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].Srb0.Active==0)
         {
             printf("[eNB %d] CCCH Not active\n",Mod_idP);
             return -1;
         }
 
-        Srb_info = &eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].Srb0;
+        Srb_info = &RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].Srb0;
 
         // check if data is there for MAC
         if(Srb_info->Tx_buffer.payload_size>0) //Fill buffer
@@ -326,25 +326,25 @@ int8_t mac_rrc_data_req_NB_IoT(
   if( enb_flagP == ENB_FLAG_YES) {
 
     if((Srb_id & RAB_OFFSET) == BCCH0_NB_IoT) {
-      if(eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].SI.Active==0) {
+      if(RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].SI.Active==0) {
         return 0;
       }
 
       // All even frames transmit SIB in SF 5
-      if (eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].sizeof_SIB1_NB_IoT == 255) {
+      if (RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].sizeof_SIB1_NB_IoT == 255) {
         LOG_E(RRC,"[eNB %d] MAC Request for SIB1 and SIB1 not initialized\n",Mod_idP);
         //exit here
       }
 
       if ((frameP%2) == 0) {
         memcpy(&buffer_pP[0],
-               eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].SIB1_NB_IoT,
-               eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].sizeof_SIB1_NB_IoT);
+               RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].SIB1_NB_IoT,
+               RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].sizeof_SIB1_NB_IoT);
 
 #if defined(ENABLE_ITTI)
         {
           MessageDef *message_p;
-          int sib1_size = eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].sizeof_SIB1_NB_IoT;
+          int sib1_size = RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].sizeof_SIB1_NB_IoT;
           int sdu_size = sizeof(RRC_MAC_BCCH_DATA_REQ (message_p).sdu);
 
           if (sib1_size > sdu_size) {
@@ -357,7 +357,7 @@ int8_t mac_rrc_data_req_NB_IoT(
           RRC_MAC_BCCH_DATA_REQ (message_p).sdu_size = sib1_size;
           memset (RRC_MAC_BCCH_DATA_REQ (message_p).sdu, 0, BCCH_SDU_SIZE);
           memcpy (RRC_MAC_BCCH_DATA_REQ (message_p).sdu,
-                  eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].SIB1_NB_IoT,
+                  RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].SIB1_NB_IoT,
                   sib1_size);
           RRC_MAC_BCCH_DATA_REQ (message_p).enb_index = eNB_index;
 
@@ -368,24 +368,24 @@ int8_t mac_rrc_data_req_NB_IoT(
 #ifdef DEBUG_RRC
         LOG_T(RRC,"[eNB %d] Frame %d : BCCH request => SIB 1\n",Mod_idP,frameP);
 
-        for (i=0; i<eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].sizeof_SIB1_NB_IoT; i++) {
+        for (i=0; i<RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].sizeof_SIB1_NB_IoT; i++) {
           LOG_T(RRC,"%x.",buffer_pP[i]);
         }
 
         LOG_T(RRC,"\n");
 #endif
 
-        return (eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].sizeof_SIB1_NB_IoT);
+        return (RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].sizeof_SIB1_NB_IoT);
       } // All RFN mod 8 transmit SIB2-3 in SF 5
       else if ((frameP%8) == 1) {
         memcpy(&buffer_pP[0],
-               eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].SIB23_NB_IoT,
-               eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].sizeof_SIB23_NB_IoT);
+               RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].SIB23_NB_IoT,
+               RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].sizeof_SIB23_NB_IoT);
 
 #if defined(ENABLE_ITTI)
         {
           MessageDef *message_p;
-          int sib23_size = eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].sizeof_SIB23_NB_IoT;
+          int sib23_size = RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].sizeof_SIB23_NB_IoT;
           int sdu_size = sizeof(RRC_MAC_BCCH_DATA_REQ (message_p).sdu);
 
           if (sib23_size > sdu_size) {
@@ -398,7 +398,7 @@ int8_t mac_rrc_data_req_NB_IoT(
           RRC_MAC_BCCH_DATA_REQ (message_p).sdu_size = sib23_size;
           memset (RRC_MAC_BCCH_DATA_REQ (message_p).sdu, 0, BCCH_SDU_SIZE);
           memcpy (RRC_MAC_BCCH_DATA_REQ (message_p).sdu,
-                  eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].SIB23_NB_IoT,
+                  RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].SIB23_NB_IoT,
                   sib23_size);
           RRC_MAC_BCCH_DATA_REQ (message_p).enb_index = eNB_index;
 
@@ -409,13 +409,13 @@ int8_t mac_rrc_data_req_NB_IoT(
 #ifdef DEBUG_RRC
         LOG_T(RRC,"[eNB %d] Frame %d BCCH request => SIB 2-3\n",Mod_idP,frameP);
 
-        for (i=0; i<eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].sizeof_SIB23_NB_IoT; i++) {
+        for (i=0; i<RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].sizeof_SIB23_NB_IoT; i++) {
           LOG_T(RRC,"%x.",buffer_pP[i]);
         }
 
         LOG_T(RRC,"\n");
 #endif
-        return(eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].sizeof_SIB23_NB_IoT);
+        return(RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].sizeof_SIB23_NB_IoT);
       } else {
         return(0);
       }
@@ -424,12 +424,12 @@ int8_t mac_rrc_data_req_NB_IoT(
     if( (Srb_id & RAB_OFFSET ) == CCCH_NB_IoT) {
       LOG_T(RRC,"[eNB %d] Frame %d CCCH request (Srb_id %d)\n",Mod_idP,frameP, Srb_id);
 
-      if(eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].Srb0.Active==0) {
+      if(RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].Srb0.Active==0) {
         LOG_E(RRC,"[eNB %d] CCCH Not active\n",Mod_idP);
         return -1;
       }
 
-      Srb_info=&eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].Srb0;
+      Srb_info=&RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].Srb0;
 
       // check if data is there for MAC
       if(Srb_info->Tx_buffer.payload_size>0) { //Fill buffer
@@ -468,7 +468,7 @@ int8_t mac_rrc_data_req_NB_IoT(
 #if defined(Rel10) || defined(Rel14)
 
     if((Srb_id & RAB_OFFSET) == MCCH_NB_IoT) {
-      if(eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].MCCH_MESS[mbsfn_sync_area].Active==0) {
+      if(RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].MCCH_MESS[mbsfn_sync_area].Active==0) {
         return 0;  // this parameter is set in function init_mcch in rrc_eNB.c
       }
 
@@ -477,7 +477,7 @@ int8_t mac_rrc_data_req_NB_IoT(
 #if defined(ENABLE_ITTI)
       {
         MessageDef *message_p;
-        int mcch_size = eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].sizeof_MCCH_MESSAGE[mbsfn_sync_area];
+        int mcch_size = RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].sizeof_MCCH_MESSAGE[mbsfn_sync_area];
         int sdu_size = sizeof(RRC_MAC_MCCH_DATA_REQ (message_p).sdu);
 
         if (mcch_size > sdu_size) {
@@ -490,7 +490,7 @@ int8_t mac_rrc_data_req_NB_IoT(
         RRC_MAC_MCCH_DATA_REQ (message_p).sdu_size = mcch_size;
         memset (RRC_MAC_MCCH_DATA_REQ (message_p).sdu, 0, MCCH_SDU_SIZE);
         memcpy (RRC_MAC_MCCH_DATA_REQ (message_p).sdu,
-                eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].MCCH_MESSAGE[mbsfn_sync_area],
+                RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].MCCH_MESSAGE[mbsfn_sync_area],
                 mcch_size);
         RRC_MAC_MCCH_DATA_REQ (message_p).enb_index = eNB_index;
         RRC_MAC_MCCH_DATA_REQ (message_p).mbsfn_sync_area = mbsfn_sync_area;
@@ -500,66 +500,25 @@ int8_t mac_rrc_data_req_NB_IoT(
 #endif
 
       memcpy(&buffer_pP[0],
-             eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].MCCH_MESSAGE[mbsfn_sync_area],
-             eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].sizeof_MCCH_MESSAGE[mbsfn_sync_area]);
+             RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].MCCH_MESSAGE[mbsfn_sync_area],
+             RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].sizeof_MCCH_MESSAGE[mbsfn_sync_area]);
 
 #ifdef DEBUG_RRC
       LOG_D(RRC,"[eNB %d] Frame %d : MCCH request => MCCH_MESSAGE \n",Mod_idP,frameP);
 
-      for (i=0; i<eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].sizeof_MCCH_MESSAGE[mbsfn_sync_area]; i++) {
+      for (i=0; i<RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].sizeof_MCCH_MESSAGE[mbsfn_sync_area]; i++) {
         LOG_T(RRC,"%x.",buffer_pP[i]);
       }
 
       LOG_T(RRC,"\n");
 #endif
 
-      return (eNB_rrc_inst_NB_IoT[Mod_idP].carrier[CC_id].sizeof_MCCH_MESSAGE[mbsfn_sync_area]);
-      //      }
-      //else
-      //return(0);
+      return (RC.nb_iot_rrc[Mod_idP]->carrier[CC_id].sizeof_MCCH_MESSAGE[mbsfn_sync_area]);
     }
-
+  
 #endif //Rel10 || Rel14
   } else {  //This is an UE
-
-    LOG_D(RRC,"[UE %d] Frame %d Filling CCCH SRB_ID %d\n",Mod_idP,frameP,Srb_id);
-    LOG_D(RRC,"[UE %d] Frame %d buffer_pP status %d,\n",Mod_idP,frameP, UE_rrc_inst_NB_IoT[Mod_idP].Srb0[eNB_index].Tx_buffer.payload_size);
-
-
-    if( (UE_rrc_inst_NB_IoT[Mod_idP].Srb0[eNB_index].Tx_buffer.payload_size > 0) ) {
-
-#if defined(ENABLE_ITTI)
-      {
-        MessageDef *message_p;
-        int ccch_size = UE_rrc_inst_NB_IoT[Mod_idP].Srb0[eNB_index].Tx_buffer.payload_size;
-        int sdu_size = sizeof(RRC_MAC_CCCH_DATA_REQ (message_p).sdu);
-
-        if (ccch_size > sdu_size) {
-          LOG_E(RRC, "SDU larger than CCCH SDU buffer size (%d, %d)", ccch_size, sdu_size);
-          ccch_size = sdu_size;
-        }
-
-        message_p = itti_alloc_new_message (TASK_RRC_UE, RRC_MAC_CCCH_DATA_REQ);
-        RRC_MAC_CCCH_DATA_REQ (message_p).frame = frameP;
-        RRC_MAC_CCCH_DATA_REQ (message_p).sdu_size = ccch_size;
-        memset (RRC_MAC_CCCH_DATA_REQ (message_p).sdu, 0, CCCH_SDU_SIZE);
-        memcpy (RRC_MAC_CCCH_DATA_REQ (message_p).sdu, UE_rrc_inst_NB_IoT[Mod_idP].Srb0[eNB_index].Tx_buffer.Payload, ccch_size);
-        RRC_MAC_CCCH_DATA_REQ (message_p).enb_index = eNB_index;
-
-        itti_send_msg_to_task (TASK_MAC_UE, UE_MODULE_ID_TO_INSTANCE(Mod_idP), message_p);
-      }
-#endif
-
-      memcpy(&buffer_pP[0],&UE_rrc_inst_NB_IoT[Mod_idP].Srb0[eNB_index].Tx_buffer.Payload[0],UE_rrc_inst_NB_IoT[Mod_idP].Srb0[eNB_index].Tx_buffer.payload_size);
-      uint8_t Ret_size=UE_rrc_inst_NB_IoT[Mod_idP].Srb0[eNB_index].Tx_buffer.payload_size;
-      //   UE_rrc_inst[Mod_id].Srb0[eNB_index].Tx_buffer.payload_size=0;
-      UE_rrc_inst_NB_IoT[Mod_idP].Info[eNB_index].T300_active = 1;
-      UE_rrc_inst_NB_IoT[Mod_idP].Info[eNB_index].T300_cnt = 0;
-      //      msg("[RRC][UE %d] Sending rach\n",Mod_id);
-      return(Ret_size);
-    } else {
-      return 0;
-    }
+    AssertFatal(1==0,"No NB-IoT UE\n");
   }
 
   return(0);
@@ -710,6 +669,20 @@ int pdcp_apply_security_NB_IoT(
   return 0;
 }
 
+boolean_t pdcp_config_req_asn1_NB_IoT(  const protocol_ctxt_t* const  ctxt_pP,
+					pdcp_t         * const        pdcp_pP,
+					const srb_flag_t              srb_flagP,
+					const rlc_mode_t              rlc_modeP, //rlc_type
+					const config_action_t         actionP,
+					const uint16_t                lc_idP, // 1 = SRB1 // 3 = SRB1bis // >= 4 for DRBs
+					const rb_id_t                 rb_idP,
+					const uint8_t                 rb_snP, //5 if srb_sn // 7 is drb_sn // 0 if drb_sn to be removed
+					const uint8_t                 rb_reportP, //not for SRBand not for NB-IOT
+					const uint16_t                header_compression_profileP, //not for SRB only DRB
+					const uint8_t                 security_modeP,
+					uint8_t         *const        kRRCenc_pP,
+					uint8_t         *const        kRRCint_pP,
+					uint8_t         *const        kUPenc_pP);
 
 //FIXME for the moment we not configure PDCP for SRB1bis (but used as it is SRB1)
 //defined in pdcp.c
@@ -1309,6 +1282,13 @@ uint8_t rrc_data_req_NB_IoT(
 #endif
 }
 
+rlc_op_status_t rlc_data_req_NB_IoT (const protocol_ctxt_t* const ctxt_pP,
+                                     const srb_flag_t   srb_flagP,
+                                     const rb_id_t      rb_idP,
+                                     const mui_t        muiP,
+                                     confirm_t    confirmP,
+                                     sdu_size_t   sdu_sizeP,
+                                     mem_block_t *sdu_pP);
 
 //we distinguish the SRBs based on the logical channel id and the transmission mode
 boolean_t pdcp_data_req_NB_IoT(
@@ -1740,6 +1720,46 @@ void rrc_data_ind_NB_IoT(
 
 
 /*---------------------------------RRC-RLC-----------------------------------*/
+rlc_union_t* rrc_rlc_add_rlc_NB_IoT (
+  const protocol_ctxt_t* const ctxt_pP,
+  const srb_flag_t        srb_flagP,
+  const rb_id_t           rb_idP,
+  const logical_chan_id_t chan_idP,
+  const rlc_mode_t        rlc_modeP);
+
+void config_req_rlc_am_asn1_NB_IoT (
+  const protocol_ctxt_t* const         ctxt_pP,
+  const srb_flag_t                     srb_flagP,
+  const struct RLC_Config_NB_r13__am  * const config_am_pP, //extracted from the srb_toAddMod
+  const rb_id_t                        rb_idP,
+  const logical_chan_id_t              chan_idP);
+
+rlc_op_status_t rrc_rlc_remove_rlc_NB_IoT (
+  const protocol_ctxt_t* const ctxt_pP,
+  const srb_flag_t  srb_flagP,
+  const rb_id_t     rb_idP);
+
+boolean_t pdcp_data_ind_NB_IoT(
+			       const protocol_ctxt_t* const ctxt_pP,
+			       const srb_flag_t   srb_flagP,
+			       const srb1bis_flag_t srb1bis_flag,
+			       const rb_id_t      rb_idP,
+			       const sdu_size_t   sdu_buffer_sizeP,
+			       mem_block_t* const sdu_buffer_pP
+			       );
+
+void config_req_rlc_tm_NB_IoT (
+			       const protocol_ctxt_t* const  ctxt_pP,
+			       const srb_flag_t  srb_flagP,
+			       const rlc_tm_info_t * const config_tmP,
+			       const rb_id_t rb_idP,
+			       const logical_chan_id_t chan_idP
+			       );
+void rlc_am_mac_data_indication_NB_IoT (
+					const protocol_ctxt_t* const ctxt_pP,
+					void * const                 rlc_pP,
+					struct mac_data_ind          data_indP
+					);
 
 //defined in rlc_rrc.c
 rlc_op_status_t rrc_rlc_config_asn1_req_NB_IoT (
@@ -1920,6 +1940,14 @@ rlc_op_status_t rrc_rlc_config_asn1_req_NB_IoT (
   return RLC_OP_STATUS_OK;
 }
 
+
+void rlc_am_configure_NB_IoT(
+			     const protocol_ctxt_t         *const  ctxt_pP,
+			     rlc_am_entity_t               *const  rlc_pP,
+			     const uint16_t                max_retx_thresholdP,
+			     const uint16_t                t_poll_retransmitP,
+			     uint32_t                *enableStatusReportSN_Gap
+			     );
 //defined in rlc_am.c
 //from TS 36.331 V14.2.1
 uint32_t pollRetransmit_NB_tab[T_PollRetransmit_NB_r13_spare1] = {250,500,1000,2000,3000,4000,6000,10000,15000,25000,40000,60000,90000,120000,180000};
@@ -2118,6 +2146,8 @@ rlc_union_t* rrc_rlc_add_rlc_NB_IoT (
 
   return NULL;
 }
+
+
 
 //defined in rlc_rrc.c
 //-----------------------------------------------------------------------------

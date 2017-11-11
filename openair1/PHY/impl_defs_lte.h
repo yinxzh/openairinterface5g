@@ -36,7 +36,6 @@
 
 #include "types.h"
 #include "nfapi_interface.h"
-//#include "defs.h"
 #include "openair2/COMMON/platform_types.h"
 
 #define RX_NB_TH_MAX 2

@@ -21,7 +21,7 @@
 
 // this function fills the PHY_vars->PHY_measurement structure
 
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 #include "PHY/extern.h"
 #include "SCHED/defs.h"
 #include "SCHED/extern.h"

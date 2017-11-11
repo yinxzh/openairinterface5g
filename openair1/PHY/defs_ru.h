@@ -42,6 +42,12 @@
 
 #include <pthread.h>
 
+#include "PHY/impl_defs_lte.h"
+#include "PHY/TOOLS/time_meas.h"
+
+#define MAX_BANDS_PER_RRU 4
+#define MAX_NUM_RU_PER_eNB 64 
+
 typedef enum {
   LOCAL_RF        =0,
   REMOTE_IF5      =1,
@@ -51,123 +57,20 @@ typedef enum {
   MAX_RU_IF_TYPES =5
 } RU_if_south_t;
 
-typedef struct RU_t_s{
-  /// index of this ru
-  uint32_t idx;
- /// Pointer to configuration file
-  char *rf_config_file;
-  /// southbound interface
-  RU_if_south_t if_south;
-  /// timing
-  node_timing_t if_timing;
-  /// function
-  node_function_t function;
-  /// Ethernet parameters for fronthaul interface
-  eth_params_t eth_params;
-  /// flag to indicate the RU is in synch with a master reference
-  int in_synch;
-  /// timing offset
-  int rx_offset;        
-  /// flag to indicate the RU is a slave to another source
-  int is_slave;
-  /// Total gain of receive chain
-  uint32_t             rx_total_gain_dB;
-  /// number of bands that this device can support
-  int num_bands;
-  /// band list
-  int band[MAX_BANDS_PER_RRU];
-  /// number of RX paths on device
-  int nb_rx;
-  /// number of TX paths on device
-  int nb_tx;
-  /// maximum PDSCH RS EPRE
-  int max_pdschReferenceSignalPower;
-  /// maximum RX gain
-  int max_rxgain;
-  /// Attenuation of RX paths on device
-  int att_rx;
-  /// Attenuation of TX paths on device
-  int att_tx;
-  /// flag to indicate precoding operation in RU
-  int do_precoding;
-  /// Frame parameters
-  LTE_DL_FRAME_PARMS frame_parms;
-  ///timing offset used in TDD
-  int              N_TA_offset; 
-  /// RF device descriptor
-  openair0_device rfdevice;
-  /// HW configuration
-  openair0_config_t openair0_cfg;
-  /// Number of eNBs using this RU
-  int num_eNB;
-  /// list of eNBs using this RU
-  struct PHY_VARS_eNB_s *eNB_list[NUMBER_OF_eNB_MAX];
-  /// list of NB-IoT eNBs using this RU
-  struct PHY_VARS_eNB_NB_IoT_s *NB_IoT_eNB_list[NUMBER_OF_eNB_MAX];
-  /// Mapping of antenna ports to RF chain index
-  openair0_rf_map      rf_map;
-  /// IF device descriptor
-  openair0_device ifdevice;
-  /// Pointer for ifdevice buffer struct
-  if_buffer_t ifbuffer;
-  /// if prach processing is to be performed in RU
-  int                  do_prach;
-  /// function pointer to synchronous RX fronthaul function (RRU,3GPP_eNB)
-  void                 (*fh_south_in)(struct RU_t_s *ru,int *frame, int *subframe);
-  /// function pointer to synchronous TX fronthaul function
-  void                 (*fh_south_out)(struct RU_t_s *ru);
-  /// function pointer to synchronous RX fronthaul function (RRU)
-  void                 (*fh_north_in)(struct RU_t_s *ru,int *frame, int *subframe);
-  /// function pointer to synchronous RX fronthaul function (RRU)
-  void                 (*fh_north_out)(struct RU_t_s *ru);
-  /// function pointer to asynchronous fronthaul interface
-  void                 (*fh_north_asynch_in)(struct RU_t_s *ru,int *frame, int *subframe);
-  /// function pointer to asynchronous fronthaul interface
-  void                 (*fh_south_asynch_in)(struct RU_t_s *ru,int *frame, int *subframe);
-  /// function pointer to initialization function for radio interface
-  int                  (*start_rf)(struct RU_t_s *ru);
-  /// function pointer to initialization function for radio interface
-  int                  (*start_if)(struct RU_t_s *ru,struct PHY_VARS_eNB_s *eNB);
-  /// function pointer to RX front-end processing routine (DFTs/prefix removal or NULL)
-  void                 (*feprx)(struct RU_t_s *ru);
-  /// function pointer to TX front-end processing routine (IDFTs and prefix removal or NULL)
-  void                 (*feptx_ofdm)(struct RU_t_s *ru);
-  /// function pointer to TX front-end processing routine (PRECODING)
-  void                 (*feptx_prec)(struct RU_t_s *ru);
-  /// function pointer to wakeup routine in lte-enb.
-  int (*wakeup_rxtx)(struct PHY_VARS_eNB_s *eNB, struct RU_t_s *ru);
-  /// function pointer to wakeup routine in lte-enb.
-  void (*wakeup_prach_eNB)(struct PHY_VARS_eNB_s *eNB,struct RU_t_s *ru,int frame,int subframe);
-  /// function pointer to wakeup routine in lte-enb.
-  void (*wakeup_prach_eNB_br)(struct PHY_VARS_eNB_s *eNB,struct RU_t_s *ru,int frame,int subframe);
-  /// function pointer to eNB entry routine
-  void (*eNB_top)(struct PHY_VARS_eNB_s *eNB, int frame_rx, int subframe_rx, char *string);
-  /// Timing statistics
-  time_stats_t ofdm_demod_stats;
-  /// Timing statistics (TX)
-  time_stats_t ofdm_mod_stats;
-  /// Timing statistics (RX Fronthaul + Compression)
-  time_stats_t rx_fhaul;
-  /// Timing statistics (TX Fronthaul + Compression)
-  time_stats_t tx_fhaul; 
-  /// RX and TX buffers for precoder output
-  RU_COMMON            common;
-  /// beamforming weight vectors per eNB
-  int32_t **beam_weights[NUMBER_OF_eNB_MAX+1][15];
+typedef enum  {
+  eNodeB_3GPP=0,   // classical eNodeB function
+  NGFI_RAU_IF5,    // RAU with NGFI IF5
+  NGFI_RAU_IF4p5,  // RAU with NFGI IF4p5
+  NGFI_RRU_IF5,    // NGFI_RRU (NGFI remote radio-unit,IF5)
+  NGFI_RRU_IF4p5,  // NGFI_RRU (NGFI remote radio-unit,IF4p5)
+  MBP_RRU_IF5      // Mobipass RRU
+} node_function_t;
 
-  /// received frequency-domain signal for PRACH (IF4p5 RRU) 
-  int16_t              **prach_rxsigF;
-  /// received frequency-domain signal for PRACH BR (IF4p5 RRU) 
-  int16_t              **prach_rxsigF_br[4];
-  /// sequence number for IF5
-  uint8_t seqno;
-  /// initial timestamp used as an offset make first real timestamp 0
-  openair0_timestamp   ts_offset;
-  /// process scheduling variables
-  RU_proc_t            proc;
-  /// stats thread pthread descriptor
-  pthread_t            ru_stats_thread;
-} RU_t;
+typedef enum {
+  synch_to_ext_device=0,  // synch to RF or Ethernet device
+  synch_to_other,          // synch to another source_(timer, other RU)
+  synch_to_mobipass_standalone  // special case for mobipass in standalone mode
+} node_timing_t;
 
 typedef struct RU_proc_t_s {
   /// Pointer to associated RU descriptor
@@ -311,5 +214,210 @@ typedef struct RU_proc_t_s {
   /// array of pointers to slaves
   struct RU_proc_t_s           **slave_proc;
 } RU_proc_t;
+
+typedef struct RU_t_s{
+  /// index of this ru
+  uint32_t idx;
+ /// Pointer to configuration file
+  char *rf_config_file;
+  /// southbound interface
+  RU_if_south_t if_south;
+  /// timing
+  node_timing_t if_timing;
+  /// function
+  node_function_t function;
+  /// Ethernet parameters for fronthaul interface
+  eth_params_t eth_params;
+  /// flag to indicate the RU is in synch with a master reference
+  int in_synch;
+  /// timing offset
+  int rx_offset;        
+  /// flag to indicate the RU is a slave to another source
+  int is_slave;
+  /// Total gain of receive chain
+  uint32_t             rx_total_gain_dB;
+  /// number of bands that this device can support
+  int num_bands;
+  /// band list
+  int band[MAX_BANDS_PER_RRU];
+  /// number of RX paths on device
+  int nb_rx;
+  /// number of TX paths on device
+  int nb_tx;
+  /// maximum PDSCH RS EPRE
+  int max_pdschReferenceSignalPower;
+  /// maximum RX gain
+  int max_rxgain;
+  /// Attenuation of RX paths on device
+  int att_rx;
+  /// Attenuation of TX paths on device
+  int att_tx;
+  /// flag to indicate precoding operation in RU
+  int do_precoding;
+  /// Frame parameters
+  LTE_DL_FRAME_PARMS frame_parms;
+  ///timing offset used in TDD
+  int              N_TA_offset; 
+  /// RF device descriptor
+  openair0_device rfdevice;
+  /// HW configuration
+  openair0_config_t openair0_cfg;
+  /// Number of eNBs using this RU
+  int num_eNB;
+  /// list of eNBs using this RU
+  struct PHY_VARS_eNB_s *eNB_list[NUMBER_OF_eNB_MAX];
+  /// list of NB-IoT eNBs using this RU
+  struct PHY_VARS_eNB_NB_IoT_s *NB_IoT_eNB_list[NUMBER_OF_eNB_MAX];
+  /// Mapping of antenna ports to RF chain index
+  openair0_rf_map      rf_map;
+  /// IF device descriptor
+  openair0_device ifdevice;
+  /// Pointer for ifdevice buffer struct
+  if_buffer_t ifbuffer;
+  /// if prach processing is to be performed in RU
+  int                  do_prach;
+  /// function pointer to synchronous RX fronthaul function (RRU,3GPP_eNB)
+  void                 (*fh_south_in)(struct RU_t_s *ru,int *frame, int *subframe);
+  /// function pointer to synchronous TX fronthaul function
+  void                 (*fh_south_out)(struct RU_t_s *ru);
+  /// function pointer to synchronous RX fronthaul function (RRU)
+  void                 (*fh_north_in)(struct RU_t_s *ru,int *frame, int *subframe);
+  /// function pointer to synchronous RX fronthaul function (RRU)
+  void                 (*fh_north_out)(struct RU_t_s *ru);
+  /// function pointer to asynchronous fronthaul interface
+  void                 (*fh_north_asynch_in)(struct RU_t_s *ru,int *frame, int *subframe);
+  /// function pointer to asynchronous fronthaul interface
+  void                 (*fh_south_asynch_in)(struct RU_t_s *ru,int *frame, int *subframe);
+  /// function pointer to initialization function for radio interface
+  int                  (*start_rf)(struct RU_t_s *ru);
+  /// function pointer to initialization function for radio interface
+  int                  (*start_if)(struct RU_t_s *ru,struct PHY_VARS_eNB_s *eNB);
+  /// function pointer to RX front-end processing routine (DFTs/prefix removal or NULL)
+  void                 (*feprx)(struct RU_t_s *ru);
+  /// function pointer to TX front-end processing routine (IDFTs and prefix removal or NULL)
+  void                 (*feptx_ofdm)(struct RU_t_s *ru);
+  /// function pointer to TX front-end processing routine (PRECODING)
+  void                 (*feptx_prec)(struct RU_t_s *ru);
+  /// function pointer to wakeup routine in lte-enb.
+  int (*wakeup_rxtx)(struct PHY_VARS_eNB_s *eNB, struct RU_t_s *ru);
+  /// function pointer to wakeup routine in lte-enb.
+  void (*wakeup_prach_eNB)(struct PHY_VARS_eNB_s *eNB,struct RU_t_s *ru,int frame,int subframe);
+  /// function pointer to wakeup routine in lte-enb.
+  void (*wakeup_prach_eNB_br)(struct PHY_VARS_eNB_s *eNB,struct RU_t_s *ru,int frame,int subframe);
+  /// function pointer to eNB entry routine
+  void (*eNB_top)(struct PHY_VARS_eNB_s *eNB, int frame_rx, int subframe_rx, char *string);
+  /// Timing statistics
+  time_stats_t ofdm_demod_stats;
+  /// Timing statistics (TX)
+  time_stats_t ofdm_mod_stats;
+  /// Timing statistics (RX Fronthaul + Compression)
+  time_stats_t rx_fhaul;
+  /// Timing statistics (TX Fronthaul + Compression)
+  time_stats_t tx_fhaul; 
+  /// RX and TX buffers for precoder output
+  RU_COMMON            common;
+  /// beamforming weight vectors per eNB
+  int32_t **beam_weights[NUMBER_OF_eNB_MAX+1][15];
+
+  /// received frequency-domain signal for PRACH (IF4p5 RRU) 
+  int16_t              **prach_rxsigF;
+  /// received frequency-domain signal for PRACH BR (IF4p5 RRU) 
+  int16_t              **prach_rxsigF_br[4];
+  /// sequence number for IF5
+  uint8_t seqno;
+  /// initial timestamp used as an offset make first real timestamp 0
+  openair0_timestamp   ts_offset;
+  /// process scheduling variables
+  RU_proc_t            proc;
+  /// stats thread pthread descriptor
+  pthread_t            ru_stats_thread;
+} RU_t;
+
+
+#define MAX_RRU_CONFIG_SIZE 1024
+typedef enum {
+  RAU_tick=0,
+  RRU_capabilities=1,
+  RRU_config=2,
+  RRU_MSG_max_num=3
+} rru_config_msg_type_t;
+
+typedef struct RRU_CONFIG_msg_s {
+  rru_config_msg_type_t type;
+  ssize_t len;
+  uint8_t msg[MAX_RRU_CONFIG_SIZE];
+} RRU_CONFIG_msg_t;
+
+typedef enum {
+  OAI_IF5_only      =0,
+  OAI_IF4p5_only    =1,
+  OAI_IF5_and_IF4p5 =2,
+  MBP_IF5           =3,
+  MAX_FH_FMTs       =4
+} FH_fmt_options_t;
+
+
+
+typedef struct RRU_capabilities_s {
+  /// Fronthaul format
+  FH_fmt_options_t FH_fmt;
+  /// number of EUTRA bands (<=4) supported by RRU
+  uint8_t          num_bands;
+  /// EUTRA band list supported by RRU
+  uint8_t          band_list[MAX_BANDS_PER_RRU];
+  /// Number of concurrent bands (component carriers)
+  uint8_t          num_concurrent_bands;
+  /// Maximum TX EPRE of each band
+  int8_t           max_pdschReferenceSignalPower[MAX_BANDS_PER_RRU];
+  /// Maximum RX gain of each band
+  uint8_t          max_rxgain[MAX_BANDS_PER_RRU];
+  /// Number of RX ports of each band
+  uint8_t          nb_rx[MAX_BANDS_PER_RRU];
+  /// Number of TX ports of each band
+  uint8_t          nb_tx[MAX_BANDS_PER_RRU]; 
+  /// max DL bandwidth (1,6,15,25,50,75,100)
+  uint8_t          N_RB_DL[MAX_BANDS_PER_RRU];
+  /// max UL bandwidth (1,6,15,25,50,75,100)
+  uint8_t          N_RB_UL[MAX_BANDS_PER_RRU];
+} RRU_capabilities_t;
+
+typedef struct RRU_config_s {
+
+  /// Fronthaul format
+  RU_if_south_t FH_fmt;
+  /// number of EUTRA bands (<=4) configured in RRU
+  uint8_t num_bands;
+  /// EUTRA band list configured in RRU
+  uint8_t band_list[MAX_BANDS_PER_RRU];
+  /// TDD configuration (0-6)
+  uint8_t tdd_config[MAX_BANDS_PER_RRU];
+  /// TDD special subframe configuration (0-10)
+  uint8_t tdd_config_S[MAX_BANDS_PER_RRU];
+  /// TX frequency
+  uint32_t tx_freq[MAX_BANDS_PER_RRU];
+  /// RX frequency
+  uint32_t rx_freq[MAX_BANDS_PER_RRU];
+  /// TX attenation w.r.t. max
+  uint8_t att_tx[MAX_BANDS_PER_RRU];
+  /// RX attenuation w.r.t. max
+  uint8_t att_rx[MAX_BANDS_PER_RRU];
+  /// DL bandwidth
+  uint8_t N_RB_DL[MAX_BANDS_PER_RRU];
+  /// UL bandwidth
+  uint8_t N_RB_UL[MAX_BANDS_PER_RRU];
+  /// 3/4 sampling rate
+  uint8_t threequarter_fs[MAX_BANDS_PER_RRU];
+  /// prach_FreqOffset for IF4p5
+  int prach_FreqOffset[MAX_BANDS_PER_RRU];
+  /// prach_ConfigIndex for IF4p5
+  int prach_ConfigIndex[MAX_BANDS_PER_RRU];
+#ifdef Rel14
+  int emtc_prach_CElevel_enable[MAX_BANDS_PER_RRU][4];
+  /// emtc_prach_FreqOffset for IF4p5 per CE Level
+  int emtc_prach_FreqOffset[MAX_BANDS_PER_RRU][4];
+  /// emtc_prach_ConfigIndex for IF4p5 per CE Level
+  int emtc_prach_ConfigIndex[MAX_BANDS_PER_RRU][4];
+#endif
+} RRU_config_t;
 
 #endif

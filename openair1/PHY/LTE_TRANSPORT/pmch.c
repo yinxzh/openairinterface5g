@@ -19,7 +19,7 @@
  *      contact@openairinterface.org
  */
 
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 #include "PHY/extern.h"
 #include "PHY/sse_intrin.h"
 
@@ -30,7 +30,6 @@
 #define MBSFN_TDD_SF8 0x10
 #define MBSFN_TDD_SF9 0x08
 
-#include "PHY/defs.h"
 
 #define MBSFN_FDD_SF1 0x80// for FDD
 #define MBSFN_FDD_SF2 0x40

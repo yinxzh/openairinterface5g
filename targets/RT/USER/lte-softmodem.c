@@ -47,7 +47,8 @@
 
 #include "PHY/types.h"
 
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
+#include "PHY/defs_L1_NB_IoT.h"
 #include "common/ran_context.h"
 #include "common/config/config_userapi.h"
 #include "common/utils/load_module_shlib.h"
@@ -59,6 +60,7 @@
 
 //#undef FRAME_LENGTH_COMPLEX_SAMPLES //there are two conflicting definitions, so we better make sure we don't use it at all
 
+#include "common/vars.h"
 #include "PHY/vars.h"
 #include "SCHED/vars.h"
 #include "LAYER2/MAC/vars.h"
@@ -1077,14 +1079,6 @@ int main( int argc, char **argv )
       frame_parms[CC_id]->nb_antennas_rx     = nb_antenna_rx;
       frame_parms[CC_id]->nb_antenna_ports_eNB = 1; //initial value overwritten by initial sync later
       LOG_I(PHY,"Set nb_rx_antenna %d , nb_tx_antenna %d \n",frame_parms[CC_id]->nb_antennas_rx, frame_parms[CC_id]->nb_antennas_tx);
-
-
-      frame_parms_NB_IoT[CC_id]->nb_antennas_tx     = nb_antenna_tx;
-      frame_parms_NB_IoT[CC_id]->nb_antennas_rx     = nb_antenna_rx;
-      frame_parms_NB_IoT[CC_id]->nb_antenna_ports_eNB = 1; //initial value overwritten by initial sync later
-
-      LOG_I(PHY,"[NB-IoT] Set nb_rx_antenna %d , nb_tx_antenna %d \n",frame_parms_NB_IoT[CC_id]->nb_antennas_rx, frame_parms_NB_IoT[CC_id]->nb_antennas_tx);
-
     }
   }
 

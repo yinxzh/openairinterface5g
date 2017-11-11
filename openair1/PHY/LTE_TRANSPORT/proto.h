@@ -31,7 +31,7 @@
  */
 #ifndef __LTE_TRANSPORT_PROTO__H__
 #define __LTE_TRANSPORT_PROTO__H__
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 #include <math.h>
 #include "nfapi_interface.h"
 

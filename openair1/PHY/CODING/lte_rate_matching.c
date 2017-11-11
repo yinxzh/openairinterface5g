@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #endif
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 #include "assertions.h"
 
 //#define cmin(a,b) ((a)<(b) ? (a) : (b))

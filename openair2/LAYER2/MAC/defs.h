@@ -49,7 +49,7 @@
 
 
 
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 #include "PHY/LTE_TRANSPORT/defs.h"
 #include "COMMON/platform_constants.h"
 #include "BCCH-BCH-Message.h"

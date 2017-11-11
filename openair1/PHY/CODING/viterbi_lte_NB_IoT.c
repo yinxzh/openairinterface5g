@@ -33,7 +33,7 @@
 #endif
 
 #ifndef TEST_DEBUG
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 #include "PHY/extern.h"
 #else
 #include <stdio.h>

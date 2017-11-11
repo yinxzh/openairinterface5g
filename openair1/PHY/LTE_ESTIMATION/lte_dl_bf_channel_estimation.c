@@ -23,7 +23,7 @@
 #include <string.h>
 #endif
 #include "defs.h"
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 #include "filt16_32.h"
 //#define DEBUG_BF_CH
 

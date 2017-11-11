@@ -32,7 +32,7 @@
 /*NB-IoT include files*/
 //#include "PHY/extern_NB_IoT.h"
 #include "LAYER2/MAC/extern_NB_IoT.h"
-//#include "RRC/LITE/proto_NB_IoT.h"
+#include "proto_NB_IoT.h"
 #include "defs_NB_IoT.h"
 #include "openair1/SCHED/defs_NB_IoT.h"
 #include "RRC/LITE/MESSAGES/asn1_msg_NB_IoT.h"
@@ -188,8 +188,8 @@ void rrc_eNB_generate_RRCConnectionRelease_NB_IoT(
   memset(buffer, 0, RRC_BUF_SIZE);
 
   size = do_RRCConnectionRelease_NB_IoT(ctxt_pP->module_id,
-		  	  	  	  	  	  	  	  buffer,
-									  rrc_eNB_get_next_transaction_identifier_NB_IoT(ctxt_pP->module_id));
+					buffer,
+					rrc_eNB_get_next_transaction_identifier_NB_IoT(ctxt_pP->module_id));
   // set release timer
   ue_context_pP->ue_context.ue_release_timer=1;
   // remove UE after 10 frames after RRCConnectionRelease is triggered

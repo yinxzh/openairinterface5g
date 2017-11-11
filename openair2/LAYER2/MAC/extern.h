@@ -36,7 +36,7 @@
 #ifdef USER_MODE
 //#include "stdio.h"
 #endif //USER_MODE
-#include "PHY/defs.h"
+#include "common/extern.h"
 #include "defs.h"
 
 #include "RRC/LITE/defs.h"

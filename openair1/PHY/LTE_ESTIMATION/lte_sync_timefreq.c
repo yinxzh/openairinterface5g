@@ -36,7 +36,7 @@
 */
 
 //#include "defs.h"
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 #include "PHY/extern.h"
 
 #if defined(__x86_64__) || defined(__i386__)

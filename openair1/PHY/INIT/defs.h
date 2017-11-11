@@ -22,7 +22,7 @@
 #ifndef __INIT_DEFS__H__
 #define __INIT_DEFS__H__
 
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 
 
 #include "SystemInformationBlockType2.h"

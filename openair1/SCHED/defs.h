@@ -28,7 +28,7 @@
 #ifndef __openair_SCHED_H__
 #define __openair_SCHED_H__
 
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 #include "PHY_INTERFACE/defs.h"
 
 enum THREAD_INDEX { OPENAIR_THREAD_INDEX = 0,

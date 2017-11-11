@@ -31,12 +31,9 @@
 
 #include "assertions.h"
 #include "platform_types.h"
-#include "PHY/defs.h"
-#include "PHY/extern.h"
 #include "msc.h"
+#include "common/ran_context.h"
 
-#include "SCHED/defs.h"
-#include "SCHED/extern.h"
 
 #include "LAYER2/MAC/defs.h"
 #include "LAYER2/MAC/extern.h"

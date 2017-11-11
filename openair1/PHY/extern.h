@@ -22,8 +22,9 @@
 #ifndef __PHY_EXTERN_H__
 #define __PHY_EXTERN_H__
 
-#include "PHY/defs.h"
-#include "common/ran_context.h"
+#include "PHY/defs_L1.h"
+
+#include "common/extern.h"
 
 extern  char* namepointer_chMag ;
 extern char* namepointer_log2;
@@ -42,7 +43,6 @@ extern int number_of_cards;
 #ifndef OCP_FRAMEWORK
 extern PHY_VARS_UE ***PHY_vars_UE_g;
 //extern PHY_VARS_eNB ***PHY_vars_eNB_g;
-extern RAN_CONTEXT_t RC;
 extern PHY_VARS_RN **PHY_vars_RN_g;
 extern LTE_DL_FRAME_PARMS *lte_frame_parms_g;
 #else

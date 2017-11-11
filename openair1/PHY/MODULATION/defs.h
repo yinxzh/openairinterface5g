@@ -21,7 +21,7 @@
 
 #ifndef __MODULATION_DEFS__H__
 #define __MODULATION_DEFS__H__
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 /** @addtogroup _PHY_MODULATION_
  * @{
 */

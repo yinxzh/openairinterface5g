@@ -27,7 +27,7 @@
 #endif
 
 #include "defs.h"
-#include "PHY/defs.h"
+#include "PHY/defs_L1.h"
 
 //extern unsigned int lte_gold_table[10][3][42];
 //#define DEBUG_DL_MBSFN

@@ -25,6 +25,7 @@
 #define FD_lte_scope_h_
 
 #include <forms.h>
+#undef Status
 #include "../impl_defs_lte.h"
 #include "../impl_defs_top.h"
 #include "../defs.h"

@@ -1,4 +1,4 @@
-#include "openair1/PHY/defs.h"
+#include "openair1/PHY/defs_L1.h"
 #include "openair2/PHY_INTERFACE/IF_Module.h"
 #include "openair1/PHY/extern.h"
 #include "LAYER2/MAC/extern.h"

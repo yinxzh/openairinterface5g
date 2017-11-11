@@ -19,7 +19,7 @@
 #include "COMMON/mac_rrc_primitives.h"
 #include "PHY/LTE_TRANSPORT/defs_NB_IoT.h"
 //#include "PHY/defs.h"
-#include "PHY/defs_NB_IoT.h"
+#include "PHY/defs_L1_NB_IoT.h"
 #include "openair2/PHY_INTERFACE/IF_Module_NB_IoT.h"
 #include "config_NB_IoT.h"
 
@@ -477,7 +477,7 @@ typedef struct RA_template_list_s{
 
 
 /*! \brief top level eNB MAC structure */
-typedef struct {
+typedef struct eNB_MAC_INST_NB_IoT_s {
 
   //  System
   uint32_t hyper_system_frame;
@@ -516,6 +516,7 @@ typedef struct {
 
   rrc_config_NB_IoT_t rrc_config;
 
+  nfapi_config_request_t config;
 } eNB_MAC_INST_NB_IoT;
 
 // actually not here, but for now put it here
