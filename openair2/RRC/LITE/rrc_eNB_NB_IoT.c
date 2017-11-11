@@ -1611,13 +1611,13 @@ static void init_SI_NB_IoT(
 	/*WE should allocate memory for PHY_Config structure
 	 * is declared in vars_nb_iot.c and put also in the extern_nb_iot
 	 * */
-	config_INFO = malloc(sizeof(PHY_Config_t));
+	config_INFO = malloc(sizeof(PHY_Config_NB_IoT_t));
 
 
   //copy basic parameters
   eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].physCellId      = configuration->Nid_cell[CC_id];
   eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].p_eNB           = configuration->nb_antenna_ports[CC_id];
-  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].p_rx_eNB		     = configuration->nb_antenna_ports_rx[CC_id];
+  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].p_rx_eNB	 = 1;
   eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Ncp             = configuration->prefix_type[CC_id]; //DL Cyclic prefix
   eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Ncp_UL			     = configuration->prefix_type_UL[CC_id];//UL cyclic prefix
   eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].dl_CarrierFreq  = configuration->downlink_frequency[CC_id];

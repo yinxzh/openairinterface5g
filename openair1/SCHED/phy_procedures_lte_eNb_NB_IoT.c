@@ -213,7 +213,7 @@ uint32_t is_SIB1_NB_IoT(const frame_t          frameP,
 * It generates NRS/NPSS/NSSS
 *
 */
-void common_signal_procedures_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_t *proc) 
+void common_signal_procedures_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_NB_IoT_t *proc) 
 {
   NB_IoT_DL_FRAME_PARMS   *fp       =  &eNB->frame_parms_NB_IoT;
   int                     **txdataF =  eNB->common_vars.txdataF[0];
@@ -269,7 +269,7 @@ void common_signal_procedures_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_t *p
   
 }
 
-void phy_procedures_eNB_uespec_RX_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_t *proc,UL_IND_t *UL_INFO)
+void phy_procedures_eNB_uespec_RX_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_NB_IoT_t *proc,UL_IND_NB_IoT_t *UL_INFO)
 {
   //RX processing for ue-specific resources (i
 
@@ -453,7 +453,7 @@ void phy_procedures_eNB_uespec_RX_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_
                       (UL_INFO->RX_NPUSCH.rx_pdu_list+i)->rx_ue_information.rnti      = eNB->nulsch[i]->rnti;
                       (UL_INFO->RX_NPUSCH.rx_pdu_list+i)->data                        = NULL;
                       (UL_INFO->RX_NPUSCH.rx_pdu_list+i)->rx_indication_rel8.length   = 0;
-                      (UL_INFO->RX_NPUSCH.rx_pdu_list+i)->rx_ue_information.harq_pid  = harq_pid;
+		      //                      (UL_INFO->RX_NPUSCH.rx_pdu_list+i)->rx_ue_information.harq_pid  = harq_pid;
                        UL_INFO->RX_NPUSCH.number_of_pdus++;
                     }
                 }
@@ -492,7 +492,7 @@ void phy_procedures_eNB_uespec_RX_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_
                       (UL_INFO->RX_NPUSCH.rx_pdu_list+i)->rx_ue_information.rnti       = eNB->nulsch[i]->rnti;
                       (UL_INFO->RX_NPUSCH.rx_pdu_list+i)->data                         = eNB->nulsch[i]->harq_process->b;
                       (UL_INFO->RX_NPUSCH.rx_pdu_list+i)->rx_indication_rel8.length    = eNB->nulsch[i]->harq_process->TBS>>3;
-                      (UL_INFO->RX_NPUSCH.rx_pdu_list+i)->rx_ue_information.harq_pid   = harq_pid;
+                      //(UL_INFO->RX_NPUSCH.rx_pdu_list+i)->rx_ue_information.harq_pid   = harq_pid;
                       UL_INFO->RX_NPUSCH.number_of_pdus++;
                     }
 
@@ -552,7 +552,7 @@ void phy_procedures_eNB_uespec_RX_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_
                   (UL_INFO->RX_NPUSCH.rx_pdu_list+i)->rx_ue_information.rnti       = eNB->nulsch[i]->rnti;
                   (UL_INFO->RX_NPUSCH.rx_pdu_list+i)->data                         = eNB->nulsch[i]->harq_process->b;
                   (UL_INFO->RX_NPUSCH.rx_pdu_list+i)->rx_indication_rel8.length    = eNB->nulsch[i]->harq_process->TBS>>3;
-                  (UL_INFO->RX_NPUSCH.rx_pdu_list+i)->rx_ue_information.harq_pid   = harq_pid;
+                  //(UL_INFO->RX_NPUSCH.rx_pdu_list+i)->rx_ue_information.harq_pid   = harq_pid;
                   UL_INFO->RX_NPUSCH.number_of_pdus++;
 	    
 	            } // mac_enabled==1
@@ -592,7 +592,7 @@ void phy_procedures_eNB_uespec_RX_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_
 
 /*Generate eNB ndlsch params for NB-IoT from the NPDCCH PDU of the DCI, modify the input to the Sched Rsp variable*/
 
-void generate_eNB_dlsch_params_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_t * proc,nfapi_dl_config_request_pdu_t *dl_config_pdu) 
+void generate_eNB_dlsch_params_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_NB_IoT_t * proc,nfapi_dl_config_request_pdu_t *dl_config_pdu) 
 {
   int                      UE_id         =  -1;
   NB_IoT_DL_FRAME_PARMS    *fp           =  &eNB->frame_parms_NB_IoT;
@@ -725,7 +725,7 @@ void generate_eNB_dlsch_params_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_t *
 
 
 
-void generate_eNB_ulsch_params_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_t *proc,nfapi_hi_dci0_request_pdu_t *hi_dci0_pdu) {
+void generate_eNB_ulsch_params_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_NB_IoT_t *proc,nfapi_hi_dci0_request_pdu_t *hi_dci0_pdu) {
 
   int UE_id = -1;
   //int harq_pid = 0;
@@ -781,10 +781,10 @@ void generate_eNB_ulsch_params_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_t *
  * ** redundancy version exist only in UL for NB-IoT and not in DL
  */
 void npdsch_procedures(PHY_VARS_eNB_NB_IoT      *eNB,
-						           eNB_rxtx_proc_t   *proc,     //Context data structure for RX/TX portion of subframe processing
-						           NB_IoT_eNB_NDLSCH_t      *ndlsch,
-						           //int num_pdcch_symbols,            //(BCOM says are not needed
-						           uint8_t                  *pdu
+		       eNB_rxtx_proc_NB_IoT_t   *proc,     //Context data structure for RX/TX portion of subframe processing
+		       NB_IoT_eNB_NDLSCH_t      *ndlsch,
+		       //int num_pdcch_symbols,            //(BCOM says are not needed
+		       uint8_t                  *pdu
 									     )
 {
   int                     frame                   =   proc->frame_tx;
@@ -1043,8 +1043,8 @@ extern int oai_exit;
  */
 
 void phy_procedures_eNB_TX_NB_IoT(PHY_VARS_eNB_NB_IoT     *eNB,
-         	 	 	 	 	                eNB_rxtx_proc_t  *proc,
-							                    int                     do_meas)
+				  eNB_rxtx_proc_NB_IoT_t  *proc,
+				  int                     do_meas)
 {
   int                    frame           = proc->frame_tx;
   int                    subframe        = proc->subframe_tx;

@@ -6,21 +6,21 @@
 
 
 //called at initialization of L2
-void IF_Module_init_L2(void) // northbound IF-Module Interface
+void IF_Module_init_L2_NB_IoT(void) // northbound IF-Module Interface
 {
 	//mapping the IF-Module function to L2 definition
-	if_inst->UL_indication = UL_indication;
+	if_inst_NB_IoT->UL_indication = UL_indication_NB_IoT;
 
 	//return if_inst;
 }
 
 
 //called at initialization of L1 (phy_init_lte_eNB)
-void IF_Module_init_L1(void) //southbound IF-Module Interface
+void IF_Module_init_L1_NB_IoT(void) //southbound IF-Module Interface
 {
 	//mapping the IF-module function to L1 definition
-	if_inst->schedule_response = schedule_response;
-	if_inst->PHY_config_req  = PHY_config_req;
+	if_inst_NB_IoT->schedule_response = schedule_response_NB_IoT;
+	if_inst_NB_IoT->PHY_config_req  = PHY_config_req_NB_IoT;
 
 	//return if_inst;
 }

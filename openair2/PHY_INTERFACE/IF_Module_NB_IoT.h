@@ -106,7 +106,7 @@ typedef struct{
 	/*MP: MISSED COMMON CONFIG. of SIB2-NB in FAPI SPECS (may non needed)*/
 	extra_phyConfig_t extra_phy_parms;
 
-}PHY_Config_t;
+}PHY_Config_NB_IoT_t;
 
 
 
@@ -147,7 +147,7 @@ typedef struct{
  	/*crc_indication*/
  	nfapi_crc_indication_body_t crc_ind;
 
- }UL_IND_t;
+ }UL_IND_NB_IoT_t;
 
  // Downlink subframe P7
 
@@ -178,25 +178,24 @@ typedef struct{
   	/// Pointers to DL SDUs
   	//uint8_t **sdu;
 
-}Sched_Rsp_t;
+}Sched_Rsp_NB_IoT_t;
 
 
 /*IF_Module_t a group for gathering the Interface
 It should be allocated at the main () in lte-softmodem.c*/
-typedef struct IF_Module_s{
+typedef struct IF_Module_NB_IoT_s{
 	//define the function pointer
-	void (*UL_indication)(UL_IND_t *UL_INFO);
-	void (*schedule_response)(Sched_Rsp_t *Sched_INFO);
-	void (*PHY_config_req)(PHY_Config_t* config_INFO);
-
-}IF_Module_t;
+	void (*UL_indication)(UL_IND_NB_IoT_t *UL_INFO);
+	void (*schedule_response)(Sched_Rsp_NB_IoT_t *Sched_INFO);
+	void (*PHY_config_req)(PHY_Config_NB_IoT_t* config_INFO);
+}IF_Module_NB_IoT_t;
 
 /*Initial */
 
 //int IF_Module_init(IF_Module_t *if_inst);
 
-void IF_Module_init_L1(void);
-void IF_Module_init_L2(void);
+void IF_Module_init_L1_NB_IoT(void);
+void IF_Module_init_L2_NB_IoT(void);
 
 
 #endif

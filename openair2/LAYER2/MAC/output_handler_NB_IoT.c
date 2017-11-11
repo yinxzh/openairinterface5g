@@ -23,7 +23,7 @@ int output_handler(eNB_MAC_INST_NB_IoT *mac_inst, module_id_t module_id, int CC_
 	uint8_t MIB_size = 0;
 	uint8_t SIB1_size = 0, i = 0;
 
-	Sched_Rsp_t *SCHED_info = (Sched_Rsp_t*) malloc(sizeof(Sched_Rsp_t));
+	Sched_Rsp_NB_IoT_t *SCHED_info = (Sched_Rsp_NB_IoT_t*) malloc(sizeof(Sched_Rsp_NB_IoT_t));
 	nfapi_dl_config_request_pdu_t *dl_config_pdu;
 	nfapi_hi_dci0_request_pdu_t* hi_dci0_pdu;
 	nfapi_ul_config_request_pdu_t* ul_config_pdu;

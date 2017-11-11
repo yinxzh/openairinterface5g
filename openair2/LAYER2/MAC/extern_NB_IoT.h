@@ -27,8 +27,8 @@
 //#include "LAYER2/MAC/vars_NB_IoT.h"
 
 //NB-IoT
-extern IF_Module_t *if_inst;
-extern eNB_MAC_INST_NB_IoT *mac_inst;
+extern IF_Module_NB_IoT_t *if_inst_NB_IoT;
+extern eNB_MAC_INST_NB_IoT *mac_inst_NB_IoT;
 
 // //extern uint32_t EBSR_Level[63];
 // extern const uint32_t Extended_BSR_TABLE[BSR_TABLE_SIZE];

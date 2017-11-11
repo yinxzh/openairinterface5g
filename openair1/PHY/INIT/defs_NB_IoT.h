@@ -25,7 +25,7 @@
 
 //#include "PHY/defs_NB_IoT.h"
 #include "openair2/PHY_INTERFACE/IF_Module_NB_IoT.h"  
-// nfapi_interface.h is required here, it is called through IF_Module_NB_IoT.h
+#include "nfapi_interface.h"  
 
 //#include "SystemInformationBlockType2.h"
 //#include "RadioResourceConfigCommonSIB.h"
@@ -61,16 +61,16 @@ void phy_config_mib_eNB_NB_IoT(int  		Mod_id,
 //                         );
 
 void phy_config_sib2_eNB_NB_IoT(uint8_t Mod_id,
-                         		int CC_id,
-                         		nfapi_config_NB_IoT_t *config,
-						 		nfapi_rf_config_t *rf_config,
-								nfapi_uplink_reference_signal_config_t* ul_nrs_config,
-								extra_phyConfig_t* extra_phy_parms);
+				int CC_id,
+				nfapi_nb_iot_config_t *config,
+				nfapi_rf_config_t *rf_config,
+				nfapi_uplink_reference_signal_config_t* ul_nrs_config,
+				extra_phyConfig_t* extra_phy_parms);
 
 void phy_config_dedicated_eNB_NB_IoT(module_id_t Mod_id,
-                              	 	 int CC_id,
-                              	 	 rnti_t rnti,
-							     	 extra_phyConfig_t* extra_phy_parms); 
+				     int CC_id,
+				     rnti_t rnti,
+				     extra_phyConfig_t* extra_phy_parms); 
 
 // void phy_init_lte_top_NB_IoT(NB_IoT_DL_FRAME_PARMS *frame_parms); 
 

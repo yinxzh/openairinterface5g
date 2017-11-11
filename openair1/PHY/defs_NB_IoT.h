@@ -511,9 +511,10 @@ typedef struct PHY_VARS_eNB_NB_IoT_s {
   /// Module ID indicator for this instance
   module_id_t                   Mod_id;
   uint8_t                       CC_id;
+  uint8_t                       configured;
   eNB_proc_NB_IoT_t             proc;
-  eNB_func_NB_IoT_t             node_function;
-  eNB_timing_NB_IoT_t           node_timing;
+  int                           num_RU;
+  RU_t                          *RU_list[MAX_NUM_RU_PER_eNB];
   eth_params_t                  *eth_params;
   int                           single_thread_flag;
   openair0_rf_map               rf_map;

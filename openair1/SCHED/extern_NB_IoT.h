@@ -68,7 +68,7 @@
 
 extern uint16_t hundred_times_log10_NPRB_NB_IoT[100];
 
-extern Sched_Rsp_t* Sched_Rsp;
+extern Sched_Rsp_NB_IoT_t* Sched_Rsp;
 
 
 
