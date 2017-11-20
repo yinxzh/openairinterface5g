@@ -565,7 +565,7 @@ void *l2l1_task(void *arg) {
 
 static void get_options(void) {
   int CC_id;
-  int tddflag;
+  int tddflag, nonbiotflag;
   char *loopfile=NULL;
   int dumpframe;
   uint32_t online_log_messages;
@@ -685,6 +685,14 @@ static void get_options(void) {
       NB_eNB_INST = RC.nb_inst;
       NB_RU	  = RC.nb_RU;
       printf("Configuration: nb_rrc_inst %d, nb_L1_inst %d, nb_ru %d\n",NB_eNB_INST,RC.nb_L1_inst,NB_RU);
+      if (nonbiotflag <= 0) {
+         RCConfig_NbIoT(&RC) ;
+         printf("               nb_nbiot_rrc_inst %d, nb_nbiot_L1_inst %d, nb_nbiot_macrlc_inst %d\n",
+                RC.nb_nb_iot_rrc_inst, RC.nb_nb_iot_L1_inst, RC.nb_nb_iot_macrlc_inst);
+      } else {
+         printf("All Nb-IoT instances disabled\n");
+      }
+
     }
   } else if (UE_flag == 1 && (CONFIG_GETCONFFILE != NULL)) {
     // Here the configuration file is the XER encoded UE capabilities

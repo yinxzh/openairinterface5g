@@ -42,7 +42,7 @@
 
 		  
 
-/* NB-Iot section name */		
+/* NB-Iot RRC list section name */		
 #define NBIOT_RRCLIST_CONFIG_STRING                                         "NB-IoT_RRCs"		 
 
 
@@ -134,3 +134,10 @@
 
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/* NB IoT MACRLC configuration list section name   */
+#define NBIOT_MACRLCLIST_CONFIG_STRING                          "NB-IoT_MACRLCs"
+
+
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/* NB IoT L1 configuration list section name   */
+#define NBIOT_L1LIST_CONFIG_STRING                          "NB-IoT_L1s"

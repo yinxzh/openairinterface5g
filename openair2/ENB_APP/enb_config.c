@@ -53,6 +53,8 @@
 #include "PHY/extern.h"
 #include "targets/ARCH/ETHERNET/USERSPACE/LIB/ethernet_lib.h"
 #include "enb_paramdef.h"
+#include "L1_paramdef.h"
+#include "MACRLC_paramdef.h"
 #include "common/config/config_userapi.h"
 
 
