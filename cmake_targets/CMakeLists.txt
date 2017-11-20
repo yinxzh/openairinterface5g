@@ -610,7 +610,7 @@ add_boolean_option(FLEXRAN_AGENT_SB_IF             False         "enable FlexRAN
 # NB-IOT
 ################################################################
 add_boolean_option(NB_IOT True "Enabling NB-IoT code")
-
+add_integer_option(MAX_NUM_NBIOTs 2 "Max number of Nb-IoT RRC instances")
 
 ########################
 # Include order
@@ -1249,6 +1249,7 @@ endif()
 set (ENB_APP_SRC
   ${OPENAIR2_DIR}/ENB_APP/enb_app.c
   ${OPENAIR2_DIR}/ENB_APP/enb_config.c
+  ${OPENAIR2_DIR}/ENB_APP/nbiot_config.c
   )
 
 add_library(L2

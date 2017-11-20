@@ -62,6 +62,8 @@ typedef UL_DCCH_Message_t       RrcUlDcchMessage;
 
 #define RRC_CONFIGURATION_REQ(mSGpTR)   (mSGpTR)->ittiMsg.rrc_configuration_req
 
+#define NBIOTRRC_CONFIGURATION_REQ(mSGpTR)   (mSGpTR)->ittiMsg.nbiotrrc_configuration_req
+
 #define NAS_KENB_REFRESH_REQ(mSGpTR)    (mSGpTR)->ittiMsg.nas_kenb_refresh_req
 #define NAS_CELL_SELECTION_REQ(mSGpTR)  (mSGpTR)->ittiMsg.nas_cell_selection_req
 #define NAS_CONN_ESTABLI_REQ(mSGpTR)    (mSGpTR)->ittiMsg.nas_conn_establi_req
@@ -181,62 +183,61 @@ typedef struct RrcConfigurationReq_s {
   long                    ue_TimersAndConstants_n310[MAX_NUM_CCs];
   long                    ue_TimersAndConstants_n311[MAX_NUM_CCs];
   long                    ue_TransmissionMode[MAX_NUM_CCs];
+} RrcConfigurationReq;
 
-  //NB-IoT------------------------------------------------------------
-
+typedef struct NbIoTRrcConfigurationReq_s {
   //RACH
-  long					  rach_raResponseWindowSize_NB[MAX_NUM_CCs];
-  long					  rach_macContentionResolutionTimer_NB[MAX_NUM_CCs];
-  long					  rach_powerRampingStep_NB[MAX_NUM_CCs];
-  long					  rach_preambleInitialReceivedTargetPower_NB[MAX_NUM_CCs];
-  long					  rach_preambleTransMax_CE_NB[MAX_NUM_CCs];
+  long					  rach_raResponseWindowSize_NB[MAX_NUM_NBIOTs];
+  long					  rach_macContentionResolutionTimer_NB[MAX_NUM_NBIOTs];
+  long					  rach_powerRampingStep_NB[MAX_NUM_NBIOTs];
+  long					  rach_preambleInitialReceivedTargetPower_NB[MAX_NUM_NBIOTs];
+  long					  rach_preambleTransMax_CE_NB[MAX_NUM_NBIOTs];
   //BCCH
-  long					  bcch_modificationPeriodCoeff_NB[MAX_NUM_CCs];
+  long					  bcch_modificationPeriodCoeff_NB[MAX_NUM_NBIOTs];
   //PCCH
-  long					  pcch_defaultPagingCycle_NB[MAX_NUM_CCs];
-  long					  pcch_nB_NB[MAX_NUM_CCs];
-  long					  pcch_npdcch_NumRepetitionPaging_NB[MAX_NUM_CCs];
+  long					  pcch_defaultPagingCycle_NB[MAX_NUM_NBIOTs];
+  long					  pcch_nB_NB[MAX_NUM_NBIOTs];
+  long					  pcch_npdcch_NumRepetitionPaging_NB[MAX_NUM_NBIOTs];
   //NPRACH
-  long					  nprach_CP_Length[MAX_NUM_CCs];
-  long					  nprach_rsrp_range[MAX_NUM_CCs];
-  long					  nprach_Periodicity[MAX_NUM_CCs];
-  long					  nprach_StartTime[MAX_NUM_CCs];
-  long					  nprach_SubcarrierOffset[MAX_NUM_CCs];
-  long					  nprach_NumSubcarriers[MAX_NUM_CCs];
-  long					  nprach_SubcarrierMSG3_RangeStart[MAX_NUM_CCs];
-  long					  maxNumPreambleAttemptCE_NB[MAX_NUM_CCs];
-  long					  numRepetitionsPerPreambleAttempt_NB[MAX_NUM_CCs];
-  long					  npdcch_NumRepetitions_RA[MAX_NUM_CCs];
-  long					  npdcch_StartSF_CSS_RA[MAX_NUM_CCs];
-  long					  npdcch_Offset_RA[MAX_NUM_CCs];
+  long					  nprach_CP_Length[MAX_NUM_NBIOTs];
+  long					  nprach_rsrp_range[MAX_NUM_NBIOTs];
+  long					  nprach_Periodicity[MAX_NUM_NBIOTs];
+  long					  nprach_StartTime[MAX_NUM_NBIOTs];
+  long					  nprach_SubcarrierOffset[MAX_NUM_NBIOTs];
+  long					  nprach_NumSubcarriers[MAX_NUM_NBIOTs];
+  long					  nprach_SubcarrierMSG3_RangeStart[MAX_NUM_NBIOTs];
+  long					  maxNumPreambleAttemptCE_NB[MAX_NUM_NBIOTs];
+  long					  numRepetitionsPerPreambleAttempt_NB[MAX_NUM_NBIOTs];
+  long					  npdcch_NumRepetitions_RA[MAX_NUM_NBIOTs];
+  long					  npdcch_StartSF_CSS_RA[MAX_NUM_NBIOTs];
+  long					  npdcch_Offset_RA[MAX_NUM_NBIOTs];
   //NPDSCH
-  long					  npdsch_nrs_Power[MAX_NUM_CCs];
+  long					  npdsch_nrs_Power[MAX_NUM_NBIOTs];
   //NPUSCH
-  long					  npusch_ack_nack_numRepetitions_NB[MAX_NUM_CCs];
-  long					  npusch_srs_SubframeConfig_NB[MAX_NUM_CCs];
-  long					  npusch_threeTone_CyclicShift_r13[MAX_NUM_CCs];
-  long					  npusch_sixTone_CyclicShift_r13[MAX_NUM_CCs];
-  BOOLEAN_t				  npusch_groupHoppingEnabled[MAX_NUM_CCs];
-  long					  npusch_groupAssignmentNPUSCH_r13[MAX_NUM_CCs];
+  long					  npusch_ack_nack_numRepetitions_NB[MAX_NUM_NBIOTs];
+  long					  npusch_srs_SubframeConfig_NB[MAX_NUM_NBIOTs];
+  long					  npusch_threeTone_CyclicShift_r13[MAX_NUM_NBIOTs];
+  long					  npusch_sixTone_CyclicShift_r13[MAX_NUM_NBIOTs];
+  BOOLEAN_t				  npusch_groupHoppingEnabled[MAX_NUM_NBIOTs];
+  long					  npusch_groupAssignmentNPUSCH_r13[MAX_NUM_NBIOTs];
 
   //DL_GapConfig
-  long					  dl_GapThreshold_NB[MAX_NUM_CCs];
-  long	 				  dl_GapPeriodicity_NB[MAX_NUM_CCs];
-  long	 				  dl_GapDurationCoeff_NB[MAX_NUM_CCs];
+  long					  dl_GapThreshold_NB[MAX_NUM_NBIOTs];
+  long	 				  dl_GapPeriodicity_NB[MAX_NUM_NBIOTs];
+  long	 				  dl_GapDurationCoeff_NB[MAX_NUM_NBIOTs];
   //Uplink power control Common
-  long					  npusch_p0_NominalNPUSCH[MAX_NUM_CCs];
-  long					  npusch_alpha[MAX_NUM_CCs];
-  long					  deltaPreambleMsg3[MAX_NUM_CCs];
+  long					  npusch_p0_NominalNPUSCH[MAX_NUM_NBIOTs];
+  long					  npusch_alpha[MAX_NUM_NBIOTs];
+  long					  deltaPreambleMsg3[MAX_NUM_NBIOTs];
   //UE timers and constants
-  long					  ue_TimersAndConstants_t300_NB[MAX_NUM_CCs];
-  long					  ue_TimersAndConstants_t301_NB[MAX_NUM_CCs];
-  long					  ue_TimersAndConstants_t310_NB[MAX_NUM_CCs];
-  long					  ue_TimersAndConstants_t311_NB[MAX_NUM_CCs];
-  long					  ue_TimersAndConstants_n310_NB[MAX_NUM_CCs];
-  long					  ue_TimersAndConstants_n311_NB[MAX_NUM_CCs];
-  //---------------------------------------------------------------------------
+  long					  ue_TimersAndConstants_t300_NB[MAX_NUM_NBIOTs];
+  long					  ue_TimersAndConstants_t301_NB[MAX_NUM_NBIOTs];
+  long					  ue_TimersAndConstants_t310_NB[MAX_NUM_NBIOTs];
+  long					  ue_TimersAndConstants_t311_NB[MAX_NUM_NBIOTs];
+  long					  ue_TimersAndConstants_n310_NB[MAX_NUM_NBIOTs];
+  long					  ue_TimersAndConstants_n311_NB[MAX_NUM_NBIOTs];
+} NbIoTRrcConfigurationReq;
 
-} RrcConfigurationReq;
 
 // UE: NAS -> RRC messages
 typedef kenb_refresh_req_t      NasKenbRefreshReq;

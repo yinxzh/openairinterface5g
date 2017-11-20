@@ -922,7 +922,7 @@ void wait_eNBs(void) {
 	  break;
 	}
     if (waiting == 0) 
-      for (i=0;i<RC.nb_L1_inst;i++)
+      for (i=0;i<RC.nb_nb_iot_L1_inst;i++)
 	if (RC.L1_NB_IoT[i]->configured==0) {
 	  waiting=1;
 	  break;
