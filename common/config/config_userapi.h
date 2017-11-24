@@ -51,6 +51,9 @@ extern int config_get(paramdef_t *params,int numparams, char *prefix);
 extern int config_isparamset(paramdef_t *params,int paramidx);
 extern void config_assign_int(paramdef_t *cfgoptions, char *fullname, int val);
 extern int config_process_cmdline(paramdef_t *cfgoptions,int numoptions, char *prefix);
+extern int config_check_intval(paramdef_t *param,int *okvalues, int numokvalues);
+
+extern int config_check_intrange(paramdef_t *param,int *range);
 #define config_getlist config_get_if()->getlist
 #define CONFIG_GETCONFFILE (config_get_if()->cfgP[0])
 

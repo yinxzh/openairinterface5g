@@ -151,3 +151,32 @@ int config_isparamset(paramdef_t *params,int paramidx)
       return 0;
   }
 }
+int config_check_intval(paramdef_t *param,int *okvalues, int numokvalues)
+{
+    if ( param == NULL ){
+       fprintf(stderr,"[CONFIG] config_check_intval: NULL param argument\n");
+       return -1;
+    }
+    for ( int i=0; i<numokvalues ; i++) {
+         if( *(param->uptr) == okvalues[i] ) {
+             return 0;
+         }
+    }
+    fprintf(stderr,"[CONFIG] config_check_intval: %s: %i invalid value, authorized values:\n       ",
+           param->optname, (int)*(param->uptr));
+    for ( int i=0; i<numokvalues ; i++) {
+         fprintf(stderr, " %i",okvalues[i]);
+         }
+    fprintf(stderr, " \n");
+    return -1;
+}
+
+int config_check_intrange(paramdef_t *param,int *range)
+{
+   if( *(param->uptr) >= range[0]  && *(param->uptr) <= range[1]  ) {
+       return 0;
+   }
+   fprintf(stderr,"[CONFIG] config_check_intrange: %s: %i invalid value, authorized range: %i %i\n",
+           param->optname, (int)*(param->uptr), range[0], range[1]);
+   return -1;
+}

@@ -60,7 +60,7 @@
 
 
 
-void RCconfig_NbIoTL1() {
+void RCconfig_NbIoTL1(void) {
   int               i,j;
   paramdef_t NbIoT_L1_Params[] = L1PARAMS_DESC;
   paramlist_def_t NbIoT_L1_ParamList = {NBIOT_L1LIST_CONFIG_STRING,NULL,0};
@@ -180,7 +180,8 @@ void RCconfig_NbIoTmacrlc() {
 int RCconfig_NbIoTRRC(MessageDef *msg_p) {
 
 
-  char nbiotlist_path[MAX_OPTNAME_SIZE + 8];
+  int st=0;
+  int okvalues[] = RACH_RARESPONSEWINDOWSIZE_NB_OKVALUES;
   paramdef_t NBIoTParams[] = NBIOTRRCPARAMS_DESC;
   paramlist_def_t NBIoTRRCParamList = {NBIOT_RRCLIST_CONFIG_STRING,NULL,0};  
 
@@ -191,8 +192,8 @@ int RCconfig_NbIoTRRC(MessageDef *msg_p) {
 
 
 	    for (int j = 0; j < NBIoTRRCParamList.numelt ;j++) { 
-
-
+        
+              st -= config_check_intval(&(NBIoTRRCParamList.paramarray[j][NBIOT_RACH_RARESPONSEWINDOWSIZE_NB_IDX]),okvalues, 6);
 	      NBIOTRRC_CONFIGURATION_REQ (msg_p).rach_raResponseWindowSize_NB[j] = *(NBIoTRRCParamList.paramarray[j][NBIOT_RACH_RARESPONSEWINDOWSIZE_NB_IDX].uptr);
 	      
 
