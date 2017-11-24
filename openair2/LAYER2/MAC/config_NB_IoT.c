@@ -578,14 +578,14 @@ void rrc_mac_config_req_NB_IoT(
 
     //Now trigger the phy_config_xxx for configuring PHY through the PHY_config_req
     AssertFatal(if_inst_NB_IoT->PHY_config_req != NULL, "rrc_mac_config_req_eNB_NB_IoT: PHY_config_req pointer function is NULL\n");
-    PHY_Config_t phycfg;
+    /*PHY_Config_t phycfg;
     phycfg.Mod_id = Mod_idP;
     phycfg.CC_id  = 0;
-    phycfg.cfg    = &RC.nb_iot_mac[Mod_idP]->config;
+    phycfg.cfg    = &RC.nb_iot_mac[Mod_idP]->config;*/
  
     //return 0;
 
-      init_mac_NB_IoT(mac_inst);
+      init_mac_NB_IoT(eNB);
 
 
    /*if( ded_flag!=0 )

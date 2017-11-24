@@ -210,7 +210,7 @@ typedef struct {
   // MSG4 complete
   int RRC_connected;
   // UE active flag
-  boolean_t active;
+  int active;
 
 } UE_TEMPLATE_NB_IoT;
 
