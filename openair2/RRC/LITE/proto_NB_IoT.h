@@ -116,44 +116,6 @@ int mac_eNB_get_rrc_status_NB_IoT(
 );
 //---------------------------
 
-//---------------------------------------------
-
-//defined in rlc_mac.c
-void mac_rlc_data_ind_NB_IoT (
-  const module_id_t         module_idP,
-  const rnti_t              rntiP,
-  const module_id_t         eNB_index,
-  const frame_t             frameP,
-  const eNB_flag_t          enb_flagP,
-//const MBMS_flag_t         MBMS_flagP,
-  const logical_chan_id_t   channel_idP,
-  char                     *buffer_pP,
-  const tb_size_t           tb_sizeP,
-  num_tb_t                  num_tbP,
-  crc_t                    *crcs_pP);
-//-------------------------------------------
-
-//defined in rlc_am.c
-void rlc_am_mac_data_indication_NB_IoT (
-  const protocol_ctxt_t* const ctxt_pP,
-  void * const                 rlc_pP,
-  struct mac_data_ind          data_indP
-);
-//--------------------------------------------
-
-//defined in rlc_mac.c
-//called by the schedule_ue_spec for getting SDU to be transmitted from SRB1/SRB1bis and DRBs
-tbs_size_t mac_rlc_data_req_eNB_NB_IoT(
-  const module_id_t       module_idP,
-  const rnti_t            rntiP,
-  const eNB_index_t       eNB_index,
-  const frame_t           frameP,
-  const MBMS_flag_t       MBMS_flagP,
-  const logical_chan_id_t channel_idP,
-  char             *buffer_pP);
-//--------------------------------------------
-
-
 
 /*-----------eNB procedures (rrc_eNB_nb_iot.c)---------------*/
 
