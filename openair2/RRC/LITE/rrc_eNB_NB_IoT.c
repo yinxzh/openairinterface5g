@@ -218,14 +218,14 @@ void rrc_eNB_generate_RRCConnectionRelease_NB_IoT(
     rrc_eNB_mui_NB_IoT,
     size);
 
-  rrc_data_req_NB_IoT(
+  /*rrc_data_req_NB_IoT(
 	       ctxt_pP,
 	       DCCH1_NB_IoT,//Through SRB1/or SRB1bis
 	       rrc_eNB_mui_NB_IoT++,
 	       SDU_CONFIRM_NO,
 	       size,
 	       buffer,
-	       PDCP_TRANSMISSION_MODE_CONTROL);
+	       PDCP_TRANSMISSION_MODE_CONTROL);*/
 }
 
 
@@ -674,7 +674,7 @@ void rrc_eNB_process_RRCConnectionReconfigurationComplete_NB_IoT(
     MSC_AS_TIME_ARGS(ctxt_pP),
     ue_context_pP->ue_context.rnti);
 
-  rrc_pdcp_config_asn1_req_NB_IoT(
+  /*rrc_pdcp_config_asn1_req_NB_IoT(
     ctxt_pP,
     SRB_configList2,
     DRB_configList2,
@@ -684,16 +684,16 @@ void rrc_eNB_process_RRCConnectionReconfigurationComplete_NB_IoT(
     kRRCint,
     kUPenc,
 	NULL,
-	DCCH1_NB_IoT); //SRB1
+	DCCH1_NB_IoT); //SRB1*/
 
   // Refresh SRBs/DRBs for RLC
-  rrc_rlc_config_asn1_req_NB_IoT(
+  /*rrc_rlc_config_asn1_req_NB_IoT(
     ctxt_pP,
     SRB_configList2,
     DRB_configList2,
     (DRB_ToReleaseList_NB_r13_t *) NULL,
 	SRB1BIS_FLAG_NO
-  );
+  );*/
 
   // set the SRB active in Ue context
 
