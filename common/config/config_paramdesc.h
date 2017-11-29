@@ -55,12 +55,31 @@
 #define PARAMFLAG_PARAMSET                (1 << 16)        // parameter has been explicitely set in get functions
 #define PARAMFLAG_PARAMSETDEF             (1 << 17)        // parameter has been set to default value in get functions
 
+
+/* checkedparam_t is possibly used in paramdef_t for specific parameter value validation */
+#define CONFIG_MAX_NUMCHECKVAL            10
+typedef struct paramdef paramdef_t;
+typedef struct checkedparam
+{
+   union {  /* pointer to the function used to check a parameter value */
+        int  (*f1)(paramdef_t *param,int *okvalues, int numokvalues); /* check an integer against a list of authorized values */
+        int  (*f2)(paramdef_t *param,int *range);                     /* check an integer against an authorized range, defined by its min and max value */
+        void (*checkfunc)(void) ;                                     /* generic function pointer */
+   } ;
+   struct { /* structure used to store parameters to be used when calling the fx function */
+        int checkingval[CONFIG_MAX_NUMCHECKVAL];  /* integer array, store possible values (f1) or min and max values (f2) */
+        int num_checkingval;                      /* used for f1: number of valid values in the checkingval array */
+   } ;
+} checkedparam_t;
+
+/* paramdef is used to describe a parameter, array of paramdef_t strustures is used as the main parameter in */
+/* config apis used to retrieve parameters values  */
 typedef struct paramdef
 {
-   char optname[MAX_OPTNAME_SIZE];        /* parameter name, can be used as long command line option */
-   char *helpstr;                         /* help string */
-   unsigned int paramflags;               /* value is a "ored" combination of above PARAMFLAG_XXXX values */
-   union {                                /* pointer to the parameter value, completed by the config module */
+   char         optname[MAX_OPTNAME_SIZE]; /* parameter name, can be used as long command line option */
+   char         *helpstr;                  /* help string */
+   unsigned int paramflags;                /* value is a "ored" combination of above PARAMFLAG_XXXX values */
+   union {                                 /* pointer to the parameter value, completed by the config module */
      char **strptr;
      char **strlistptr;
      uint8_t   *u8ptr;
@@ -74,16 +93,17 @@ typedef struct paramdef
      double    *dblptr;
      } ;
    union {                                /* default parameter value, to be used when PARAMFLAG_MANDATORY is not specified */
-     char *defstrval;
-     char **defstrlistval;
-     uint32_t defuintval;
-     int defintval;
-     uint64_t defint64val;
-     int *defintarrayval;
-     double defdblval;
+     char      *defstrval;
+     char      **defstrlistval;
+     uint32_t  defuintval;
+     int       defintval;
+     uint64_t  defint64val;
+     int       *defintarrayval;
+     double    defdblval;
      } ;   
    char type;                              /* parameter value type, as listed below as TYPE_XXXX macro */
    int numelt;                             /* number of elements in a list or array parameters or max size of string value */ 
+   checkedparam_t   *chkPptr;              /* possible pointer to the structure containing the info used to check parameter values */
 } paramdef_t;
 
 #define TYPE_INT        TYPE_INT32

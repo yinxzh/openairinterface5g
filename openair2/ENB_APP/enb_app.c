@@ -205,7 +205,23 @@ static void configure_rrc(uint32_t enb_id)
   }
   else AssertFatal(0,"RRC context for eNB %d not allocated\n",enb_id);
 }
+/*------------------------------------------------------------------------------*/
+static void configure_nbiot_rrc(int nbiotrrc_id)
+{
+  MessageDef *msg_p = NULL;
+ 
 
+  msg_p = itti_alloc_new_message (TASK_ENB_APP, NBIOTRRC_CONFIGURATION_REQ);
+
+    RCconfig_NbIoTRRC(msg_p, nbiotrrc_id, RC.nb_iot_rrc);
+    
+ 
+    LOG_I(ENB_APP,"Sending configuration message to RRC task\n");
+    itti_send_msg_to_task (TASK_RRC_ENB, ENB_MODULE_ID_TO_INSTANCE(nbiotrrc_id), msg_p);
+
+  
+ 
+}
 /*------------------------------------------------------------------------------*/
 # if defined(ENABLE_USE_MME)
 static uint32_t eNB_app_register(uint32_t enb_id_start, uint32_t enb_id_end)//, const Enb_properties_array_t *enb_properties)
@@ -305,9 +321,10 @@ void *eNB_app_task(void *args_p)
   itti_mark_task_ready (TASK_ENB_APP);
 
   RCconfig_L1();
+  RCconfig_NbIoTL1();
 
   RCconfig_macrlc();
-
+  RCconfig_NbIoTmacrlc();
   if (RC.nb_L1_inst>0) AssertFatal(l1_north_init_eNB()==0,"could not initialize L1 north interface\n");
 
   # if defined(ENABLE_ITTI)
@@ -336,7 +353,17 @@ void *eNB_app_task(void *args_p)
     memset((void *)RC.rrc[enb_id],0,sizeof(eNB_RRC_INST));
     configure_rrc(enb_id);
   }
-  
+
+  LOG_I(ENB_APP,"Allocating NB-IoT_RRC_INST for %d instances\n",RC.nb_nb_iot_rrc_inst);
+
+  RC.nb_iot_rrc = (eNB_RRC_INST_NB_IoT **)malloc(RC.nb_nb_iot_rrc_inst*sizeof(eNB_RRC_INST_NB_IoT *));
+
+  for (int i=0; i< RC.nb_nb_iot_rrc_inst; i++) {
+    RC.nb_iot_rrc[i] = (eNB_RRC_INST_NB_IoT*)malloc(sizeof(eNB_RRC_INST_NB_IoT));
+    memset((void *)RC.nb_iot_rrc[i],0,sizeof(eNB_RRC_INST_NB_IoT));
+    configure_nbiot_rrc(i); 
+  }
+
 #if defined (FLEXRAN_AGENT_SB_IF)
   
   for (enb_id = enb_id_start; (enb_id < enb_id_end) ; enb_id++) {

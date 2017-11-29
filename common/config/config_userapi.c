@@ -124,6 +124,22 @@ void config_printhelp(paramdef_t *params,int numparams)
    }
 }
 
+int config_execcheck(paramdef_t *params,int numparams, char *prefix)
+{
+int st;
+
+   for (int i=0 ; i<numparams ; i++) {
+       if ( params[i].chkPptr == NULL) {
+           continue;
+       }
+       if ( params[i].chkPptr->f1  == config_check_intval) {
+            st=config_check_intval(&(params[i]), params[i].chkPptr->checkingval,params[i].chkPptr->num_checkingval);
+       } else if  ( params[i].chkPptr->f2  == config_check_intrange) {
+            st=config_check_intrange(&(params[i]), params[i].chkPptr->checkingval);
+       }
+   }
+}
+
 int config_get(paramdef_t *params,int numparams, char *prefix)
 {
 int ret= -1;
@@ -137,6 +153,7 @@ configmodule_interface_t *cfgif = config_get_if();
       ret = config_get_if()->get(params, numparams,prefix);
       if (ret >= 0) {
          config_process_cmdline(params,numparams,prefix);
+      config_execcheck(params,numparams,prefix);
      }
   return ret;
   }

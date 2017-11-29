@@ -20,11 +20,11 @@
  */
 
 /*
-  enb_config.c
+  nbiot_config.c
   -------------------
-  AUTHOR  : Lionel GAUTHIER, navid nikaein, Laurent Winckel
-  COMPANY : EURECOM
-  EMAIL   : Lionel.Gauthier@eurecom.fr, navid.nikaein@eurecom.fr
+  AUTHOR  : Francois Taburet
+  COMPANY : NOKIA
+  EMAIL   : francois.taburet@nokia-bell-labs.com
 */
 
 #include <string.h>
@@ -52,16 +52,15 @@
 #include "LAYER2/MAC/extern.h"
 #include "PHY/extern.h"
 #include "targets/ARCH/ETHERNET/USERSPACE/LIB/ethernet_lib.h"
+
+#include "common/config/config_userapi.h"
 #include "nbiot_paramdef.h"
 #include "L1_paramdef.h"
 #include "MACRLC_paramdef.h"
-#include "common/config/config_userapi.h"
-
 
 
 
 void RCconfig_NbIoTL1(void) {
-  int               i,j;
   paramdef_t NbIoT_L1_Params[] = L1PARAMS_DESC;
   paramlist_def_t NbIoT_L1_ParamList = {NBIOT_L1LIST_CONFIG_STRING,NULL,0};
 
@@ -120,8 +119,8 @@ void RCconfig_NbIoTL1(void) {
   }
 }
 
-void RCconfig_NbIoTmacrlc() {
-  int               j;
+void RCconfig_NbIoTmacrlc(void) {
+ 
 
 
   paramdef_t NbIoT_MacRLC_Params[] = MACRLCPARAMS_DESC;
@@ -177,28 +176,25 @@ void RCconfig_NbIoTmacrlc() {
 
 
 	       
-int RCconfig_NbIoTRRC(MessageDef *msg_p) {
+int RCconfig_NbIoTRRC(MessageDef *msg_p, int nbiotrrc_id,eNB_RRC_INST_NB_IoT *nbiotrrc) {
 
 
-  int st=0;
-  int okvalues[] = RACH_RARESPONSEWINDOWSIZE_NB_OKVALUES;
-  paramdef_t NBIoTParams[] = NBIOTRRCPARAMS_DESC;
-  paramlist_def_t NBIoTRRCParamList = {NBIOT_RRCLIST_CONFIG_STRING,NULL,0};  
+  char instprefix[MAX_OPTNAME_SIZE + 8];
+  checkedparam_t NBIoTCheckParams[] = NBIOT_RRCPARAMS_CHECK_DESC;
+  paramdef_t     NBIoTParams[]      = NBIOTRRCPARAMS_DESC;
 
- 
-  config_getlist( &NBIoTRRCParamList,NBIoTParams,sizeof(NBIoTParams)/sizeof(paramdef_t),NULL); 
-	  
-  LOG_I(RRC,"num NbIoT RRCs %d \n",NBIoTRRCParamList.numelt);  
+/* map parameter checking array instances to parameter definition array instances */
+  for (int i=0; i<sizeof(NBIoTParams)/sizeof(paramdef_t) && i<sizeof(NBIoTCheckParams)/sizeof(checkedparam_t); i++ ) {
+     NBIoTParams[i].chkPptr = &(NBIoTCheckParams[i]); 
+  } 
+  sprintf(instprefix, NBIOT_RRCLIST_CONFIG_STRING ".[%i]",nbiotrrc_id);
 
+  NBIoTParams[NBIOT_RACH_RARESPONSEWINDOWSIZE_NB_IDX].uptr = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).rach_raResponseWindowSize_NB);
+  NBIoTParams[NBIOT_RACH_MACCONTENTIONRESOLUTIONTIMER_NB_IDX].uptr = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).rach_macContentionResolutionTimer_NB);
 
-	    for (int j = 0; j < NBIoTRRCParamList.numelt ;j++) { 
-        
-              st -= config_check_intval(&(NBIoTRRCParamList.paramarray[j][NBIOT_RACH_RARESPONSEWINDOWSIZE_NB_IDX]),okvalues, 6);
-	      NBIOTRRC_CONFIGURATION_REQ (msg_p).rach_raResponseWindowSize_NB[j] = *(NBIoTRRCParamList.paramarray[j][NBIOT_RACH_RARESPONSEWINDOWSIZE_NB_IDX].uptr);
-	      
+  config_get( NBIoTParams,sizeof(NBIoTParams)/sizeof(paramdef_t),instprefix); 
 
-      
-    }
+//  NBIOTRRC_CONFIGURATION_REQ (msg_p).rach_raResponseWindowSize_NB[j] = *(NBIoTRRCParamList.paramarray[j][NBIOT_RACH_RARESPONSEWINDOWSIZE_NB_IDX].uptr);
 return 0;
 }
 
@@ -207,8 +203,7 @@ void RCConfig_NbIoT(RAN_CONTEXT_t *RC) {
   paramlist_def_t NbIoT_MACRLCParamList = {NBIOT_MACRLCLIST_CONFIG_STRING,NULL,0};
   paramlist_def_t NbIoT_L1ParamList = {NBIOT_L1LIST_CONFIG_STRING,NULL,0};
   paramlist_def_t NbIoT_ParamList = {NBIOT_RRCLIST_CONFIG_STRING,NULL,0};
-  
-  char aprefix[MAX_OPTNAME_SIZE*2 + 8];  
+    
   
   config_getlist( &NbIoT_ParamList,NULL,0,NULL);
   RC->nb_nb_iot_rrc_inst = NbIoT_ParamList.numelt;

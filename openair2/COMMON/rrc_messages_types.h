@@ -184,58 +184,58 @@ typedef struct RrcConfigurationReq_s {
   long                    ue_TimersAndConstants_n311[MAX_NUM_CCs];
   long                    ue_TransmissionMode[MAX_NUM_CCs];
 } RrcConfigurationReq;
-
+#define MAX_NUM_NBIOT_PRACH_INST    3
 typedef struct NbIoTRrcConfigurationReq_s {
   //RACH
-  long					  rach_raResponseWindowSize_NB[MAX_NUM_NBIOTs];
-  long					  rach_macContentionResolutionTimer_NB[MAX_NUM_NBIOTs];
-  long					  rach_powerRampingStep_NB[MAX_NUM_NBIOTs];
-  long					  rach_preambleInitialReceivedTargetPower_NB[MAX_NUM_NBIOTs];
-  long					  rach_preambleTransMax_CE_NB[MAX_NUM_NBIOTs];
+  long					  rach_raResponseWindowSize_NB;
+  long					  rach_macContentionResolutionTimer_NB;
+  long					  rach_powerRampingStep_NB;
+  long					  rach_preambleInitialReceivedTargetPower_NB;
+  long					  rach_preambleTransMax_CE_NB;
   //BCCH
-  long					  bcch_modificationPeriodCoeff_NB[MAX_NUM_NBIOTs];
+  long					  bcch_modificationPeriodCoeff_NB;
   //PCCH
-  long					  pcch_defaultPagingCycle_NB[MAX_NUM_NBIOTs];
-  long					  pcch_nB_NB[MAX_NUM_NBIOTs];
-  long					  pcch_npdcch_NumRepetitionPaging_NB[MAX_NUM_NBIOTs];
+  long					  pcch_defaultPagingCycle_NB;
+  long					  pcch_nB_NB;
+  long					  pcch_npdcch_NumRepetitionPaging_NB;
   //NPRACH
-  long					  nprach_CP_Length[MAX_NUM_NBIOTs];
-  long					  nprach_rsrp_range[MAX_NUM_NBIOTs];
-  long					  nprach_Periodicity[MAX_NUM_NBIOTs];
-  long					  nprach_StartTime[MAX_NUM_NBIOTs];
-  long					  nprach_SubcarrierOffset[MAX_NUM_NBIOTs];
-  long					  nprach_NumSubcarriers[MAX_NUM_NBIOTs];
-  long					  nprach_SubcarrierMSG3_RangeStart[MAX_NUM_NBIOTs];
-  long					  maxNumPreambleAttemptCE_NB[MAX_NUM_NBIOTs];
-  long					  numRepetitionsPerPreambleAttempt_NB[MAX_NUM_NBIOTs];
-  long					  npdcch_NumRepetitions_RA[MAX_NUM_NBIOTs];
-  long					  npdcch_StartSF_CSS_RA[MAX_NUM_NBIOTs];
-  long					  npdcch_Offset_RA[MAX_NUM_NBIOTs];
+  long					  nprach_CP_Length;
+  long					  nprach_rsrp_range;
+  long					  nprach_Periodicity[MAX_NUM_NBIOT_PRACH_INST];
+  long					  nprach_StartTime[MAX_NUM_NBIOT_PRACH_INST];
+  long					  nprach_SubcarrierOffset[MAX_NUM_NBIOT_PRACH_INST];
+  long					  nprach_NumSubcarriers[MAX_NUM_NBIOT_PRACH_INST];
+  long					  numRepetitionsPerPreambleAttempt_NB[MAX_NUM_NBIOT_PRACH_INST];
+  long					  nprach_SubcarrierMSG3_RangeStart;
+  long					  maxNumPreambleAttemptCE_NB;
+  long					  npdcch_NumRepetitions_RA;
+  long					  npdcch_StartSF_CSS_RA;
+  long					  npdcch_Offset_RA;
   //NPDSCH
-  long					  npdsch_nrs_Power[MAX_NUM_NBIOTs];
+  long					  npdsch_nrs_Power;
   //NPUSCH
-  long					  npusch_ack_nack_numRepetitions_NB[MAX_NUM_NBIOTs];
-  long					  npusch_srs_SubframeConfig_NB[MAX_NUM_NBIOTs];
-  long					  npusch_threeTone_CyclicShift_r13[MAX_NUM_NBIOTs];
-  long					  npusch_sixTone_CyclicShift_r13[MAX_NUM_NBIOTs];
-  BOOLEAN_t				  npusch_groupHoppingEnabled[MAX_NUM_NBIOTs];
-  long					  npusch_groupAssignmentNPUSCH_r13[MAX_NUM_NBIOTs];
+  long					  npusch_ack_nack_numRepetitions_NB;
+  long					  npusch_srs_SubframeConfig_NB;
+  long					  npusch_threeTone_CyclicShift_r13;
+  long					  npusch_sixTone_CyclicShift_r13;
+  BOOLEAN_t				  npusch_groupHoppingEnabled;
+  long					  npusch_groupAssignmentNPUSCH_r13;
 
   //DL_GapConfig
-  long					  dl_GapThreshold_NB[MAX_NUM_NBIOTs];
-  long	 				  dl_GapPeriodicity_NB[MAX_NUM_NBIOTs];
-  long	 				  dl_GapDurationCoeff_NB[MAX_NUM_NBIOTs];
+  long					  dl_GapThreshold_NB;
+  long	 				  dl_GapPeriodicity_NB;
+  long	 				  dl_GapDurationCoeff_NB;
   //Uplink power control Common
-  long					  npusch_p0_NominalNPUSCH[MAX_NUM_NBIOTs];
-  long					  npusch_alpha[MAX_NUM_NBIOTs];
-  long					  deltaPreambleMsg3[MAX_NUM_NBIOTs];
+  long					  npusch_p0_NominalNPUSCH;
+  long					  npusch_alpha;
+  long					  deltaPreambleMsg3;
   //UE timers and constants
-  long					  ue_TimersAndConstants_t300_NB[MAX_NUM_NBIOTs];
-  long					  ue_TimersAndConstants_t301_NB[MAX_NUM_NBIOTs];
-  long					  ue_TimersAndConstants_t310_NB[MAX_NUM_NBIOTs];
-  long					  ue_TimersAndConstants_t311_NB[MAX_NUM_NBIOTs];
-  long					  ue_TimersAndConstants_n310_NB[MAX_NUM_NBIOTs];
-  long					  ue_TimersAndConstants_n311_NB[MAX_NUM_NBIOTs];
+  long					  ue_TimersAndConstants_t300_NB;
+  long					  ue_TimersAndConstants_t301_NB;
+  long					  ue_TimersAndConstants_t310_NB;
+  long					  ue_TimersAndConstants_t311_NB;
+  long					  ue_TimersAndConstants_n310_NB;
+  long					  ue_TimersAndConstants_n311_NB;
 } NbIoTRrcConfigurationReq;
 
 
