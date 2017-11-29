@@ -1123,14 +1123,14 @@ rrc_eNB_generate_dedicatedRRCConnectionReconfiguration_NB_IoT(
     size);
 
   //transmit the RRCConnectionReconfiguration-NB
-  rrc_data_req_NB_IoT(
+  /*rrc_data_req_NB_IoT(
     ctxt_pP,
     DCCH1_NB_IoT,//through SRB1
     rrc_eNB_mui_NB_IoT++,
     SDU_CONFIRM_NO,
     size,
     buffer,
-    PDCP_TRANSMISSION_MODE_CONTROL);
+    PDCP_TRANSMISSION_MODE_CONTROL);*/
 
 }
 
@@ -2115,7 +2115,7 @@ int rrc_eNB_decode_ccch_NB_IoT(
         ue_context_p->ue_context.rnti);
 
       //MP: we should not configure PDCP for SRB1bis but only for SRB1
-      rrc_pdcp_config_asn1_req_NB_IoT(ctxt_pP,
+      /*rrc_pdcp_config_asn1_req_NB_IoT(ctxt_pP,
                                       ue_context_p->ue_context.SRB_configList, //contain SRB1bis but used as SRB1
                                       (DRB_ToAddModList_NB_r13_t *) NULL,
                                       (DRB_ToReleaseList_NB_r13_t*) NULL,
@@ -2139,7 +2139,7 @@ int rrc_eNB_decode_ccch_NB_IoT(
                                     (DRB_ToAddModList_NB_r13_t*) NULL,
                                     (DRB_ToReleaseList_NB_r13_t*) NULL,
       							  SRB1BIS_FLAG_NO
-                                   );
+                                   );*/
 //#endif //NO_RRM
 
       break; //RRCConnectionSetup-NB

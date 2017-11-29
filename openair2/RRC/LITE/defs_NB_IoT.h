@@ -249,6 +249,8 @@ typedef struct HANDOVER_INFO_UE_NB_IoT_s {
 
 //NB-IoT eNB_RRC_UE_NB_IoT_s--(used as a context in eNB --> ue_context in rrc_eNB_ue_context)------
 typedef struct eNB_RRC_UE_NB_IoT_s {
+
+  EstablishmentCause_t               establishment_cause;
   uint8_t                            primaryCC_id;
   //in NB-IoT only SRB0, SRB1 and SRB1bis (until AS security activation) exist
 
