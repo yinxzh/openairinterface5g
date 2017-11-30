@@ -110,7 +110,7 @@ unsigned short config_frames[4] = {2,9,11,13};
 #include "stats.h"
 #endif
 #include "lte-softmodem.h"
-
+#include "nbiot_config.h"
 
 #ifdef XFORMS
 // current status is that every UE has a DL scope for a SINGLE eNB (eNB_id=0)
@@ -1215,6 +1215,8 @@ int main( int argc, char **argv )
   else {
     printf("No ITTI, Initializing L1\n");
     RCconfig_L1();
+    if (RC.nb_nb_iot_rrc_inst > 0)
+        RCconfig_NbIoTL1() ;
   }
 #endif
   

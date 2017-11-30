@@ -53,7 +53,7 @@
 #if defined(FLEXRAN_AGENT_SB_IF)
 #   include "flexran_agent.h"
 #endif
-
+#include "nbiot_config.h"
 extern unsigned char NB_eNB_INST;
 #endif
 
@@ -217,7 +217,7 @@ static void configure_nbiot_rrc(int nbiotrrc_id)
     
  
     LOG_I(ENB_APP,"Sending configuration message to RRC task\n");
-    itti_send_msg_to_task (TASK_RRC_ENB, ENB_MODULE_ID_TO_INSTANCE(nbiotrrc_id), msg_p);
+    itti_send_msg_to_task (TASK_RRC_ENB_NB_IoT, ENB_MODULE_ID_TO_INSTANCE(nbiotrrc_id), msg_p);
 
   
  

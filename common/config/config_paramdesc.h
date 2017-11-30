@@ -57,19 +57,27 @@
 
 
 /* checkedparam_t is possibly used in paramdef_t for specific parameter value validation */
-#define CONFIG_MAX_NUMCHECKVAL            10
+#define CONFIG_MAX_NUMCHECKVAL            20
 typedef struct paramdef paramdef_t;
-typedef struct checkedparam
-{
-   union {  /* pointer to the function used to check a parameter value */
-        int  (*f1)(paramdef_t *param,int *okvalues, int numokvalues); /* check an integer against a list of authorized values */
-        int  (*f2)(paramdef_t *param,int *range);                     /* check an integer against an authorized range, defined by its min and max value */
-        void (*checkfunc)(void) ;                                     /* generic function pointer */
-   } ;
-   struct { /* structure used to store parameters to be used when calling the fx function */
-        int checkingval[CONFIG_MAX_NUMCHECKVAL];  /* integer array, store possible values (f1) or min and max values (f2) */
-        int num_checkingval;                      /* used for f1: number of valid values in the checkingval array */
-   } ;
+typedef union checkedparam {
+        struct  { 
+               int  (*f1)(paramdef_t *param);   /* check an integer against a list of authorized values */
+               int okintval[CONFIG_MAX_NUMCHECKVAL];                        /* integer array, store possible values  */
+               int num_okintval;                                            /* number of valid values in the checkingval array */
+        } s1;
+        struct { 
+               int  (*f2)(paramdef_t *param);  /* check an integer against an authorized range, defined by its min and max value */
+               int okintrange[CONFIG_MAX_NUMCHECKVAL];  /* integer array, store  min and max values  */
+   
+        } s2;
+        struct {
+               int  (*f3)(paramdef_t *param); /* check a string against a list of authorized values */
+               char *okstrval[CONFIG_MAX_NUMCHECKVAL];                      /* string array, store possible values  */
+               int  num_okstrval;                                           /* number of valid values in the checkingval array */
+        } s3;
+        struct { 
+                void (*checkfunc)(void) ; 
+        } s4;
 } checkedparam_t;
 
 /* paramdef is used to describe a parameter, array of paramdef_t strustures is used as the main parameter in */

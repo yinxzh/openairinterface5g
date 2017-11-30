@@ -126,18 +126,19 @@ void config_printhelp(paramdef_t *params,int numparams)
 
 int config_execcheck(paramdef_t *params,int numparams, char *prefix)
 {
-int st;
+int st=0;
 
    for (int i=0 ; i<numparams ; i++) {
        if ( params[i].chkPptr == NULL) {
            continue;
        }
-       if ( params[i].chkPptr->f1  == config_check_intval) {
-            st=config_check_intval(&(params[i]), params[i].chkPptr->checkingval,params[i].chkPptr->num_checkingval);
-       } else if  ( params[i].chkPptr->f2  == config_check_intrange) {
-            st=config_check_intrange(&(params[i]), params[i].chkPptr->checkingval);
+       if ( params[i].chkPptr->s1.f1  == config_check_intval) {
+            st=config_check_intval(&(params[i]));
+       } else if  ( params[i].chkPptr->s2.f2  == config_check_intrange) {
+            st=config_check_intrange(&(params[i]));
        }
    }
+return st;
 }
 
 int config_get(paramdef_t *params,int numparams, char *prefix)
@@ -168,32 +169,52 @@ int config_isparamset(paramdef_t *params,int paramidx)
       return 0;
   }
 }
-int config_check_intval(paramdef_t *param,int *okvalues, int numokvalues)
+int config_check_intval(paramdef_t *param)
 {
     if ( param == NULL ){
        fprintf(stderr,"[CONFIG] config_check_intval: NULL param argument\n");
        return -1;
     }
-    for ( int i=0; i<numokvalues ; i++) {
-         if( *(param->uptr) == okvalues[i] ) {
+    for ( int i=0; i<param->chkPptr->s1.num_okintval ; i++) {
+         if( *(param->uptr) == param->chkPptr->s1.okintval[i] ) {
              return 0;
          }
     }
     fprintf(stderr,"[CONFIG] config_check_intval: %s: %i invalid value, authorized values:\n       ",
            param->optname, (int)*(param->uptr));
-    for ( int i=0; i<numokvalues ; i++) {
-         fprintf(stderr, " %i",okvalues[i]);
+    for ( int i=0; i<param->chkPptr->s1.num_okintval ; i++) {
+         fprintf(stderr, " %i",param->chkPptr->s1.okintval[i]);
          }
     fprintf(stderr, " \n");
     return -1;
 }
 
-int config_check_intrange(paramdef_t *param,int *range)
+int config_check_intrange(paramdef_t *param)
 {
-   if( *(param->uptr) >= range[0]  && *(param->uptr) <= range[1]  ) {
+   if( *(param->iptr) >= param->chkPptr->s2.okintrange[0]  && *(param->iptr) <= param->chkPptr->s2.okintrange[1]  ) {
        return 0;
    }
    fprintf(stderr,"[CONFIG] config_check_intrange: %s: %i invalid value, authorized range: %i %i\n",
-           param->optname, (int)*(param->uptr), range[0], range[1]);
+           param->optname, (int)*(param->uptr), param->chkPptr->s2.okintrange[0], param->chkPptr->s2.okintrange[1]);
    return -1;
+}
+
+int config_check_strval(paramdef_t *param)
+{
+    if ( param == NULL ){
+       fprintf(stderr,"[CONFIG] config_check_strval: NULL param argument\n");
+       return -1;
+    }
+    for ( int i=0; i<param->chkPptr->s3.num_okstrval ; i++) {
+         if( strcasecmp(*(param->strptr),param->chkPptr->s3.okstrval[i] ) == 0) {
+             return 0;
+         }
+    }
+    fprintf(stderr,"[CONFIG] config_check_strval: %s: %s invalid value, authorized values:\n       ",
+           param->optname, *(param->strptr));
+    for ( int i=0; i<param->chkPptr->s3.num_okstrval ; i++) {
+         fprintf(stderr, " %s",param->chkPptr->s3.okstrval[i]);
+         }
+    fprintf(stderr, " \n");
+    return -1;
 }
