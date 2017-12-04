@@ -37,10 +37,11 @@
 #     include "lteRALenb.h"
 #   endif
 #   include "RRC/LITE/defs.h"
+#   include "RRC/LITE/extern_NB_IoT.h"
 # endif
 # include "enb_app.h"
 
-int create_tasks(uint32_t enb_nb, uint32_t ue_nb)
+int create_tasks(uint32_t enb_nb, uint32_t ue_nb, uint32_t nbiot)
 {
   itti_wait_ready(1);
   if (itti_create_task (TASK_L2L1, l2l1_task, NULL) < 0) {
@@ -113,6 +114,15 @@ int create_tasks(uint32_t enb_nb, uint32_t ue_nb)
         return -1;
       }
 
+    if (nbiot > 0) {
+      LOG_I(RRC,"Creating NB-IoT RRC Task\n");
+
+      if (itti_create_task (TASK_RRC_ENB_NB_IoT,  rrc_enb_task_NB_IoT, NULL) < 0) {
+        LOG_E(RRC, "Create task for NB-IoT RRC  failed\n");
+        return -1;
+      }
+
+    }
 #   if ENABLE_RAL
 
       if (itti_create_task (TASK_RAL_UE, mRAL_task, NULL) < 0) {

@@ -575,7 +575,7 @@ typedef struct UE_RRC_INST_NB_IoT_s {
 } UE_RRC_INST_NB_IoT;
 
 
-//#include "proto_NB_IoT.h" //should be put here otherwise compilation error
+#include "proto_NB_IoT.h" //should be put here otherwise compilation error
 
 #endif
 /** @} */

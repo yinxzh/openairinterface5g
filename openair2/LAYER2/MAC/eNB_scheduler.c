@@ -30,7 +30,7 @@
  */
 
 #include "assertions.h"
-#include "common/ran_context.h"
+#include "common/extern.h"
 //#include "PHY/defs.h"
 //#include "PHY/extern.h"
 
@@ -67,7 +67,6 @@
 #define ENABLE_MAC_PAYLOAD_DEBUG
 #define DEBUG_eNB_SCHEDULER 1
 
-extern RAN_CONTEXT_t RC;
 
 uint16_t pdcch_order_table[6] = {31,31,511,2047,2047,8191};
 

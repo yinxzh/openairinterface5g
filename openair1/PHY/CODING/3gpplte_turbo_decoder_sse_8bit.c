@@ -55,7 +55,7 @@
 #include "mex.h"
 #endif
 
-#include "common/ran_context.h"
+#include "common/extern.h"
 
 #define SHUFFLE16(a,b,c,d,e,f,g,h) _mm_set_epi8(h==-1?-1:h*2+1, \
             h==-1?-1:h*2, \
@@ -846,8 +846,6 @@ void free_td8(void)
 }
 
 
-
-extern RAN_CONTEXT_t RC;
 
 void init_td8()
 {

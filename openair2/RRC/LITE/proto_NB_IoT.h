@@ -132,7 +132,7 @@ void rrc_config_buffer_NB_IoT(
 
 char openair_rrc_eNB_configuration_NB_IoT(
   const module_id_t enb_mod_idP,
-  RrcConfigurationReq* configuration
+  NbIoTRrcConfigurationReq* configuration
 );
 
 //-----------------------------
@@ -197,7 +197,7 @@ void //was under ITTI
 rrc_eNB_generate_dedicatedRRCConnectionReconfiguration_NB_IoT(
 		const protocol_ctxt_t* const ctxt_pP,
 	    rrc_eNB_ue_context_NB_IoT_t*          const ue_context_pP
-        //no ho state
+//            const uint8_t      ho_state
 	     );
 
 void rrc_eNB_process_RRCConnectionSetupComplete_NB_IoT(

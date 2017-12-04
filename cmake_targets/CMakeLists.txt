@@ -316,7 +316,8 @@ file(GLOB rrc_h ${RRC_FULL_DIR}/*.h)
 set(rrc_h ${rrc_h} ${RRC_FULL_DIR}/asn1_constants.h)
 set_source_files_properties(${rrc_source} PROPERTIES COMPILE_FLAGS -w) # suppress warnings from generated code
 add_library(RRC_LIB ${rrc_h} ${rrc_source}
-    ${OPENAIR2_DIR}/RRC/LITE/MESSAGES/asn1_msg.c)
+    ${OPENAIR2_DIR}/RRC/LITE/MESSAGES/asn1_msg.c
+    ${OPENAIR2_DIR}/RRC/LITE/MESSAGES/asn1_msg_NB_IoT.c)
 include_directories ("${RRC_FULL_DIR}")
 
 # add the command to generate the source code
@@ -610,7 +611,7 @@ add_boolean_option(FLEXRAN_AGENT_SB_IF             False         "enable FlexRAN
 # NB-IOT
 ################################################################
 add_boolean_option(NB_IOT True "Enabling NB-IoT code")
-add_integer_option(MAX_NUM_NBIOT_RRCs 2 "Max number of Nb-IoT RRC instances")
+#add_integer_option(MAX_NUM_NBIOT_RRCs 2 "Max number of Nb-IoT RRC instances")
 
 ########################
 # Include order
@@ -1009,6 +1010,7 @@ set(SCHED_SRC
   ${OPENAIR1_DIR}/SCHED/phy_procedures_lte_eNb_NB_IoT.c
   ${OPENAIR1_DIR}/SCHED/phy_procedures_lte_ue.c
   ${OPENAIR1_DIR}/SCHED/phy_procedures_lte_common.c
+  ${OPENAIR1_DIR}/SCHED//phy_procedures_lte_common_NB_IoT.c
   ${OPENAIR1_DIR}/SCHED/ru_procedures.c
 #  ${OPENAIR1_DIR}/SCHED/phy_mac_stub.c
   ${OPENAIR1_DIR}/SCHED/pucch_pc.c

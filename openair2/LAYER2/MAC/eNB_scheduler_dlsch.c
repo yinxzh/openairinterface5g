@@ -30,7 +30,7 @@
  */
 
 #include "assertions.h"
-#include "common/ran_context.h"
+#include "common/extern.h"
 //#include "PHY/defs.h"
 //#include "PHY/extern.h"
 //#include "SCHED/defs.h"
@@ -62,7 +62,6 @@
 #define ENABLE_MAC_PAYLOAD_DEBUG
 //#define DEBUG_eNB_SCHEDULER 1
 
-extern RAN_CONTEXT_t RC;
 
 //------------------------------------------------------------------------------
 void

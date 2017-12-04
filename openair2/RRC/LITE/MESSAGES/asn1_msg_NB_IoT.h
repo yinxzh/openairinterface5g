@@ -79,7 +79,7 @@ uint8_t do_MIB_NB_IoT(
 uint8_t do_SIB1_NB_IoT(uint8_t Mod_id, 
                        int CC_id,
 				               rrc_eNB_carrier_data_NB_IoT_t *carrier,
-                       RrcConfigurationReq *configuration,
+                       NbIoTRrcConfigurationReq *configuration,
 				               uint32_t frame
                       );
 
@@ -95,7 +95,7 @@ uint8_t do_SIB1_NB_IoT(uint8_t Mod_id,
 uint8_t do_SIB23_NB_IoT(uint8_t Mod_id,
                         int CC_id,
                         rrc_eNB_carrier_data_NB_IoT_t *carrier,
-                        RrcConfigurationReq *configuration
+                        NbIoTRrcConfigurationReq *configuration
                         );
 
 /**(UE-SIDE)

@@ -49,7 +49,7 @@
 
 #include "PHY/defs_L1.h"
 #include "PHY/defs_L1_NB_IoT.h"
-#include "common/ran_context.h"
+#include "common/extern.h"
 #include "common/config/config_userapi.h"
 #include "common/utils/load_module_shlib.h"
 #undef MALLOC //there are two conflicting definitions, so we better make sure we don't use it at all
@@ -1202,10 +1202,11 @@ int main( int argc, char **argv )
   
   
   if ((UE_flag == 1)||
-      (RC.nb_inst > 0))  {
+      (RC.nb_inst > 0) ||
+      (RC.nb_nb_iot_rrc_inst > 0))  {
     
     // don't create if node doesn't connect to RRC/S1/GTP
-    if (create_tasks(UE_flag ? 0 : 1, UE_flag ? 1 : 0) < 0) {
+    if (create_tasks(UE_flag ? 0 : 1, UE_flag ? 1 : 0, (RC.nb_nb_iot_rrc_inst>0)?1:0 ) < 0) {
       printf("cannot create ITTI tasks\n");
       exit(-1); // need a softer mode
     }

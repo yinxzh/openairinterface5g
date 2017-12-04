@@ -4,7 +4,6 @@
 #include "LAYER2/MAC/extern_NB_IoT.h"
 //#include "LAYER2/MAC/proto_NB_IoT.h"
 
-
 //called at initialization of L2
 void IF_Module_init_L2_NB_IoT(void) // northbound IF-Module Interface
 {

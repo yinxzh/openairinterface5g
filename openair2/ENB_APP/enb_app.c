@@ -33,7 +33,7 @@
 #include "enb_app.h"
 #include "enb_config.h"
 #include "assertions.h"
-#include "common/ran_context.h"
+#include "common/extern.h"
 
 #include "log.h"
 #if defined(OAI_EMU)
@@ -57,7 +57,6 @@
 extern unsigned char NB_eNB_INST;
 #endif
 
-extern RAN_CONTEXT_t RC;
 
 #if defined(ENABLE_ITTI)
 

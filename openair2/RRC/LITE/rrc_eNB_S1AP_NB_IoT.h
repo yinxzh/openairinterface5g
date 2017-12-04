@@ -46,8 +46,8 @@ rrc_eNB_S1AP_remove_ue_ids_NB_IoT(
 
 void
 rrc_eNB_generate_dedicatedRRCConnectionReconfiguration_NB_IoT(const protocol_ctxt_t* const ctxt_pP,
-                                                     rrc_eNB_ue_context_NB_IoT_t*          const ue_context_pP,
-                                                     const uint8_t                ho_state
+                                                     rrc_eNB_ue_context_NB_IoT_t*          const ue_context_pP
+//                                                     const uint8_t                ho_state
                                                      );
 
 

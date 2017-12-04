@@ -30,7 +30,7 @@
  */
 
 #include "assertions.h"
-#include "common/ran_context.h"
+#include "common/extern.h"
 
 //#include "PHY/defs.h"
 //#include "PHY/extern.h"

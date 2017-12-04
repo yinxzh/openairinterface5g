@@ -1298,7 +1298,7 @@ int rrc_eNB_process_S1AP_E_RAB_SETUP_REQ_NB_IoT(MessageDef *msg_p, const char *m
       //      S1AP_INITIAL_CONTEXT_SETUP_REQ(msg_p).ue_ambr;
     }
 
-    rrc_eNB_generate_dedicatedRRCConnectionReconfiguration_NB_IoT(&ctxt, ue_context_p, 0);
+    rrc_eNB_generate_dedicatedRRCConnectionReconfiguration_NB_IoT(&ctxt, ue_context_p);
 
     return (0);
   }

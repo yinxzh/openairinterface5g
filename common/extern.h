@@ -19,11 +19,11 @@
  *      contact@openairinterface.org
  */
 
-#ifndef __RAN_EXTERN_H__
-#define __RAN_EXTERN_H__
+#ifndef __common_EXTERN_H__
+#define __common_EXTERN_H__
 
 #include "ran_context.h"
 
 extern RAN_CONTEXT_t RC;
 
-#endif /*__RAN_EXTERN_H__ */
+#endif /*__common_EXTERN_H__ */

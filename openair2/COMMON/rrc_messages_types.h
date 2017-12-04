@@ -186,6 +186,23 @@ typedef struct RrcConfigurationReq_s {
 } RrcConfigurationReq;
 #define MAX_NUM_NBIOT_PRACH_INST    3
 typedef struct NbIoTRrcConfigurationReq_s {
+  uint32_t            cell_identity;
+
+  uint16_t            tac;
+
+  uint16_t	      mcc;
+  uint16_t	      mnc;
+  uint8_t	      mnc_digit_length;
+  lte_frame_type_t	  frame_type;
+  uint8_t                 tdd_config;
+  uint8_t                 tdd_config_s;
+  lte_prefix_type_t       prefix_type;
+  lte_prefix_type_t	  prefix_type_UL;
+  int16_t                 eutra_band;
+  uint32_t                downlink_frequency;
+  int32_t                 uplink_frequency_offset;
+  int16_t                 Nid_cell;// for testing, change later
+  int16_t                 N_RB_DL;// for testing, change later
   //RACH
   long					  rach_raResponseWindowSize_NB;
   long					  rach_macContentionResolutionTimer_NB;

@@ -30,7 +30,7 @@
  */
 
 #include "assertions.h"
-#include "common/ran_context.h"
+#include "common/extern.h"
 #include "extern.h"
 
 #include "LAYER2/MAC/defs.h"

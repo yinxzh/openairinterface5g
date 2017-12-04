@@ -1604,7 +1604,7 @@ void rrc_eNB_generate_defaultRRCConnectionReconfiguration_NB_IoT(const protocol_
 static void init_SI_NB_IoT(
   const protocol_ctxt_t* const ctxt_pP,
   const int              CC_id,
-  RrcConfigurationReq* configuration //openair2/COMMON/rrc_messages_types
+  NbIoTRrcConfigurationReq* configuration //openair2/COMMON/rrc_messages_types
 )
 //-----------------------------------------------------------------------------
 { 
@@ -1615,13 +1615,12 @@ static void init_SI_NB_IoT(
 
 
   //copy basic parameters
-  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].physCellId      = configuration->Nid_cell[CC_id];
-  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].p_eNB           = configuration->nb_antenna_ports[CC_id];
+  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].physCellId      = configuration->Nid_cell;
   eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].p_rx_eNB	 = 1;
-  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Ncp             = configuration->prefix_type[CC_id]; //DL Cyclic prefix
-  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Ncp_UL			     = configuration->prefix_type_UL[CC_id];//UL cyclic prefix
-  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].dl_CarrierFreq  = configuration->downlink_frequency[CC_id];
-  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].ul_CarrierFreq  = configuration->downlink_frequency[CC_id]+ configuration->uplink_frequency_offset[CC_id];
+  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Ncp             = configuration->prefix_type; //DL Cyclic prefix
+  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Ncp_UL			     = configuration->prefix_type_UL;//UL cyclic prefix
+  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].dl_CarrierFreq  = configuration->downlink_frequency;
+  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].ul_CarrierFreq  = configuration->downlink_frequency+ configuration->uplink_frequency_offset;
 
 
   //TODO: verify who allocate memory for sib1_NB_IoT, sib2_NB_IoT, sib3_NB and mib_nb in the carrier before being passed as parameter
@@ -1638,7 +1637,7 @@ static void init_SI_NB_IoT(
   {
 	  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].sizeof_MIB_NB_IoT =
 	  			  do_MIB_NB_IoT(&eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id],
-	  					  	configuration->N_RB_DL[CC_id],
+	  					  	configuration->N_RB_DL,
 					        0 //FIXME is correct to pass frame = 0??
 					        );
   }
@@ -1734,7 +1733,7 @@ static void init_SI_NB_IoT(
 //aka openair_rrc_eNB_init
 char openair_rrc_eNB_configuration_NB_IoT(
   const module_id_t enb_mod_idP,
-  RrcConfigurationReq* configuration //MP: previously was insiede ITTI but actually I put it out
+  NbIoTRrcConfigurationReq* configuration //MP: previously was insiede ITTI but actually I put it out
 )
 //-----------------------------------------------------------------------------
 {
@@ -2856,7 +2855,7 @@ void* rrc_enb_task_NB_IoT(
       /* Messages from eNB app */
     case RRC_CONFIGURATION_REQ:
       LOG_I(RRC, "[eNB %d] Received %s\n", instance, msg_name_p);
-      openair_rrc_eNB_configuration_NB_IoT(ENB_INSTANCE_TO_MODULE_ID(instance), &RRC_CONFIGURATION_REQ(msg_p));
+      openair_rrc_eNB_configuration_NB_IoT(ENB_INSTANCE_TO_MODULE_ID(instance), &NBIOTRRC_CONFIGURATION_REQ(msg_p));
       break;
 
     default:

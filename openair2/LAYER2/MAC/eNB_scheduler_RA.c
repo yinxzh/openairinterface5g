@@ -32,7 +32,7 @@
 #include "assertions.h"
 #include "platform_types.h"
 #include "msc.h"
-#include "common/ran_context.h"
+#include "common/extern.h"
 
 
 #include "LAYER2/MAC/defs.h"
