@@ -184,7 +184,7 @@ typedef struct RrcConfigurationReq_s {
   long                    ue_TimersAndConstants_n311[MAX_NUM_CCs];
   long                    ue_TransmissionMode[MAX_NUM_CCs];
 } RrcConfigurationReq;
-#define MAX_NUM_NBIOT_PRACH_INST    3
+#define MAX_NUM_NBIOT_CELEVELS    3
 typedef struct NbIoTRrcConfigurationReq_s {
   uint32_t            cell_identity;
 
@@ -218,16 +218,16 @@ typedef struct NbIoTRrcConfigurationReq_s {
   //NPRACH
   long					  nprach_CP_Length;
   long					  nprach_rsrp_range;
-  long					  nprach_Periodicity[MAX_NUM_NBIOT_PRACH_INST];
-  long					  nprach_StartTime[MAX_NUM_NBIOT_PRACH_INST];
-  long					  nprach_SubcarrierOffset[MAX_NUM_NBIOT_PRACH_INST];
-  long					  nprach_NumSubcarriers[MAX_NUM_NBIOT_PRACH_INST];
-  long					  numRepetitionsPerPreambleAttempt_NB[MAX_NUM_NBIOT_PRACH_INST];
+  long					  nprach_Periodicity[MAX_NUM_NBIOT_CELEVELS];
+  long					  nprach_StartTime[MAX_NUM_NBIOT_CELEVELS];
+  long					  nprach_SubcarrierOffset[MAX_NUM_NBIOT_CELEVELS];
+  long					  nprach_NumSubcarriers[MAX_NUM_NBIOT_CELEVELS];
+  long					  numRepetitionsPerPreambleAttempt_NB[MAX_NUM_NBIOT_CELEVELS];
   long					  nprach_SubcarrierMSG3_RangeStart;
   long					  maxNumPreambleAttemptCE_NB;
-  long					  npdcch_NumRepetitions_RA;
-  long					  npdcch_StartSF_CSS_RA;
-  long					  npdcch_Offset_RA;
+  long					  npdcch_NumRepetitions_RA[MAX_NUM_NBIOT_CELEVELS];
+  long					  npdcch_StartSF_CSS_RA[MAX_NUM_NBIOT_CELEVELS];
+  long					  npdcch_Offset_RA[MAX_NUM_NBIOT_CELEVELS];
   //NPDSCH
   long					  npdsch_nrs_Power;
   //NPUSCH

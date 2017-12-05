@@ -81,7 +81,7 @@
 #define ITTI_DEBUG_ISSUES           (1<<5)
 #define ITTI_DEBUG_MP_STATISTICS    (1<<6)
 
-const int itti_debug = (ITTI_DEBUG_ISSUES | ITTI_DEBUG_MP_STATISTICS);
+const int itti_debug = (ITTI_DEBUG_ISSUES | ITTI_DEBUG_MP_STATISTICS | ITTI_DEBUG_INIT);
 
 /* Don't flush if using RTAI */
 #ifdef RTAI

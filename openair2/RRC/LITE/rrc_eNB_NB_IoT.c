@@ -2606,8 +2606,8 @@ int rrc_eNB_decode_dcch_NB_IoT(
       dec_rval = uper_decode(NULL,
                              &asn_DEF_UE_Capability_NB_r13,
                              (void **)&UE_Capability_NB,
-							 Rx_sdu, //*buffer//FIXME may this is not the best way (may incorrect)
-							 sdu_sizeP,//*size //FIXME may this is not the best way (may incorrect)
+							 Rx_sdu, //buffer//FIXME may this is not the best way (may incorrect)
+							 sdu_sizeP,//size //FIXME may this is not the best way (may incorrect)
 							 0, //skip bits
 							 0); //unused bits
 
@@ -2731,7 +2731,6 @@ int rrc_eNB_decode_dcch_NB_IoT(
 }
 
 //-----------------------------------------------------------------------------
-//put out from the ITTI FIXME is completely based on ITTI--> must be changed (msg_p, itti_receive_msg ecc...)
 void* rrc_enb_task_NB_IoT(
   void* args_p
 )
@@ -2745,11 +2744,11 @@ void* rrc_enb_task_NB_IoT(
   int                                 CC_id;
 
   protocol_ctxt_t                     ctxt;
-  itti_mark_task_ready(TASK_RRC_ENB);
+  itti_mark_task_ready(TASK_RRC_ENB_NB_IoT);
 
   while (1) {
     // Wait for a message
-    itti_receive_msg(TASK_RRC_ENB, &msg_p);
+    itti_receive_msg(TASK_RRC_ENB_NB_IoT, &msg_p);
 
     msg_name_p = ITTI_MSG_NAME(msg_p);
     instance = ITTI_MSG_INSTANCE(msg_p);
@@ -2760,7 +2759,7 @@ void* rrc_enb_task_NB_IoT(
       break;
 
     case MESSAGE_TEST:
-      LOG_I(RRC, "[eNB %d] Received %s\n", instance, msg_name_p);
+      LOG_I(RRC, "[NB-IoT %d] Received %s\n", instance, msg_name_p);
       break;
 
       /* Messages from MAC */

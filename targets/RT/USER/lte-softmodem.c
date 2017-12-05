@@ -929,12 +929,14 @@ void wait_eNBs(void) {
 	  waiting=1;
 	  break;
 	}
-    if (waiting == 0) 
+    if (RC.nb_nb_iot_L1_inst > 0) {
+      waiting=0;
       for (i=0;i<RC.nb_nb_iot_L1_inst;i++)
 	if (RC.L1_NB_IoT[i]->configured==0) {
 	  waiting=1;
 	  break;
 	}
+     }
   }
   printf("eNB L1 are configured\n");
 }

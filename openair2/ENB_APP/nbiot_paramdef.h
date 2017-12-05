@@ -48,9 +48,6 @@
 #define NPRACH_RSRP_RANGE_OKVALUES                              {0}
 #define NPRACH_SUBCARRIERMSG3_RANGESTART_OKVALUES               {"zero","oneThird","twoThird","one"}
 #define MAXNUMPREAMBLEATTEMPTCE_NB_OKVALUES                     {3,4,5,6,7,8,10}
-#define NPDCCH_NUMREPETITIONS_RA_OKVALUES                       {1,2,4,8,16,32,64,128}
-#define NPDCCH_STARTSF_CSS_RA_OKVALUES                          {1.5,2,4,8,16,32,48,64}
-#define NPDCCH_OFFSET_RA_OKVALUES                               {"zero","oneEighth","oneFourth","threeEighth"}
 #define NPDSCH_NRS_POWER_OKRANGE                                {-60,50}
 #define NPUSCH_ACK_NACK_NUMREPETITIONS_NB_OKVALUES              {0}
 #define NPUSCH_SRS_SUBFRAMECONFIG_NB_OKRANGE                    {0,15}
@@ -77,9 +74,6 @@
              { .s1= { NULL,		     NPRACH_RSRP_RANGE_OKVALUES,4}} ,			     \
              { .s3= { config_check_strval,   NPRACH_SUBCARRIERMSG3_RANGESTART_OKVALUES,4}} ,	     \
              { .s1= { config_check_intval,   MAXNUMPREAMBLEATTEMPTCE_NB_OKVALUES,7}} ,  	     \
-             { .s1= { config_check_intval,   NPDCCH_NUMREPETITIONS_RA_OKVALUES,8}} ,		     \
-             { .s1= { config_check_intval,   NPDCCH_STARTSF_CSS_RA_OKVALUES,9}} ,		     \
-             { .s3= { config_check_strval,   NPDCCH_OFFSET_RA_OKVALUES,4}} ,			     \
              { .s1= { config_check_intval,   NPDSCH_NRS_POWER_OKRANGE,4}} ,			     \
              { .s1= { NULL,		     NPUSCH_ACK_NACK_NUMREPETITIONS_NB_OKVALUES,4}} ,	     \
              { .s2= { config_check_intrange, NPUSCH_SRS_SUBFRAMECONFIG_NB_OKRANGE}} , 	             \
@@ -110,9 +104,6 @@
 {"nprach_rsrp_range",                              NULL,   0,		   uptr:NULL,	 defintval:0,		TYPE_UINT,	 0},  \
 {"nprach_SubcarrierMSG3_RangeStart",               NULL,   0,		   strptr:NULL,  defstrval:"one",	TYPE_STRING,	 0},  \
 {"maxNumPreambleAttemptCE_NB",                     NULL,   0,		   uptr:NULL,	 defintval:10,  	TYPE_UINT,	 0},  \
-{"npdcch_NumRepetitions_RA",                       NULL,   0,		   uptr:NULL,	 defintval:4,		TYPE_UINT,	 0},  \
-{"npdcch_StartSF_CSS_RA",                          NULL,   0,		   uptr:NULL,	 defintval:2,		TYPE_UINT,	 0},  \
-{"npdcch_Offset_RA",                               NULL,   0,		   strptr:NULL,  defstrval:"zero",	TYPE_STRING,	 0},  \
 {"npdsch_nrs_Power",                               NULL,   0,		   iptr:NULL,	 defintval:0,		TYPE_INT,	 0},  \
 {"npusch_ack_nack_numRepetitions_NB",              NULL,   0,		   uptr:NULL,	 defintval:1,		TYPE_UINT,	 0},  \
 {"npusch_srs_SubframeConfig_NB",                   NULL,   0,		   uptr:NULL,	 defintval:0,		TYPE_UINT,	 0},  \
@@ -145,47 +136,25 @@
 #define NBIOT_NPRACH_RSRP_RANGE_IDX                                    8
 #define NBIOT_NPRACH_SUBCARRIERMSG3_RANGESTART_IDX                     9
 #define NBIOT_MAXNUMPREAMBLEATTEMPTCE_NB_IDX                           10
-#define NBIOT_NPDCCH_NUMREPETITIONS_RA_IDX                             11
-#define NBIOT_NPDCCH_STARTSF_CSS_RA_IDX                                12
-#define NBIOT_NPDCCH_OFFSET_RA_IDX                                     13
-#define NBIOT_NPDSCH_NRS_POWER_IDX                                     14
-#define NBIOT_NPUSCH_ACK_NACK_NUMREPETITIONS_NB_IDX                    15
-#define NBIOT_NPUSCH_SRS_SUBFRAMECONFIG_NB_IDX                         16
-#define NBIOT_NPUSCH_THREETONE_CYCLICSHIFT_R13_IDX                     17
-#define NBIOT_NPUSCH_SIXTONE_CYCLICSHIFT_R13_IDX                       18
-#define NBIOT_NPUSCH_GROUPHOPPINGENABLED_IDX                           19
-#define NBIOT_NPUSCH_GROUPASSIGNMENTNPUSCH_R13_IDX                     20
-#define NBIOT_DL_GAPTHRESHOLD_NB_IDX                                   21
-#define NBIOT_DL_GAPPERIODICITY_NB_IDX                                 22
-#define NBIOT_DL_GAPDURATIONCOEFF_NB_IDX                               23
-#define NBIOT_NPUSCH_P0_NOMINALNPUSCH_IDX                              24
-#define NBIOT_NPUSCH_ALPHA_IDX                                         25
-#define NBIOT_DELTAPREAMBLEMSG3_IDX                                    26
-#define NBIOT_UE_TIMERSANDCONSTANTS_T300_NB_IDX                        27
-#define NBIOT_UE_TIMERSANDCONSTANTS_T301_NB_IDX                        28
-#define NBIOT_UE_TIMERSANDCONSTANTS_T310_NB_IDX                        29
-#define NBIOT_UE_TIMERSANDCONSTANTS_T311_NB_IDX                        30
-#define NBIOT_UE_TIMERSANDCONSTANTS_N310_NB_IDX                        31
-#define NBIOT_UE_TIMERSANDCONSTANTS_N311_NB_IDX                        32
-
-
-
-
-#define NBIOT_RRCLIST_NPRACHPARAMS_CONFIG_STRING        "NPRACH-NB-r13"
-
-#define NPRACH_PERIODICITY_OKVALUES                             {40,80,160,240,320,640,1280,2560}
-#define NPRACH_STARTTIME_OKVALUES                               {8,16,32,64,128,256,512,1024}
-#define NPRACH_SUBCARRIEROFFSET_OKVALUES                        {0,12,24,36,2,18,34}
-#define NPRACH_NUMSUBCARRIERS_OKVALUES                          {12,24,36,48}
-#define NUMREPETITIONSPERPREAMBLEATTEMPT_NB_OKVALUES            {1,2,4,8,16,32,64,128}
-
-#define NBIOT_RRCLIST_NPRACHPARAMSCHECK_DESC { \
-             { .s1= { config_check_intval,   NPRACH_PERIODICITY_OKVALUES,8}}, 	                  \
-             { .s1= { config_check_intval,   NPRACH_STARTTIME_OKVALUES,8}} ,                      \
-             { .s1= { config_check_intval,   NPRACH_SUBCARRIEROFFSET_OKVALUES,7}} ,	          \
-             { .s1= { config_check_intval,   NPRACH_NUMSUBCARRIERS_OKVALUES,4}} ,	          \
-             { .s1= { config_check_intval,   NUMREPETITIONSPERPREAMBLEATTEMPT_NB_OKVALUES,8}} ,	  \
-}
+#define NBIOT_NPDSCH_NRS_POWER_IDX                                     11
+#define NBIOT_NPUSCH_ACK_NACK_NUMREPETITIONS_NB_IDX                    12
+#define NBIOT_NPUSCH_SRS_SUBFRAMECONFIG_NB_IDX                         13
+#define NBIOT_NPUSCH_THREETONE_CYCLICSHIFT_R13_IDX                     14
+#define NBIOT_NPUSCH_SIXTONE_CYCLICSHIFT_R13_IDX                       15
+#define NBIOT_NPUSCH_GROUPHOPPINGENABLED_IDX                           16
+#define NBIOT_NPUSCH_GROUPASSIGNMENTNPUSCH_R13_IDX                     17
+#define NBIOT_DL_GAPTHRESHOLD_NB_IDX                                   18
+#define NBIOT_DL_GAPPERIODICITY_NB_IDX                                 19
+#define NBIOT_DL_GAPDURATIONCOEFF_NB_IDX                               20
+#define NBIOT_NPUSCH_P0_NOMINALNPUSCH_IDX                              21
+#define NBIOT_NPUSCH_ALPHA_IDX                                         22
+#define NBIOT_DELTAPREAMBLEMSG3_IDX                                    23
+#define NBIOT_UE_TIMERSANDCONSTANTS_T300_NB_IDX                        24
+#define NBIOT_UE_TIMERSANDCONSTANTS_T301_NB_IDX                        25
+#define NBIOT_UE_TIMERSANDCONSTANTS_T310_NB_IDX                        26
+#define NBIOT_UE_TIMERSANDCONSTANTS_T311_NB_IDX                        27
+#define NBIOT_UE_TIMERSANDCONSTANTS_N310_NB_IDX                        28
+#define NBIOT_UE_TIMERSANDCONSTANTS_N311_NB_IDX                        29
 
 /* NB-Iot RRC: link to LTE RRC section name */		
 #define NBIOT_LTERRCREF_CONFIG_STRING          "LTERRC_Ref"
@@ -197,6 +166,30 @@
 {"RRC_inst",                         NULL,   0,            uptr:NULL,     defintval:0,	  TYPE_UINT,	   0},  \
 {"CC_inst",                          NULL,   0,            uptr:NULL,     defintval:0, 	  TYPE_UINT,	   0},  \
 }
+/*--------------------------------------------------------------------------------------------------------------*/
+
+#define NBIOT_RRCLIST_NPRACHPARAMS_CONFIG_STRING        "NPRACH-NB-r13"
+
+#define NPRACH_PERIODICITY_OKVALUES                             {40,80,160,240,320,640,1280,2560}
+#define NPRACH_STARTTIME_OKVALUES                               {8,16,32,64,128,256,512,1024}
+#define NPRACH_SUBCARRIEROFFSET_OKVALUES                        {0,12,24,36,2,18,34}
+#define NPRACH_NUMSUBCARRIERS_OKVALUES                          {12,24,36,48}
+#define NUMREPETITIONSPERPREAMBLEATTEMPT_NB_OKVALUES            {1,2,4,8,16,32,64,128}
+#define NPDCCH_NUMREPETITIONS_RA_OKVALUES                       {1,2,4,8,16,32,64,128}
+#define NPDCCH_STARTSF_CSS_RA_OKVALUES                          {1.5,2,4,8,16,32,48,64}
+#define NPDCCH_OFFSET_RA_OKVALUES                               {"zero","oneEighth","oneFourth","threeEighth"}
+
+#define NBIOT_RRCLIST_NPRACHPARAMSCHECK_DESC { \
+             { .s1= { config_check_intval,   NPRACH_PERIODICITY_OKVALUES,8}}, 	                  \
+             { .s1= { config_check_intval,   NPRACH_STARTTIME_OKVALUES,8}} ,                      \
+             { .s1= { config_check_intval,   NPRACH_SUBCARRIEROFFSET_OKVALUES,7}} ,	          \
+             { .s1= { config_check_intval,   NPRACH_NUMSUBCARRIERS_OKVALUES,4}} ,	          \
+             { .s1= { config_check_intval,   NUMREPETITIONSPERPREAMBLEATTEMPT_NB_OKVALUES,8}} ,	  \
+             { .s1= { config_check_intval,   NPDCCH_STARTSF_CSS_RA_OKVALUES,9}} ,	          \
+             { .s3= { config_check_strval,   NPDCCH_OFFSET_RA_OKVALUES,4}} ,	                  \
+}
+
+
 
 /*------------------------------------------------------------------------------------------------------------------------------*/
 /* NB-IoT NPrach parameters, there will be three ocuurences of these parameters in each RRC instance                            */
@@ -208,6 +201,9 @@
 {"nprach_SubcarrierOffset",                   NULL,   0,            uptr:NULL,     defintval:0, 	  TYPE_UINT,	   0},  \
 {"nprach_NumSubcarriers",                     NULL,   0,            uptr:NULL,     defintval:12,	  TYPE_UINT,	   0},  \
 {"numRepetitionsPerPreambleAttempt_NB",       NULL,   0,            uptr:NULL,     defintval:2, 	  TYPE_UINT,	   0},  \
+{"npdcch_NumRepetitions_RA",                  NULL,   0,            uptr:NULL,     defintval:4,		  TYPE_UINT,	   0},  \
+{"npdcch_StartSF_CSS_RA",                     NULL,   0,            uptr:NULL,     defintval:2,	          TYPE_UINT,       0},  \
+{"npdcch_Offset_RA",                          NULL,   0,            strptr:NULL,   defstrval:"zero",      TYPE_STRING,     0},  \
 }
 
 #define NBIOT_NPRACH_PERIODICITY_IDX                                   0
@@ -215,6 +211,9 @@
 #define NBIOT_NPRACH_SUBCARRIEROFFSET_IDX                              2
 #define NBIOT_NPRACH_NUMSUBCARRIERS_IDX                                3
 #define NBIOT_NUMREPETITIONSPERPREAMBLEATTEMPT_NB_IDX                  4
+#define NBIOT_NPDCCH_NUMREPETITIONS_RA_IDX                             5
+#define NBIOT_NPDCCH_STARTSF_CSS_RA_IDX                                6
+#define NBIOT_NPDCCH_OFFSET_RA_IDX                                     7
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /* NB IoT MACRLC configuration list section name   */
