@@ -12,6 +12,7 @@
 */
 #include "defs_NB_IoT.h"
 #include "PHY/extern_NB_IoT.h"
+#include "common/extern.h"
 //#include "SCHED/defs_nb_iot.h"
 //#include "SCHED/extern.h"
 
@@ -1111,7 +1112,7 @@ int8_t find_ue_NB_IoT(uint16_t rnti, PHY_VARS_eNB_NB_IoT *eNB)
 NB_IoT_DL_FRAME_PARMS* get_NB_IoT_frame_parms(module_id_t Mod_id, uint8_t  CC_id)
 {
 
-  return(&PHY_vars_eNB_NB_IoT_g[Mod_id][CC_id]->frame_parms);
+  return(&RC.eNB[Mod_id][CC_id]->frame_parms);
 
 }
 

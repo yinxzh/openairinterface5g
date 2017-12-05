@@ -73,7 +73,7 @@ int32_t get_uldl_offset_NB_IoT(int eutra_band) {
   return(-eutra_bandtable[eutra_band].dl_min + eutra_bandtable[eutra_band].ul_min);
 }
 
-uint32_t to_earfcn(int eutra_bandP,uint32_t dl_CarrierFreq, float m_dl) {
+uint32_t to_earfcn_NB_IoT(int eutra_bandP,uint32_t dl_CarrierFreq, float m_dl) {
 
   uint32_t dl_CarrierFreq_by_100k = dl_CarrierFreq/100000;
 

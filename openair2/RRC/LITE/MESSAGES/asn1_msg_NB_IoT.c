@@ -401,7 +401,7 @@ uint8_t do_SIB1_NB_IoT(uint8_t Mod_id, int CC_id,
 
 
 #ifdef USER_MODE
-  LOG_D(RRC,"[eNB] SystemInformationBlockType1-NB Encoded %d bits (%d bytes)\n",enc_rval.encoded,(enc_rval.encoded+7)/8);
+  LOG_D(RRC,"[eNB] SystemInformationBlockType1-NB Encoded %zd bits (%zd bytes)\n",enc_rval.encoded,(enc_rval.encoded+7)/8);
 #endif
 
   if (enc_rval.encoded==-1) {
@@ -648,7 +648,7 @@ uint8_t do_SIB23_NB_IoT(uint8_t Mod_id,
 
 
 #ifdef USER_MODE
-  LOG_D(RRC,"[eNB] SystemInformation-NB Encoded %d bits (%d bytes)\n",enc_rval.encoded,(enc_rval.encoded+7)/8);
+  LOG_D(RRC,"[eNB] SystemInformation-NB Encoded %zd bits (%zd bytes)\n",enc_rval.encoded,(enc_rval.encoded+7)/8);
 #endif
 
   if (enc_rval.encoded==-1) {
@@ -862,7 +862,7 @@ uint8_t do_RRCConnectionSetup_NB_IoT(
 
 
 #ifdef USER_MODE
- LOG_D(RRC,"RRCConnectionSetup-NB Encoded %d bits (%d bytes), ecause %d\n",
+ LOG_D(RRC,"RRCConnectionSetup-NB Encoded %zd bits (%zd bytes), ecause %d\n",
        enc_rval.encoded,(enc_rval.encoded+7)/8,ecause);
 #endif
 
@@ -914,7 +914,7 @@ uint8_t do_SecurityModeCommand_NB_IoT(
 //# if !defined(DISABLE_XER_SPRINT)....
 
 #ifdef USER_MODE
-  LOG_D(RRC,"[eNB %d] securityModeCommand-NB for UE %x Encoded %d bits (%d bytes)\n",
+  LOG_D(RRC,"[eNB %d] securityModeCommand-NB for UE %x Encoded %zd bits (%zd bytes)\n",
         ctxt_pP->module_id,
         ctxt_pP->rnti,
         enc_rval.encoded,
@@ -972,7 +972,7 @@ uint8_t do_UECapabilityEnquiry_NB_IoT(
 //# if !defined(DISABLE_XER_SPRINT)....
 
 #ifdef USER_MODE
-  LOG_D(RRC,"[eNB %d] UECapabilityEnquiry-NB for UE %x Encoded %d bits (%d bytes)\n",
+  LOG_D(RRC,"[eNB %d] UECapabilityEnquiry-NB for UE %x Encoded %zd bits (%zd bytes)\n",
         ctxt_pP->module_id,
         ctxt_pP->rnti,
         enc_rval.encoded,
@@ -1069,7 +1069,7 @@ uint16_t do_RRCConnectionReconfiguration_NB_IoT(
 //# if !defined(DISABLE_XER_SPRINT)...
 
 
-  LOG_I(RRC,"RRCConnectionReconfiguration-NB Encoded %d bits (%d bytes)\n",enc_rval.encoded,(enc_rval.encoded+7)/8);
+  LOG_I(RRC,"RRCConnectionReconfiguration-NB Encoded %zd bits (%zd bytes)\n",enc_rval.encoded,(enc_rval.encoded+7)/8);
 
   return((enc_rval.encoded+7)/8);
 }
@@ -1125,7 +1125,7 @@ uint8_t do_RRCConnectionReestablishmentReject_NB_IoT(
 #endif
 
 #ifdef USER_MODE
-  LOG_D(RRC,"RRCConnectionReestablishmentReject Encoded %d bits (%d bytes)\n",
+  LOG_D(RRC,"RRCConnectionReestablishmentReject Encoded %zd bits (%zd bytes)\n",
         enc_rval.encoded,(enc_rval.encoded+7)/8);
 #endif
 
@@ -1192,7 +1192,7 @@ uint8_t do_RRCConnectionReject_NB_IoT(
 #endif
 
 #ifdef USER_MODE
-  LOG_D(RRC,"RRCConnectionReject-NB Encoded %d bits (%d bytes)\n",
+  LOG_D(RRC,"RRCConnectionReject-NB Encoded %zd bits (%zd bytes)\n",
         enc_rval.encoded,(enc_rval.encoded+7)/8);
 #endif
 
@@ -1320,7 +1320,7 @@ uint8_t do_RRCConnectionReestablishment_NB_IoT(
 # endif
 #endif
 
-  LOG_I(RRC,"RRCConnectionReestablishment-NB Encoded %d bits (%d bytes)\n",enc_rval.encoded,(enc_rval.encoded+7)/8);
+  LOG_I(RRC,"RRCConnectionReestablishment-NB Encoded %zd bits (%zd bytes)\n",enc_rval.encoded,(enc_rval.encoded+7)/8);
 
 }
 

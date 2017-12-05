@@ -1,6 +1,7 @@
 #if defined(ENABLE_USE_MME)
 # include "defs_NB_IoT.h"
 # include "extern_NB_IoT.h"
+# include "proto_NB_IoT.h"
 //# include "RRC/LITE/openair_rrc_L2_interface.h"
 # include "RRC/LITE/MESSAGES/asn1_msg_NB_IoT.h"
 //# include "RRC/LITE/defs_NB_IoT.h"
@@ -339,7 +340,7 @@ rrc_pdcp_config_security_NB_IoT(
 #if defined(ENABLE_SECURITY)
 
 
-  SRB_ToAddModList_t*                 SRB_configList = ue_context_pP->ue_context.SRB_configList;
+  SRB_ToAddModList_NB_r13_t*         SRB_configList = ue_context_pP->ue_context.SRB_configList;
   uint8_t                            *kRRCenc = NULL;
   uint8_t                            *kRRCint = NULL;
   uint8_t                            *kUPenc = NULL;
@@ -498,7 +499,7 @@ rrc_eNB_send_S1AP_UPLINK_NAS_NB_IoT(
       MessageDef *msg_p;
 
       pdu_length = ulInformationTransfer->criticalExtensions.choice.ulInformationTransfer_r13.dedicatedInfoNAS_r13.size;
-      pdu_buffer = &ulInformationTransfer->criticalExtensions.choice.ulInformationTransfer_r13.dedicatedInfoNAS_r13.buf;
+      pdu_buffer = ulInformationTransfer->criticalExtensions.choice.ulInformationTransfer_r13.dedicatedInfoNAS_r13.buf;
 
       msg_p = itti_alloc_new_message (TASK_RRC_ENB_NB_IoT, S1AP_UPLINK_NAS);
       S1AP_UPLINK_NAS (msg_p).eNB_ue_s1ap_id = ue_context_pP->ue_context.eNB_ue_s1ap_id;
@@ -595,7 +596,7 @@ rrc_eNB_send_S1AP_NAS_FIRST_REQ_NB_IoT(
     message_p = itti_alloc_new_message (TASK_RRC_ENB_NB_IoT, S1AP_NAS_FIRST_REQ);
     memset(&message_p->ittiMsg.s1ap_nas_first_req, 0, sizeof(s1ap_nas_first_req_t));
 
-    ue_context_pP->ue_context.ue_initial_id = get_next_ue_initial_id (ctxt_pP->module_id);
+    ue_context_pP->ue_context.ue_initial_id = get_next_ue_initial_id_NB_IoT(ctxt_pP->module_id);
     S1AP_NAS_FIRST_REQ (message_p).ue_initial_id = ue_context_pP->ue_context.ue_initial_id;
 
     rrc_ue_s1ap_ids_p = malloc(sizeof(*rrc_ue_s1ap_ids_p));
@@ -961,7 +962,7 @@ int rrc_eNB_process_S1AP_UE_CTXT_MODIFICATION_REQ_NB_IoT(MessageDef *msg_p, cons
   protocol_ctxt_t              ctxt;
 
   eNB_ue_s1ap_id = S1AP_UE_CTXT_MODIFICATION_REQ (msg_p).eNB_ue_s1ap_id;
-  ue_context_p   = rrc_eNB_get_ue_context_from_s1ap_ids(instance, UE_INITIAL_ID_INVALID, eNB_ue_s1ap_id);
+  ue_context_p   = rrc_eNB_get_ue_context_from_s1ap_ids_NB_IoT(instance, UE_INITIAL_ID_INVALID, eNB_ue_s1ap_id);
 
   if (ue_context_p == NULL) {
     /* Can not associate this message to an UE index, send a failure to S1AP and discard it! */

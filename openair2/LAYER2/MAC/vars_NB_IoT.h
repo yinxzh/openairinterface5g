@@ -21,7 +21,7 @@
 //#include "COMMON/mac_rrc_primitives.h"
 
 
-IF_Module_t *if_inst;
+IF_Module_NB_IoT_t *if_inst_NB_IoT;
 
 //NB-IoT--------------------------------------
 eNB_MAC_INST_NB_IoT *mac_inst;

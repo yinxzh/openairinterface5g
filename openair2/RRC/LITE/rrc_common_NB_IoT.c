@@ -91,12 +91,12 @@ void rrc_t310_expiration_NB_IoT(
                            UE_rrc_inst_NB_IoT[ctxt_pP->module_id].Srb2[eNB_index].Srb_info.Srb_id,
                            0);
 
-      rrc_rlc_config_req_NB_IoT(
+              /*rrc_rlc_config_req(
     		  	  	  	  	        ctxt_pP,
 							                  SRB_FLAG_YES,
 							                  CONFIG_ACTION_REMOVE,
 							                  UE_rrc_inst_NB_IoT[ctxt_pP->module_id].Srb2[eNB_index].Srb_info.Srb_id,
-							                  Rlc_info_am_NB_IoT);
+							                  Rlc_info_am_NB_IoT);*/
 
 
       UE_rrc_inst_NB_IoT[ctxt_pP->module_id].Srb2[eNB_index].Active = 0;

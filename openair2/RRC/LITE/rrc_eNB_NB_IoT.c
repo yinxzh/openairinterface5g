@@ -1230,14 +1230,14 @@ void rrc_eNB_generate_SecurityModeCommand_NB_IoT(
     rrc_eNB_mui_NB_IoT,
     size);
 
-  rrc_data_req_NB_IoT( //to PDCP
+  /*rrc_data_req( //to PDCP
 	       ctxt_pP,
 	       DCCH0_NB_IoT,//MP:through SRB1bis
 	       rrc_eNB_mui_NB_IoT++,
 	       SDU_CONFIRM_NO,
 	       size,
 	       buffer,
-		   PDCP_TRANSMISSION_MODE_TRANSPARENT);
+		   PDCP_TRANSMISSION_MODE_TRANSPARENT);*/
 
 }
 
@@ -1284,7 +1284,7 @@ void rrc_eNB_generate_UECapabilityEnquiry_NB_IoT(
     rrc_eNB_mui_NB_IoT,
     size);
 
-  rrc_data_req_NB_IoT( //to PDCP
+  /*rrc_data_req( //to PDCP
 	       ctxt_pP,
 	       DCCH1_NB_IoT, //MP: send over SRB1
 	       rrc_eNB_mui_NB_IoT++,
@@ -1292,7 +1292,7 @@ void rrc_eNB_generate_UECapabilityEnquiry_NB_IoT(
 	       size,
 	       buffer,
 	       PDCP_TRANSMISSION_MODE_CONTROL);//MP: no more transparent to PDCP -->SRB1 was registered to the pdcp at the beginning
-
+    */
 }
 
 //-----------------------------------------------------------------------------
@@ -1587,14 +1587,14 @@ void rrc_eNB_generate_defaultRRCConnectionReconfiguration_NB_IoT(const protocol_
     rrc_eNB_mui_NB_IoT,
     size);
 
-  rrc_data_req_NB_IoT( //to PDCP
+  /*rrc_data_req( //to PDCP
 	       ctxt_pP,
 	       DCCH1_NB_IoT,//through SRB1
 	       rrc_eNB_mui_NB_IoT++,
 	       SDU_CONFIRM_NO,
 	       size,
 	       buffer,
-	       PDCP_TRANSMISSION_MODE_CONTROL);
+	       PDCP_TRANSMISSION_MODE_CONTROL);*/
 }
 
 
@@ -2542,7 +2542,7 @@ int rrc_eNB_decode_dcch_NB_IoT(
 
 //MP: the integrity protection is still not used in OAI --> MAC-I is padded always to 0 so no need to modify it
 
-      rrc_pdcp_config_asn1_req_NB_IoT(
+      rrc_pdcp_config_asn1_req(
     		  	  	  	  	  	  ctxt_pP,
 								  ue_context_p->ue_context.SRB_configList,
 								  (DRB_ToAddModList_NB_r13_t *)NULL,
