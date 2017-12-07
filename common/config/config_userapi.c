@@ -36,6 +36,9 @@
 #include <errno.h>
 #include <dlfcn.h>
 #include "config_userapi.h"
+#include "DL-GapConfig-NB-r13.h"
+
+extern void exit_fun(const char* s);  // lte-softmodem clean exit function
 
 
 configmodule_interface_t *config_get_if(void)
@@ -111,7 +114,29 @@ int tmpval=val;
 	break;
   }
 }
+void config_assign_processedint(paramdef_t *cfgoption, int val) {
+        cfgoption->processedvalue = malloc(sizeof(int));
+        if (  cfgoption->processedvalue != NULL) {
+             *(cfgoption->processedvalue) = val;
+        } else {
+             fprintf (stderr,"[CONFIG] %s %d malloc error\n",__FILE__, __LINE__);
+             exit(-1);
+        }            
+}
 
+int config_get_processedint(paramdef_t *cfgoption) {
+   int ret;
+        if (  cfgoption->processedvalue != NULL) {
+             ret=*(cfgoption->processedvalue);
+             free( cfgoption->processedvalue);
+             cfgoption->processedvalue=NULL;
+             printf_params("[CONFIG] %s:  set from %s to %i\n",cfgoption->optname, *(cfgoption->strptr), ret);
+        } else {
+             fprintf (stderr,"[CONFIG] %s %d %s has no processed integer availablle\n",__FILE__, __LINE__, cfgoption->optname);
+             ret=0;
+        }
+return ret;            
+}
 void config_printhelp(paramdef_t *params,int numparams)
 {
    for (int i=0 ; i<numparams ; i++) {
@@ -132,11 +157,15 @@ int st=0;
        if ( params[i].chkPptr == NULL) {
            continue;
        }
-       if ( params[i].chkPptr->s1.f1  == config_check_intval) {
-            st=config_check_intval(&(params[i]));
-       } else if  ( params[i].chkPptr->s2.f2  == config_check_intrange) {
-            st=config_check_intrange(&(params[i]));
+       if (params[i].chkPptr->s4.f4 != NULL) {
+         st += params[i].chkPptr->s4.f4(&(params[i]));
        }
+   }
+   if (st != 0) {
+      fprintf(stderr,"[CONFIG] config_execcheck: %i parameters with wrong value\n", -st); 
+      if ( CONFIG_ISFLAGSET(CONFIG_NOABORTONCHKF) == 0) {
+          exit_fun("exit because configuration failed\n");
+      }
    }
 return st;
 }

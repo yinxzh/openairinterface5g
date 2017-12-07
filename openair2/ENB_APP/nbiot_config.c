@@ -54,6 +54,7 @@
 #include "targets/ARCH/ETHERNET/USERSPACE/LIB/ethernet_lib.h"
 
 #include "common/config/config_userapi.h"
+#include "RRC_config_tools.h"
 #include "nbiot_paramdef.h"
 #include "L1_paramdef.h"
 #include "MACRLC_paramdef.h"
@@ -170,6 +171,8 @@ int RCconfig_NbIoTRRC(MessageDef *msg_p, int nbiotrrc_id,eNB_RRC_INST_NB_IoT *nb
 
 
   char instprefix[MAX_OPTNAME_SIZE*2 + 16];
+  
+ 
   checkedparam_t NBIoTCheckParams[] = NBIOT_RRCPARAMS_CHECK_DESC;
   paramdef_t     NBIoTParams[]      = NBIOTRRCPARAMS_DESC;
 
@@ -195,7 +198,9 @@ int RCconfig_NbIoTRRC(MessageDef *msg_p, int nbiotrrc_id,eNB_RRC_INST_NB_IoT *nb
   NBIoTParams[NBIOT_PCCH_DEFAULTPAGINGCYCLE_NB_IDX].uptr                 = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).pcch_defaultPagingCycle_NB);	 
   NBIoTParams[NBIOT_NPRACH_CP_LENGTH_IDX].uptr                           = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).nprach_CP_Length);  		 
   NBIoTParams[NBIOT_NPRACH_RSRP_RANGE_IDX].uptr                          = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).nprach_rsrp_range); 		       
-//  NBIoTParams[NBIOT_NPRACH_SUBCARRIERMSG3_RANGESTART_IDX].uptr         = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).nprach_SubcarrierMSG3_RangeStart);
+
+  
+  
   NBIoTParams[NBIOT_MAXNUMPREAMBLEATTEMPTCE_NB_IDX].uptr                 = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).maxNumPreambleAttemptCE_NB);
 
   NBIoTParams[NBIOT_NPDSCH_NRS_POWER_IDX].uptr  			 = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).npdsch_nrs_Power);       
@@ -207,7 +212,7 @@ int RCconfig_NbIoTRRC(MessageDef *msg_p, int nbiotrrc_id,eNB_RRC_INST_NB_IoT *nb
   NBIoTParams[NBIOT_NPUSCH_GROUPASSIGNMENTNPUSCH_R13_IDX].uptr           = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).npusch_groupAssignmentNPUSCH_r13);
   NBIoTParams[NBIOT_DL_GAPTHRESHOLD_NB_IDX].uptr                         = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).dl_GapThreshold_NB);	 
   NBIoTParams[NBIOT_DL_GAPPERIODICITY_NB_IDX].uptr                       = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).dl_GapPeriodicity_NB);	 
-//  NBIoTParams[NBIOT_DL_GAPDURATIONCOEFF_NB_IDX].uptr                   = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).dl_GapDurationCoeff_NB);	 
+  
   NBIoTParams[NBIOT_NPUSCH_P0_NOMINALNPUSCH_IDX].uptr                    = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).npusch_p0_NominalNPUSCH);	  
   NBIoTParams[NBIOT_NPUSCH_ALPHA_IDX].uptr                               = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).npusch_alpha);			  
   NBIoTParams[NBIOT_DELTAPREAMBLEMSG3_IDX].uptr                          = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).deltaPreambleMsg3); 	  
@@ -220,17 +225,23 @@ int RCconfig_NbIoTRRC(MessageDef *msg_p, int nbiotrrc_id,eNB_RRC_INST_NB_IoT *nb
 
   sprintf(instprefix, NBIOT_RRCLIST_CONFIG_STRING ".[%i]",nbiotrrc_id);
   config_get( NBIoTParams,sizeof(NBIoTParams)/sizeof(paramdef_t),instprefix); 
+
+  NBIOTRRC_CONFIGURATION_REQ (msg_p).nprach_SubcarrierMSG3_RangeStart    = config_get_processedint( &(NBIoTParams[NBIOT_NPRACH_SUBCARRIERMSG3_RANGESTART_IDX]) );
+  NBIOTRRC_CONFIGURATION_REQ (msg_p).dl_GapDurationCoeff_NB              = config_get_processedint( &(NBIoTParams[NBIOT_DL_GAPDURATIONCOEFF_NB_IDX] ) ); 	 
+
   for (int i=0; i<MAX_NUM_NBIOT_CELEVELS; i++) {
+       char *tmpptr=NULL;
        NBIoTPrachParams[NBIOT_NPRACH_PERIODICITY_IDX ].uptr	            = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).nprach_Periodicity[i]);		
        NBIoTPrachParams[NBIOT_NPRACH_STARTTIME_IDX].uptr  	            = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).nprach_StartTime[i]);			
        NBIoTPrachParams[NBIOT_NPRACH_SUBCARRIEROFFSET_IDX].uptr	            = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).nprach_SubcarrierOffset[i]);		
        NBIoTPrachParams[NBIOT_NPRACH_NUMSUBCARRIERS_IDX].uptr	            = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).nprach_NumSubcarriers[i]);		
        NBIoTPrachParams[NBIOT_NUMREPETITIONSPERPREAMBLEATTEMPT_NB_IDX].uptr = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).numRepetitionsPerPreambleAttempt_NB[i]);
-       NBIoTParams[NBIOT_NPDCCH_NUMREPETITIONS_RA_IDX].uptr                 = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).npdcch_NumRepetitions_RA)[i];
-       NBIoTParams[NBIOT_NPDCCH_STARTSF_CSS_RA_IDX].uptr	            = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).npdcch_StartSF_CSS_RA)[i];
-//     NBIoTParams[NBIOT_NPDCCH_OFFSET_RA_IDX].uptr			    = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).npdcch_Offset_RA)[i];
+       NBIoTParams[NBIOT_NPDCCH_NUMREPETITIONS_RA_IDX].uptr                 = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).npdcch_NumRepetitions_RA[i]);
+       NBIoTParams[NBIOT_NPDCCH_STARTSF_CSS_RA_IDX].uptr	            = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).npdcch_StartSF_CSS_RA[i]);
+       NBIoTParams[NBIOT_NPDCCH_OFFSET_RA_IDX].strptr			    = &tmpptr;
        sprintf(instprefix, "%s.[%i].%s.[%i]",NBIOT_RRCLIST_CONFIG_STRING, nbiotrrc_id,NBIOT_RRCLIST_NPRACHPARAMS_CONFIG_STRING,i);
        config_get( NBIoTPrachParams,sizeof(NBIoTPrachParams)/sizeof(paramdef_t),instprefix); 
+       NBIOTRRC_CONFIGURATION_REQ (msg_p).npdcch_Offset_RA[i] = config_get_processedint( &(NBIoTParams[NBIOT_NPDCCH_OFFSET_RA_IDX]) ); 
   }
 
   sprintf(instprefix, NBIOT_RRCLIST_CONFIG_STRING ".[%i]." NBIOT_LTERRCREF_CONFIG_STRING, nbiotrrc_id );

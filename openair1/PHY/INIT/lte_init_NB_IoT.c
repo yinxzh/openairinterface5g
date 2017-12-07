@@ -90,7 +90,7 @@ void phy_config_mib_eNB_NB_IoT(int  			Mod_id,
   //TODO  (new Raymond implementation) in the classic implementation seems to be used only by oaisim
   //init_frame_parms(fp,1);
   //init_lte_top(fp);
-  RC.L1_NB_IoT[Mod_id]->configured==1;
+  RC.L1_NB_IoT[Mod_id]->configured=1;
 }
 
 //Before FAPI implementation

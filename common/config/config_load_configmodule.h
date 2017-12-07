@@ -41,11 +41,12 @@
 #define CONFIG_MAX_ALLOCATEDPTRS  1024   // maximum number of parameters that can be dynamicaly allocated in the config module
 
 /* rtflags bit position definitions */
-#define CONFIG_PRINTPARAMS    1        // print parameters values while processing
-#define CONFIG_DEBUGPTR       2        // print memory allocation/free debug messages
-#define CONFIG_DEBUGCMDLINE   4        // print command line processing messages
-#define CONFIG_HELP           8        // print help message
-#define CONFIG_ABORT          16       // config failed,abort execution 
+#define CONFIG_PRINTPARAMS    1               // print parameters values while processing
+#define CONFIG_DEBUGPTR       1<<1            // print memory allocation/free debug messages
+#define CONFIG_DEBUGCMDLINE   1<<2            // print command line processing messages
+#define CONFIG_NOABORTONCHKF  1<<3            // abort execution when parameter checking function fails
+#define CONFIG_HELP           1<<20           // print help message
+#define CONFIG_ABORT          1<<21            // config failed,abort execution 
 
 
 typedef int(*configmodule_initfunc_t)(char *cfgP[],int numP);

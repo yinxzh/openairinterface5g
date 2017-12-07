@@ -95,7 +95,7 @@ static void configure_nbiot_rrc(int nbiotrrc_id)
 
   msg_p = itti_alloc_new_message (TASK_ENB_APP, NBIOTRRC_CONFIGURATION_REQ);
 
-    RCconfig_NbIoTRRC(msg_p, nbiotrrc_id, &(RC.nb_iot_rrc[nbiotrrc_id]));
+    RCconfig_NbIoTRRC(msg_p, nbiotrrc_id, RC.nb_iot_rrc[nbiotrrc_id]);
     
  
     LOG_I(ENB_APP,"Sending configuration message to RRC task\n");

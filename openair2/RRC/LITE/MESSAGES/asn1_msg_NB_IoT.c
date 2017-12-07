@@ -528,9 +528,9 @@ uint8_t do_SIB23_NB_IoT(uint8_t Mod_id,
 
   nprach_parameters.nprach_SubcarrierMSG3_RangeStart_r13= configuration->nprach_SubcarrierMSG3_RangeStart;
   nprach_parameters.maxNumPreambleAttemptCE_r13= configuration->maxNumPreambleAttemptCE_NB;
-  nprach_parameters.npdcch_NumRepetitions_RA_r13 = configuration->npdcch_NumRepetitions_RA;
-  nprach_parameters.npdcch_StartSF_CSS_RA_r13= configuration->npdcch_StartSF_CSS_RA;
-  nprach_parameters.npdcch_Offset_RA_r13= configuration->npdcch_Offset_RA;
+  nprach_parameters.npdcch_NumRepetitions_RA_r13 = configuration->npdcch_NumRepetitions_RA[CC_id];
+  nprach_parameters.npdcch_StartSF_CSS_RA_r13= configuration->npdcch_StartSF_CSS_RA[CC_id];
+  nprach_parameters.npdcch_Offset_RA_r13= configuration->npdcch_Offset_RA[CC_id];
 
   //nprach_parameterList have a max size of 3 possible nprach configuration (see maxNPRACH_Resources_NB_r13)
   ASN_SEQUENCE_ADD(&sib2_NB_IoT->radioResourceConfigCommon_r13.nprach_Config_r13.nprach_ParametersList_r13.list,&nprach_parameters);

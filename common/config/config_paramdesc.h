@@ -75,9 +75,13 @@ typedef union checkedparam {
                char *okstrval[CONFIG_MAX_NUMCHECKVAL];                      /* string array, store possible values  */
                int  num_okstrval;                                           /* number of valid values in the checkingval array */
         } s3;
+        struct {
+               int  (*f4)(paramdef_t *param); /* generic check function, no arguments but the parama description */
+               
+        } s4;
         struct { 
                 void (*checkfunc)(void) ; 
-        } s4;
+        } s5;
 } checkedparam_t;
 
 /* paramdef is used to describe a parameter, array of paramdef_t strustures is used as the main parameter in */
@@ -91,7 +95,7 @@ typedef struct paramdef
      char **strptr;
      char **strlistptr;
      uint8_t   *u8ptr;
-     char      *i8ptr;     
+     int8_t    *i8ptr;     
      uint16_t  *u16ptr;
      int16_t   *i16ptr;
      uint32_t  *uptr;
@@ -112,6 +116,7 @@ typedef struct paramdef
    char type;                              /* parameter value type, as listed below as TYPE_XXXX macro */
    int numelt;                             /* number of elements in a list or array parameters or max size of string value */ 
    checkedparam_t   *chkPptr;              /* possible pointer to the structure containing the info used to check parameter values */
+   int *processedvalue;                    /* used to store integer values computed from string original value */
 } paramdef_t;
 
 #define TYPE_INT        TYPE_INT32

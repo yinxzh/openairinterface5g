@@ -56,52 +56,6 @@
 
 
 
-#define KHz (1000UL)
-#define MHz (1000 * KHz)
-
-typedef struct eutra_band_s {
-  int16_t             band;
-  uint32_t            ul_min;
-  uint32_t            ul_max;
-  uint32_t            dl_min;
-  uint32_t            dl_max;
-  lte_frame_type_t    frame_type;
-} eutra_band_t;
-
-static const eutra_band_t eutra_bands[] = {
-  { 1, 1920    * MHz, 1980    * MHz, 2110    * MHz, 2170    * MHz, FDD},
-  { 2, 1850    * MHz, 1910    * MHz, 1930    * MHz, 1990    * MHz, FDD},
-  { 3, 1710    * MHz, 1785    * MHz, 1805    * MHz, 1880    * MHz, FDD},
-  { 4, 1710    * MHz, 1755    * MHz, 2110    * MHz, 2155    * MHz, FDD},
-  { 5,  824    * MHz,  849    * MHz,  869    * MHz,  894    * MHz, FDD},
-  { 6,  830    * MHz,  840    * MHz,  875    * MHz,  885    * MHz, FDD},
-  { 7, 2500    * MHz, 2570    * MHz, 2620    * MHz, 2690    * MHz, FDD},
-  { 8,  880    * MHz,  915    * MHz,  925    * MHz,  960    * MHz, FDD},
-  { 9, 1749900 * KHz, 1784900 * KHz, 1844900 * KHz, 1879900 * KHz, FDD},
-  {10, 1710    * MHz, 1770    * MHz, 2110    * MHz, 2170    * MHz, FDD},
-  {11, 1427900 * KHz, 1452900 * KHz, 1475900 * KHz, 1500900 * KHz, FDD},
-  {12,  698    * MHz,  716    * MHz,  728    * MHz,  746    * MHz, FDD},
-  {13,  777    * MHz,  787    * MHz,  746    * MHz,  756    * MHz, FDD},
-  {14,  788    * MHz,  798    * MHz,  758    * MHz,  768    * MHz, FDD},
-
-  {17,  704    * MHz,  716    * MHz,  734    * MHz,  746    * MHz, FDD},
-  {20,  832    * MHz,  862    * MHz,  791    * MHz,  821    * MHz, FDD},
-  {33, 1900    * MHz, 1920    * MHz, 1900    * MHz, 1920    * MHz, TDD},
-  {33, 1900    * MHz, 1920    * MHz, 1900    * MHz, 1920    * MHz, TDD},
-  {34, 2010    * MHz, 2025    * MHz, 2010    * MHz, 2025    * MHz, TDD},
-  {35, 1850    * MHz, 1910    * MHz, 1850    * MHz, 1910    * MHz, TDD},
-  {36, 1930    * MHz, 1990    * MHz, 1930    * MHz, 1990    * MHz, TDD},
-  {37, 1910    * MHz, 1930    * MHz, 1910    * MHz, 1930    * MHz, TDD},
-  {38, 2570    * MHz, 2620    * MHz, 2570    * MHz, 2630    * MHz, TDD},
-  {39, 1880    * MHz, 1920    * MHz, 1880    * MHz, 1920    * MHz, TDD},
-  {40, 2300    * MHz, 2400    * MHz, 2300    * MHz, 2400    * MHz, TDD},
-  {41, 2496    * MHz, 2690    * MHz, 2496    * MHz, 2690    * MHz, TDD},
-  {42, 3400    * MHz, 3600    * MHz, 3400    * MHz, 3600    * MHz, TDD},
-  {43, 3600    * MHz, 3800    * MHz, 3600    * MHz, 3800    * MHz, TDD},
-  {44, 703    * MHz, 803    * MHz, 703    * MHz, 803    * MHz, TDD},
-};
-
-
 
 
 
@@ -372,11 +326,13 @@ static int DEFENBS[] = {0};
 #define ENB_CONFIG_STRING_UETIMERS_N310                                 "ue_TimersAndConstants_n310"
 #define ENB_CONFIG_STRING_UETIMERS_N311                                 "ue_TimersAndConstants_n311"
 #define ENB_CONFIG_STRING_UE_TRANSMISSION_MODE                          "ue_TransmissionMode"
-		
-/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-/*                                     component carriers configuration parameters                                                                                                     */
-/*   optname                                                   helpstr   paramflags    XXXptr                                        defXXXval                    type         numelt  */
-/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+/* init for checkedparam_t structure */
+#define ENB_CONFIG_CHECK_UETIMERS       { .s4= { config_check_assign_UEtc }}                		
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/*                                     component carriers configuration parameters                                                                                                                   */
+/*   optname                                                   helpstr   paramflags    XXXptr                                        defXXXval                    type         numelt  checked_param */
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 #define CCPARAMS_DESC { \
 {ENB_CONFIG_STRING_FRAME_TYPE,                                   NULL,   0,           strptr:&frame_type,                             defstrval:"FDD",           TYPE_STRING,     0},  \
 {ENB_CONFIG_STRING_TDD_CONFIG,                                   NULL,   0,           iptr:&tdd_config,                               defintval:3,               TYPE_UINT,       0},  \
@@ -439,12 +395,12 @@ static int DEFENBS[] = {0};
 {ENB_CONFIG_STRING_PCCH_DEFAULT_PAGING_CYCLE,                    NULL,   0,           iptr:&pcch_defaultPagingCycle,                  defintval:128,             TYPE_INT,        0},  \
 {ENB_CONFIG_STRING_PCCH_NB,                                      NULL,   0,           strptr:&pcch_nB,                                defstrval:"oneT",          TYPE_STRING,     0},  \
 {ENB_CONFIG_STRING_BCCH_MODIFICATIONPERIODCOEFF,                 NULL,   0,           iptr:&bcch_modificationPeriodCoeff,             defintval:2,               TYPE_UINT,       0},  \
-{ENB_CONFIG_STRING_UETIMERS_T300,                                NULL,   0,           iptr:&ue_TimersAndConstants_t300,               defintval:1000,            TYPE_UINT,       0},  \
-{ENB_CONFIG_STRING_UETIMERS_T301,                                NULL,   0,           iptr:&ue_TimersAndConstants_t301,               defintval:1000,            TYPE_UINT,       0},  \
-{ENB_CONFIG_STRING_UETIMERS_T310,                                NULL,   0,           iptr:&ue_TimersAndConstants_t310,               defintval:1000,            TYPE_UINT,       0},  \
-{ENB_CONFIG_STRING_UETIMERS_T311,                                NULL,   0,           iptr:&ue_TimersAndConstants_t311,               defintval:10000,           TYPE_UINT,       0},  \
-{ENB_CONFIG_STRING_UETIMERS_N310,                                NULL,   0,           iptr:&ue_TimersAndConstants_n310,               defintval:20,              TYPE_UINT,       0},  \
-{ENB_CONFIG_STRING_UETIMERS_N311,                                NULL,   0,           iptr:&ue_TimersAndConstants_n311,               defintval:1,               TYPE_UINT,       0},  \
+{ENB_CONFIG_STRING_UETIMERS_T300,                                NULL,   0,           iptr:&ue_TimersAndConstants_t300,               defintval:1000,            TYPE_UINT,       0,     &config_checkparam_assign_UEtc },  \
+{ENB_CONFIG_STRING_UETIMERS_T301,                                NULL,   0,           iptr:&ue_TimersAndConstants_t301,               defintval:1000,            TYPE_UINT,       0,     &config_checkparam_assign_UEtc },  \
+{ENB_CONFIG_STRING_UETIMERS_T310,                                NULL,   0,           iptr:&ue_TimersAndConstants_t310,               defintval:1000,            TYPE_UINT,       0,     &config_checkparam_assign_UEtc },  \
+{ENB_CONFIG_STRING_UETIMERS_T311,                                NULL,   0,           iptr:&ue_TimersAndConstants_t311,               defintval:10000,           TYPE_UINT,       0,     &config_checkparam_assign_UEtc },  \
+{ENB_CONFIG_STRING_UETIMERS_N310,                                NULL,   0,           iptr:&ue_TimersAndConstants_n310,               defintval:20,              TYPE_UINT,       0,     &config_checkparam_assign_UEtc },  \
+{ENB_CONFIG_STRING_UETIMERS_N311,                                NULL,   0,           iptr:&ue_TimersAndConstants_n311,               defintval:1,               TYPE_UINT,       0,     &config_checkparam_assign_UEtc },  \
 {ENB_CONFIG_STRING_UE_TRANSMISSION_MODE,                         NULL,   0,           iptr:&ue_TransmissionMode,                      defintval:1,               TYPE_UINT,       0}   \
 }
 

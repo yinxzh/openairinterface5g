@@ -46,8 +46,8 @@
 #define PCCH_DEFAULTPAGINGCYCLE_NB_OKVALUES                     {0}
 #define NPRACH_CP_LENGTH_OKVALUES                               {0,1}
 #define NPRACH_RSRP_RANGE_OKVALUES                              {0}
-#define NPRACH_SUBCARRIERMSG3_RANGESTART_OKVALUES               {"zero","oneThird","twoThird","one"}
-#define MAXNUMPREAMBLEATTEMPTCE_NB_OKVALUES                     {3,4,5,6,7,8,10}
+
+
 #define NPDSCH_NRS_POWER_OKRANGE                                {-60,50}
 #define NPUSCH_ACK_NACK_NUMREPETITIONS_NB_OKVALUES              {0}
 #define NPUSCH_SRS_SUBFRAMECONFIG_NB_OKRANGE                    {0,15}
@@ -55,9 +55,7 @@
 #define NPUSCH_SIXTONE_CYCLICSHIFT_R13_OKRANGE                  {0,3}
 #define NPUSCH_GROUPHOPPINGENABLED_OKVALUES                     {0}
 #define NPUSCH_GROUPASSIGNMENTNPUSCH_R13_OKRANGE                {0,29}
-#define DL_GAPTHRESHOLD_NB_OKVALUES                             {32,64,128,256}
-#define DL_GAPPERIODICITY_NB_OKVALUES                           {64,128,256,512}
-#define DL_GAPDURATIONCOEFF_NB_OKVALUES                         {"oneEighth","oneFourth","threeEighth","oneHalf"}
+
 #define NPUSCH_P0_NOMINALNPUSCH_OKRANGE                         {-128,24}
 #define NPUSCH_ALPHA_OKVALUES                                   {0,4,5,10} //?? to be checked
 #define DELTAPREAMBLEMSG3_OKRANGE                               {-1,6}	
@@ -72,8 +70,8 @@
              { .s1= { NULL,		     PCCH_DEFAULTPAGINGCYCLE_NB_OKVALUES,4}} ,  	     \
              { .s1= { NULL,		     NPRACH_CP_LENGTH_OKVALUES ,4}} ,			     \
              { .s1= { NULL,		     NPRACH_RSRP_RANGE_OKVALUES,4}} ,			     \
-             { .s3= { config_check_strval,   NPRACH_SUBCARRIERMSG3_RANGESTART_OKVALUES,4}} ,	     \
-             { .s1= { config_check_intval,   MAXNUMPREAMBLEATTEMPTCE_NB_OKVALUES,7}} ,  	     \
+             { .s4= { config_check_assign_rach_NB }} ,                                               \
+             { .s4= { config_check_assign_rach_NB }} ,                                               \
              { .s1= { config_check_intval,   NPDSCH_NRS_POWER_OKRANGE,4}} ,			     \
              { .s1= { NULL,		     NPUSCH_ACK_NACK_NUMREPETITIONS_NB_OKVALUES,4}} ,	     \
              { .s2= { config_check_intrange, NPUSCH_SRS_SUBFRAMECONFIG_NB_OKRANGE}} , 	             \
@@ -81,12 +79,18 @@
              { .s2= { config_check_intrange, NPUSCH_SIXTONE_CYCLICSHIFT_R13_OKRANGE}} ,	             \
              { .s1= { NULL,		     NPUSCH_GROUPHOPPINGENABLED_OKVALUES,2}} ,  	     \
              { .s2= { config_check_intrange, NPUSCH_GROUPASSIGNMENTNPUSCH_R13_OKRANGE}} ,	     \
-             { .s1= { config_check_intval,   DL_GAPTHRESHOLD_NB_OKVALUES,4}} ,  		     \
-             { .s1= { config_check_intval,   DL_GAPPERIODICITY_NB_OKVALUES,4}} ,		     \
-             { .s3= { config_check_strval,   DL_GAPDURATIONCOEFF_NB_OKVALUES,4}} ,		     \
+             { .s4= { config_check_assign_DLGap_NB }} ,                                              \
+             { .s4= { config_check_assign_DLGap_NB }} ,                                              \
+             { .s4= { config_check_assign_DLGap_NB }} ,                                              \
              { .s2= { config_check_intrange, NPUSCH_P0_NOMINALNPUSCH_OKRANGE}} ,		     \
              { .s1= { config_check_intval,   NPUSCH_ALPHA_OKVALUES,4}} ,			     \
              { .s2= { config_check_intrange, DELTAPREAMBLEMSG3_OKRANGE}} ,			     \
+             { .s4= { config_check_assign_UEtc }} ,						     \
+             { .s4= { config_check_assign_UEtc }} ,						     \
+             { .s4= { config_check_assign_UEtc }} ,						     \
+             { .s4= { config_check_assign_UEtc }} ,						     \
+             { .s4= { config_check_assign_UEtc }} ,						     \
+             { .s4= { config_check_assign_UEtc }} ,						     \
 }
 /*-----------------------------------------------------------------------------------------------------------------------------------------*/
 /*                                                           NB-IoT RRC  configuration parameters                                          */
@@ -170,23 +174,20 @@
 
 #define NBIOT_RRCLIST_NPRACHPARAMS_CONFIG_STRING        "NPRACH-NB-r13"
 
-#define NPRACH_PERIODICITY_OKVALUES                             {40,80,160,240,320,640,1280,2560}
-#define NPRACH_STARTTIME_OKVALUES                               {8,16,32,64,128,256,512,1024}
-#define NPRACH_SUBCARRIEROFFSET_OKVALUES                        {0,12,24,36,2,18,34}
-#define NPRACH_NUMSUBCARRIERS_OKVALUES                          {12,24,36,48}
-#define NUMREPETITIONSPERPREAMBLEATTEMPT_NB_OKVALUES            {1,2,4,8,16,32,64,128}
-#define NPDCCH_NUMREPETITIONS_RA_OKVALUES                       {1,2,4,8,16,32,64,128}
-#define NPDCCH_STARTSF_CSS_RA_OKVALUES                          {1.5,2,4,8,16,32,48,64}
-#define NPDCCH_OFFSET_RA_OKVALUES                               {"zero","oneEighth","oneFourth","threeEighth"}
+
+
+
+
 
 #define NBIOT_RRCLIST_NPRACHPARAMSCHECK_DESC { \
-             { .s1= { config_check_intval,   NPRACH_PERIODICITY_OKVALUES,8}}, 	                  \
-             { .s1= { config_check_intval,   NPRACH_STARTTIME_OKVALUES,8}} ,                      \
-             { .s1= { config_check_intval,   NPRACH_SUBCARRIEROFFSET_OKVALUES,7}} ,	          \
-             { .s1= { config_check_intval,   NPRACH_NUMSUBCARRIERS_OKVALUES,4}} ,	          \
-             { .s1= { config_check_intval,   NUMREPETITIONSPERPREAMBLEATTEMPT_NB_OKVALUES,8}} ,	  \
-             { .s1= { config_check_intval,   NPDCCH_STARTSF_CSS_RA_OKVALUES,9}} ,	          \
-             { .s3= { config_check_strval,   NPDCCH_OFFSET_RA_OKVALUES,4}} ,	                  \
+             { .s4= { config_check_assign_rach_NB }}, 	         \
+             { .s4= { config_check_assign_rach_NB }},            \
+             { .s4= { config_check_assign_rach_NB }},	         \
+             { .s4= { config_check_assign_rach_NB }},	         \
+             { .s4= { config_check_assign_rach_NB }},	         \
+             { .s4= { config_check_assign_rach_NB }},	         \
+             { .s4= { config_check_assign_rach_NB }},	          \
+             { .s4= { config_check_assign_rach_NB }},	          \
 }
 
 
@@ -200,7 +201,7 @@
 {"nprach_StartTime",                          NULL,   0,            uptr:NULL,     defintval:8, 	  TYPE_UINT,	   0},  \
 {"nprach_SubcarrierOffset",                   NULL,   0,            uptr:NULL,     defintval:0, 	  TYPE_UINT,	   0},  \
 {"nprach_NumSubcarriers",                     NULL,   0,            uptr:NULL,     defintval:12,	  TYPE_UINT,	   0},  \
-{"numRepetitionsPerPreambleAttempt_NB",       NULL,   0,            uptr:NULL,     defintval:2, 	  TYPE_UINT,	   0},  \
+{"numRepetitionsPerPreambleAttempt",          NULL,   0,            uptr:NULL,     defintval:2, 	  TYPE_UINT,	   0},  \
 {"npdcch_NumRepetitions_RA",                  NULL,   0,            uptr:NULL,     defintval:4,		  TYPE_UINT,	   0},  \
 {"npdcch_StartSF_CSS_RA",                     NULL,   0,            uptr:NULL,     defintval:2,	          TYPE_UINT,       0},  \
 {"npdcch_Offset_RA",                          NULL,   0,            strptr:NULL,   defstrval:"zero",      TYPE_STRING,     0},  \

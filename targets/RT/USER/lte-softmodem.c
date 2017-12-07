@@ -139,11 +139,11 @@ volatile int             oai_exit = 0;
 static clock_source_t clock_source = internal;
 static int wait_for_sync = 0;
 
-static char              UE_flag=0;
+static int8_t              UE_flag=0;
 unsigned int                    mmapped_dma=0;
 int                             single_thread_flag=1;
 
-static char                     threequarter_fs=0;
+static int8_t                     threequarter_fs=0;
 
 uint32_t                 downlink_frequency[MAX_NUM_CCs][4];
 int32_t                  uplink_frequency_offset[MAX_NUM_CCs][4];

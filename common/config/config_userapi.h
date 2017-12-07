@@ -50,6 +50,8 @@ extern int config_process_cmdline(paramdef_t *params,int numparams, char *prefix
 extern int config_get(paramdef_t *params,int numparams, char *prefix);
 extern int config_isparamset(paramdef_t *params,int paramidx);
 extern void config_assign_int(paramdef_t *cfgoptions, char *fullname, int val);
+extern void config_assign_processedint(paramdef_t *cfgoption, int val);
+extern int config_get_processedint(paramdef_t *cfgoption);
 extern int config_process_cmdline(paramdef_t *cfgoptions,int numoptions, char *prefix);
 extern int config_check_intval(paramdef_t *param);
 extern int config_check_intrange(paramdef_t *param);

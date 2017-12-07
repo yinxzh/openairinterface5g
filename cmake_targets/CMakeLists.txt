@@ -1253,6 +1253,7 @@ set (ENB_APP_SRC
   ${OPENAIR2_DIR}/ENB_APP/enb_app.c
   ${OPENAIR2_DIR}/ENB_APP/enb_config.c
   ${OPENAIR2_DIR}/ENB_APP/nbiot_config.c
+  ${OPENAIR2_DIR}/ENB_APP/RRC_config_tools.c
   )
 
 add_library(L2
