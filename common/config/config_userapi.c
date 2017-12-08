@@ -183,7 +183,7 @@ configmodule_interface_t *cfgif = config_get_if();
       ret = config_get_if()->get(params, numparams,prefix);
       if (ret >= 0) {
          config_process_cmdline(params,numparams,prefix);
-      config_execcheck(params,numparams,prefix);
+         config_execcheck(params,numparams,prefix);
      }
   return ret;
   }

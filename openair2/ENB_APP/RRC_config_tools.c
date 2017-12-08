@@ -161,7 +161,7 @@ char *astrptr=okvalstr;
     	    return 0; 
     	}
    }
-   LOG_E(RRC," %s, unknown value \"%s\" authorised values %s  ",
+   LOG_E(RRC," %s, unknown value \"%s\" authorized values %s  ",
      	 param->optname, cfgvalue,okvalstr);
     return -1;
 }

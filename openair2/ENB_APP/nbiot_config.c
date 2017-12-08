@@ -241,7 +241,7 @@ int RCconfig_NbIoTRRC(MessageDef *msg_p, int nbiotrrc_id,eNB_RRC_INST_NB_IoT *nb
        NBIoTParams[NBIOT_NPDCCH_OFFSET_RA_IDX].strptr			    = &tmpptr;
        sprintf(instprefix, "%s.[%i].%s.[%i]",NBIOT_RRCLIST_CONFIG_STRING, nbiotrrc_id,NBIOT_RRCLIST_NPRACHPARAMS_CONFIG_STRING,i);
        config_get( NBIoTPrachParams,sizeof(NBIoTPrachParams)/sizeof(paramdef_t),instprefix); 
-       NBIOTRRC_CONFIGURATION_REQ (msg_p).npdcch_Offset_RA[i] = config_get_processedint( &(NBIoTParams[NBIOT_NPDCCH_OFFSET_RA_IDX]) ); 
+       NBIOTRRC_CONFIGURATION_REQ (msg_p).npdcch_Offset_RA[i] = config_get_processedint( &(NBIoTPrachParams[NBIOT_NPDCCH_OFFSET_RA_IDX]) ); 
   }
 
   sprintf(instprefix, NBIOT_RRCLIST_CONFIG_STRING ".[%i]." NBIOT_LTERRCREF_CONFIG_STRING, nbiotrrc_id );
