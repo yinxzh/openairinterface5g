@@ -181,10 +181,10 @@ int RCconfig_NbIoTRRC(MessageDef *msg_p, int nbiotrrc_id,eNB_RRC_INST_NB_IoT *nb
 
   paramdef_t     NBIoTRRCRefParams[]      = NBIOTRRCPARAMS_RRCREF_DESC;
 /* map parameter checking array instances to parameter definition array instances */
-  for (int i=0; i<sizeof(NBIoTParams)/sizeof(paramdef_t) && i<sizeof(NBIoTCheckParams)/sizeof(checkedparam_t); i++ ) {
+  for (int i=0; (i<sizeof(NBIoTParams)/sizeof(paramdef_t)) && (i<sizeof(NBIoTCheckParams)/sizeof(checkedparam_t)); i++ ) {
      NBIoTParams[i].chkPptr = &(NBIoTCheckParams[i]); 
   } 
-  for (int i=0; i<sizeof(NBIoTPrachParams)/sizeof(paramdef_t) && i<sizeof(NBIoTPrachCheckParams)/sizeof(checkedparam_t); i++ ) {
+  for (int i=0; (i<sizeof(NBIoTPrachParams)/sizeof(paramdef_t)) && (i<sizeof(NBIoTPrachCheckParams)/sizeof(checkedparam_t)); i++ ) {
      NBIoTPrachParams[i].chkPptr = &(NBIoTPrachCheckParams[i]);
   }
 

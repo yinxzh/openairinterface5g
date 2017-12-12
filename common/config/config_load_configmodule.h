@@ -44,7 +44,7 @@
 #define CONFIG_PRINTPARAMS    1               // print parameters values while processing
 #define CONFIG_DEBUGPTR       1<<1            // print memory allocation/free debug messages
 #define CONFIG_DEBUGCMDLINE   1<<2            // print command line processing messages
-#define CONFIG_NOABORTONCHKF  1<<3            // abort execution when parameter checking function fails
+#define CONFIG_NOABORTONCHKF  1<<3            // disable abort execution when parameter checking function fails
 #define CONFIG_HELP           1<<20           // print help message
 #define CONFIG_ABORT          1<<21            // config failed,abort execution 
 

@@ -65,6 +65,13 @@ typedef union checkedparam {
                int okintval[CONFIG_MAX_NUMCHECKVAL];                        /* integer array, store possible values  */
                int num_okintval;                                            /* number of valid values in the checkingval array */
         } s1;
+        struct  { 
+               int  (*f1a)(paramdef_t *param);   /* check an integer against a list of authorized values and set param value */
+                                                 /* to the corresponding item in setintval array (mainly for RRC params)     */
+               int okintval[CONFIG_MAX_NUMCHECKVAL];                        /* integer array, store possible values in config file */
+               int setintval[CONFIG_MAX_NUMCHECKVAL];                        /* integer array, values set in the paramdef structure */
+               int num_okintval;                                            /* number of valid values in the checkingval array */
+        } s1a;
         struct { 
                int  (*f2)(paramdef_t *param);  /* check an integer against an authorized range, defined by its min and max value */
                int okintrange[CONFIG_MAX_NUMCHECKVAL];  /* integer array, store  min and max values  */
@@ -76,7 +83,14 @@ typedef union checkedparam {
                int  num_okstrval;                                           /* number of valid values in the checkingval array */
         } s3;
         struct {
-               int  (*f4)(paramdef_t *param); /* generic check function, no arguments but the parama description */
+               int  (*f3a)(paramdef_t *param); /* check a string against a list of authorized values and set param value */
+                                                 /* to the corresponding item in setintval array (mainly for RRC params) */
+               char *okstrval[CONFIG_MAX_NUMCHECKVAL];                      /* string array, store possible values  */
+               int  setintval[CONFIG_MAX_NUMCHECKVAL];                      /* integer array, values set in the paramdef structure */
+               int  num_okstrval;                                           /* number of valid values in the checkingval array */
+        } s3a;
+        struct {
+               int  (*f4)(paramdef_t *param); /* generic check function, no arguments but the param description */
                
         } s4;
         struct { 

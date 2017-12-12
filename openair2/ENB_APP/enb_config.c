@@ -422,15 +422,16 @@ int RCconfig_RRC(MessageDef *msg_p, uint32_t i, eNB_RRC_INST *rrc) {
   paramdef_t ENBParams[]  = ENBPARAMS_DESC;
   paramlist_def_t ENBParamList = {ENB_CONFIG_STRING_ENB_LIST,NULL,0};  
 
-  checkedparam_t config_checkparam_assign_UEtc = ENB_CONFIG_CHECK_UETIMERS;
+  checkedparam_t config_check_CCparams[] = CCPARAMS_CHECK;
   paramdef_t CCsParams[] = CCPARAMS_DESC;
   paramlist_def_t CCsParamList = {ENB_CONFIG_STRING_COMPONENT_CARRIERS,NULL,0};
   
   paramdef_t SRB1Params[] = SRB1PARAMS_DESC;  
 
-  
-
-
+/* map parameter checking array instances to parameter definition array instances */
+  for (int I=0; I< ( sizeof(CCsParams)/ sizeof(paramdef_t)  ) ; I++) {
+     CCsParams[I].chkPptr = &(config_check_CCparams[I]);  
+  }
 /* get global parameters, defined outside any section in the config file */
   
   config_get( ENBSParams,sizeof(ENBSParams)/sizeof(paramdef_t),NULL); 
@@ -1352,7 +1353,7 @@ int RCconfig_RRC(MessageDef *msg_p, uint32_t i, eNB_RRC_INST *rrc) {
 		  break;
 		}
 
-
+                
                 RRC_CONFIGURATION_REQ (msg_p).ue_TimersAndConstants_t300[j] = ue_TimersAndConstants_t300;
                 RRC_CONFIGURATION_REQ (msg_p).ue_TimersAndConstants_t301[j] = ue_TimersAndConstants_t301;
                 RRC_CONFIGURATION_REQ (msg_p).ue_TimersAndConstants_t310[j] = ue_TimersAndConstants_t310;

@@ -44,7 +44,7 @@ typedef struct eutra_band_s {
 
 extern int config_check_band_frequencies(int ind, int16_t band, uint32_t downlink_frequency, 
                                          int32_t uplink_frequency_offset, uint32_t  frame_type);
-extern int config_check_assign_UEtc(paramdef_t *param);
+
 extern int config_check_assign_DLGap_NB(paramdef_t *param);
 extern int config_check_assign_rach_NB(paramdef_t *param);
 #endif

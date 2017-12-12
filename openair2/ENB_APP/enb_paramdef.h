@@ -31,7 +31,7 @@
  */
 
 #include "common/config/config_paramdesc.h"
-
+#include "RRC_paramsvalues.h"
 
 
 
@@ -276,9 +276,7 @@ static int DEFENBS[] = {0};
 #define ENB_CONFIG_STRING_PUCCH_DELTA_SHIFT                             "pucch_delta_shift"
 #define ENB_CONFIG_STRING_PUCCH_NRB_CQI                                 "pucch_nRB_CQI"
 #define ENB_CONFIG_STRING_PUCCH_NCS_AN                                  "pucch_nCS_AN"
-//#if !defined(Rel10) && !defined(Rel14)
 #define ENB_CONFIG_STRING_PUCCH_N1_AN                                   "pucch_n1_AN"
-//#endif
 #define ENB_CONFIG_STRING_PDSCH_RS_EPRE                                 "pdsch_referenceSignalPower"
 #define ENB_CONFIG_STRING_PDSCH_PB                                      "pdsch_p_b"
 #define ENB_CONFIG_STRING_PUSCH_N_SB                                     "pusch_n_SB"
@@ -328,7 +326,77 @@ static int DEFENBS[] = {0};
 #define ENB_CONFIG_STRING_UE_TRANSMISSION_MODE                          "ue_TransmissionMode"
 
 /* init for checkedparam_t structure */
-#define ENB_CONFIG_CHECK_UETIMERS       { .s4= { config_check_assign_UEtc }}                		
+
+#define CCPARAMS_CHECK                 {                                     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s5= {NULL }} ,						     \
+             { .s1a= { config_check_modify_integer, UETIMER_T300_OKVALUES, UETIMER_T300_MODVALUES,8}} ,						     \
+             { .s1a= { config_check_modify_integer, UETIMER_T301_OKVALUES, UETIMER_T301_MODVALUES,8}} ,						     \
+             { .s1a= { config_check_modify_integer, UETIMER_T310_OKVALUES, UETIMER_T310_MODVALUES,7}} ,						     \
+             { .s1a= { config_check_modify_integer, UETIMER_T311_OKVALUES, UETIMER_T311_MODVALUES,7}} ,						     \
+             { .s1a= { config_check_modify_integer, UETIMER_N310_OKVALUES, UETIMER_N310_MODVALUES,8}} , 					      \
+             { .s1a= { config_check_modify_integer, UETIMER_N311_OKVALUES, UETIMER_N311_MODVALUES,8}} , 					      \
+             { .s5= {NULL }} ,						     \
+}
 /*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /*                                     component carriers configuration parameters                                                                                                                   */
 /*   optname                                                   helpstr   paramflags    XXXptr                                        defXXXval                    type         numelt  checked_param */
@@ -395,14 +463,83 @@ static int DEFENBS[] = {0};
 {ENB_CONFIG_STRING_PCCH_DEFAULT_PAGING_CYCLE,                    NULL,   0,           iptr:&pcch_defaultPagingCycle,                  defintval:128,             TYPE_INT,        0},  \
 {ENB_CONFIG_STRING_PCCH_NB,                                      NULL,   0,           strptr:&pcch_nB,                                defstrval:"oneT",          TYPE_STRING,     0},  \
 {ENB_CONFIG_STRING_BCCH_MODIFICATIONPERIODCOEFF,                 NULL,   0,           iptr:&bcch_modificationPeriodCoeff,             defintval:2,               TYPE_UINT,       0},  \
-{ENB_CONFIG_STRING_UETIMERS_T300,                                NULL,   0,           iptr:&ue_TimersAndConstants_t300,               defintval:1000,            TYPE_UINT,       0,     &config_checkparam_assign_UEtc },  \
-{ENB_CONFIG_STRING_UETIMERS_T301,                                NULL,   0,           iptr:&ue_TimersAndConstants_t301,               defintval:1000,            TYPE_UINT,       0,     &config_checkparam_assign_UEtc },  \
-{ENB_CONFIG_STRING_UETIMERS_T310,                                NULL,   0,           iptr:&ue_TimersAndConstants_t310,               defintval:1000,            TYPE_UINT,       0,     &config_checkparam_assign_UEtc },  \
-{ENB_CONFIG_STRING_UETIMERS_T311,                                NULL,   0,           iptr:&ue_TimersAndConstants_t311,               defintval:10000,           TYPE_UINT,       0,     &config_checkparam_assign_UEtc },  \
-{ENB_CONFIG_STRING_UETIMERS_N310,                                NULL,   0,           iptr:&ue_TimersAndConstants_n310,               defintval:20,              TYPE_UINT,       0,     &config_checkparam_assign_UEtc },  \
-{ENB_CONFIG_STRING_UETIMERS_N311,                                NULL,   0,           iptr:&ue_TimersAndConstants_n311,               defintval:1,               TYPE_UINT,       0,     &config_checkparam_assign_UEtc },  \
+{ENB_CONFIG_STRING_UETIMERS_T300,                                NULL,   0,           iptr:&ue_TimersAndConstants_t300,               defintval:1000,            TYPE_UINT,       0},  \
+{ENB_CONFIG_STRING_UETIMERS_T301,                                NULL,   0,           iptr:&ue_TimersAndConstants_t301,               defintval:1000,            TYPE_UINT,       0},  \
+{ENB_CONFIG_STRING_UETIMERS_T310,                                NULL,   0,           iptr:&ue_TimersAndConstants_t310,               defintval:1000,            TYPE_UINT,       0},  \
+{ENB_CONFIG_STRING_UETIMERS_T311,                                NULL,   0,           iptr:&ue_TimersAndConstants_t311,               defintval:10000,           TYPE_UINT,       0},  \
+{ENB_CONFIG_STRING_UETIMERS_N310,                                NULL,   0,           iptr:&ue_TimersAndConstants_n310,               defintval:20,              TYPE_UINT,       0},  \
+{ENB_CONFIG_STRING_UETIMERS_N311,                                NULL,   0,           iptr:&ue_TimersAndConstants_n311,               defintval:1,               TYPE_UINT,       0},  \
 {ENB_CONFIG_STRING_UE_TRANSMISSION_MODE,                         NULL,   0,           iptr:&ue_TransmissionMode,                      defintval:1,               TYPE_UINT,       0}   \
 }
+
+#define ENB_CONFIG_FRAME_TYPE_IDX                            0  			     
+#define ENB_CONFIG_TDD_CONFIG_IDX                            1  			     
+#define ENB_CONFIG_TDD_CONFIG_S_IDX			     2
+#define ENB_CONFIG_PREFIX_TYPE_IDX 			     3
+#define ENB_CONFIG_PBCH_REPETITION_IDX			     4
+#define ENB_CONFIG_EUTRA_BAND_IDX  			     5
+#define ENB_CONFIG_DOWNLINK_FREQUENCY_IDX  		     6
+#define ENB_CONFIG_UPLINK_FREQUENCY_OFFSET_IDX		     7
+#define ENB_CONFIG_NID_CELL_IDX				     8
+#define ENB_CONFIG_N_RB_DL_IDX				     9
+#define ENB_CONFIG_CELL_MBSFN_IDX  			     10
+#define ENB_CONFIG_NB_ANT_PORTS_IDX			     11
+#define ENB_CONFIG_PRACH_ROOT_IDX  			     12
+#define ENB_CONFIG_PRACH_CONFIG_INDEX_IDX  		     13
+#define ENB_CONFIG_PRACH_HIGH_SPEED_IDX			     14
+#define ENB_CONFIG_PRACH_ZERO_CORRELATION_IDX		     15
+#define ENB_CONFIG_PRACH_FREQ_OFFSET_IDX	             16     
+#define ENB_CONFIG_PUCCH_DELTA_SHIFT_IDX		     17     
+#define ENB_CONFIG_PUCCH_NRB_CQI_IDX			     18
+#define ENB_CONFIG_PUCCH_NCS_AN_IDX			     19
+#define ENB_CONFIG_PUCCH_N1_AN_IDX 			     20
+#define ENB_CONFIG_PDSCH_RS_EPRE_IDX			     21
+#define ENB_CONFIG_PDSCH_PB_IDX				     22
+#define ENB_CONFIG_PUSCH_N_SB_IDX  			     23
+#define ENB_CONFIG_PUSCH_HOPPINGMODE_IDX		     24     
+#define ENB_CONFIG_PUSCH_HOPPINGOFFSET_IDX 		     25
+#define ENB_CONFIG_PUSCH_ENABLE64QAM_IDX		     26     
+#define ENB_CONFIG_PUSCH_GROUP_HOPPING_EN_IDX		     27
+#define ENB_CONFIG_PUSCH_GROUP_ASSIGNMENT_IDX		     28
+#define ENB_CONFIG_PUSCH_SEQUENCE_HOPPING_EN_IDX	     29     
+#define ENB_CONFIG_PUSCH_NDMRS1_IDX			     30
+#define ENB_CONFIG_PHICH_DURATION_IDX			     31
+#define ENB_CONFIG_PHICH_RESOURCE_IDX			     32
+#define ENB_CONFIG_SRS_ENABLE_IDX  			     33
+#define ENB_CONFIG_SRS_BANDWIDTH_CONFIG_IDX		     34
+#define ENB_CONFIG_SRS_SUBFRAME_CONFIG_IDX 		     35
+#define ENB_CONFIG_SRS_ACKNACKST_CONFIG_IDX		     36
+#define ENB_CONFIG_SRS_MAXUPPTS_IDX			     37
+#define ENB_CONFIG_PUSCH_PO_NOMINAL_IDX			     38
+#define ENB_CONFIG_PUSCH_ALPHA_IDX 			     39
+#define ENB_CONFIG_PUCCH_PO_NOMINAL_IDX			     40
+#define ENB_CONFIG_MSG3_DELTA_PREAMBLE_IDX 		     41
+#define ENB_CONFIG_PUCCH_DELTAF_FORMAT1_IDX		     42
+#define ENB_CONFIG_PUCCH_DELTAF_FORMAT1b_IDX		     43
+#define ENB_CONFIG_PUCCH_DELTAF_FORMAT2_IDX		     44
+#define ENB_CONFIG_PUCCH_DELTAF_FORMAT2A_IDX		     45
+#define ENB_CONFIG_PUCCH_DELTAF_FORMAT2B_IDX		     46
+#define ENB_CONFIG_RACH_NUM_RA_PREAMBLES_IDX		     47
+#define ENB_CONFIG_RACH_PREAMBLESGROUPACONFIG_IDX  	     48
+#define ENB_CONFIG_RACH_SIZEOFRA_PREAMBLESGROUPA_IDX	     49
+#define ENB_CONFIG_RACH_MESSAGESIZEGROUPA_IDX		     50
+#define ENB_CONFIG_RACH_MESSAGEPOWEROFFSETGROUPB_IDX	     51
+#define ENB_CONFIG_RACH_POWERRAMPINGSTEP_IDX		     52
+#define ENB_CONFIG_RACH_PREAMBLEINITIALRECEIVEDTARGETPOWER_IDX 53 
+#define ENB_CONFIG_RACH_PREAMBLETRANSMAX_IDX		     54
+#define ENB_CONFIG_RACH_RARESPONSEWINDOWSIZE_IDX	     55     
+#define ENB_CONFIG_RACH_MACCONTENTIONRESOLUTIONTIMER_IDX     56	     
+#define ENB_CONFIG_RACH_MAXHARQMSG3TX_IDX  		     57
+#define ENB_CONFIG_PCCH_DEFAULT_PAGING_CYCLE_IDX	     58     
+#define ENB_CONFIG_PCCH_NB_IDX				     59
+#define ENB_CONFIG_BCCH_MODIFICATIONPERIODCOEFF_IDX	     60
+#define ENB_CONFIG_UETIMERS_T300_IDX			     61
+#define ENB_CONFIG_UETIMERS_T301_IDX			     62
+#define ENB_CONFIG_UETIMERS_T310_IDX			     63
+#define ENB_CONFIG_UETIMERS_T311_IDX			     64
+#define ENB_CONFIG_UETIMERS_N310_IDX			     65
+#define ENB_CONFIG_UETIMERS_N311_IDX			     66
+#define ENB_CONFIG_UE_TRANSMISSION_MODE_IDX		     67
 
 /*------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /*------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/

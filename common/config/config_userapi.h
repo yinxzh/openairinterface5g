@@ -43,20 +43,29 @@ extern "C"
 #define CONFIG_GETP(P)      ( (config_get_if()==NULL) ? NULL : config_get_if()->cfgP[P]       )
 #define CONFIG_ISFLAGSET(P) ( (config_get_if()==NULL) ? 0    : !!(config_get_if()->rtflags & P))
 
+/* utility functions, to be used by configuration module and/or configuration libraries */
 extern configmodule_interface_t *config_get_if(void);
 extern char * config_check_valptr(paramdef_t *cfgoptions, char **ptr, int length) ;
 extern void config_printhelp(paramdef_t *,int numparams);
 extern int config_process_cmdline(paramdef_t *params,int numparams, char *prefix);
-extern int config_get(paramdef_t *params,int numparams, char *prefix);
-extern int config_isparamset(paramdef_t *params,int paramidx);
-extern void config_assign_int(paramdef_t *cfgoptions, char *fullname, int val);
 extern void config_assign_processedint(paramdef_t *cfgoption, int val);
+extern void config_assign_int(paramdef_t *cfgoptions, char *fullname, int val);
+
+/* apis to get parameters, to be used by oai modules, at configuration time */
+extern int config_get(paramdef_t *params,int numparams, char *prefix);
+#define config_getlist config_get_if()->getlist
+
+/* apis to retrieve parameters info after calling get or getlist functions */
+extern int config_isparamset(paramdef_t *params,int paramidx);
 extern int config_get_processedint(paramdef_t *cfgoption);
-extern int config_process_cmdline(paramdef_t *cfgoptions,int numoptions, char *prefix);
+
+/* functions to be used in parameters definition, to check parameters values */
 extern int config_check_intval(paramdef_t *param);
+extern int config_check_modify_integer(paramdef_t *param);
 extern int config_check_intrange(paramdef_t *param);
 extern int config_check_strval(paramdef_t *param);
-#define config_getlist config_get_if()->getlist
+extern int config_checkstr_assign_integer(paramdef_t *param);
+
 #define CONFIG_GETCONFFILE (config_get_if()->cfgP[0])
 
 #ifdef __cplusplus
