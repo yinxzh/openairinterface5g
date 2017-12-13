@@ -33,19 +33,49 @@
 #include "common/config/config_paramdesc.h"
 #include "SystemInformationBlockType2.h"
 #include "DL-GapConfig-NB-r13.h"
-#include "NPRACH-Parameters-NB-r13.h"		  
+#include "NPRACH-Parameters-NB-r13.h"
+#include "PowerRampingParameters.h"		  
+#include "BCCH-Config-NB-r13.h"
+#include "PCCH-Config-NB-r13.h"
+#include "ACK-NACK-NumRepetitions-NB-r13.h"
+
 #include "RRC_paramsvalues.h"
 /* NB-Iot RRC list section name */		
 #define NBIOT_RRCLIST_CONFIG_STRING          "NB-IoT_RRCs"		 
 
 
 #define RACH_RARESPONSEWINDOWSIZE_NB_OKVALUES                   {20,50,80,120,180,240,320,400}
-#define RACH_MACCONTENTIONRESOLUTIONTIMER_NB_OKVALUES           {80,100,120,160,200,240,480,960}  
+#define PREF1(A)                                                 RACH_CE_LevelInfo_r13__ra_ResponseWindowSize_r13_ ## A
+#define RACH_RARESPONSEWINDOWSIZE_NB_MODVALUES                  { PREF1(sf20),PREF1(sf50),PREF1(sf80),PREF1(sf120),    \
+                                                                  PREF1(sf180),PREF1(sf240),PREF1(sf320),PREF1(sf400) }
+
+
+#define RACH_MACCONTENTIONRESOLUTIONTIMER_NB_OKVALUES           {80,100,120,160,200,240,480,960} 
+#define PREF2(A)                                                 RACH_CE_LevelInfo_r13__mac_ContentionResolutionTimer_r13_ ## A 
+#define RACH_MACCONTENTIONRESOLUTIONTIMER_NB_MODVALUES          { PREF2(sf80),PREF2(sf100),PREF2(sf120),PREF2(sf160),    \
+                                                                  PREF2(sf200),PREF2(sf240),PREF2(sf480),PREF2(sf960) }
+
+
 #define RACH_POWERRAMPINGSTEP_NB_OKVALUES                       {0,2,4,6}
+#define PREF3(A)                                                 PowerRampingParameters__powerRampingStep_ ## A
+#define RACH_POWERRAMPINGSTEP_NB_MODVALUES                      { PREF3(dB0),PREF3(dB2),PREF3(dB4),PREF3(dB6) }
+
+
 #define RACH_PREAMBLEINITIALRECEIVEDTARGETPOWER_NB_OKRANGE      {-120, -90}
+
 #define RACH_PREAMBLETRANSMAX_CE_NB_OKVALUES                    {3,4,5,6,7,8,10,20,50,100,200}
-#define BCCH_MODIFICATIONPERIODCOEFF_NB_OKVALUES                {0}
-#define PCCH_DEFAULTPAGINGCYCLE_NB_OKVALUES                     {0}
+#define PREF4(A)                                                PreambleTransMax_ ## A 
+#define RACH_PREAMBLETRANSMAX_CE_NB_MODVALUES                   { PREF4(n3), PREF4(n4), PREF4(n5), PREF4(n6),  PREF4(n7), PREF4(n8), \
+                                                                  PREF4(n10),PREF4(n20),PREF4(n50),PREF4(n100),PREF4(n200) }
+
+#define BCCH_MODIFICATIONPERIODCOEFF_NB_OKVALUES                {16,32,64,128}
+#define PREF5(A)                                                BCCH_Config_NB_r13__modificationPeriodCoeff_r13_ ## A 
+#define BCCH_MODIFICATIONPERIODCOEFF_NB_MODVALUES              { PREF5(n16), PREF5(n32), PREF5(n64),PREF5(n128) }
+
+#define PCCH_DEFAULTPAGINGCYCLE_NB_OKVALUES                     {128,256,512,1024}
+#define PREF6(A)                                                PCCH_Config_NB_r13__defaultPagingCycle_r13_ ## A 
+#define PCCH_DEFAULTPAGINGCYCLE_NB_MODVALUES                    { PREF6(rf128), PREF6(rf256), PREF6(rf512), PREF6(rf1024) }
+
 #define NPRACH_CP_LENGTH_OKVALUES                               {0,1}
 #define NPRACH_RSRP_RANGE_OKVALUES                              {0}
 
@@ -61,7 +91,12 @@
                                                NPRACH_Parameters_NB_r13__maxNumPreambleAttemptCE_r13_n10,NPRACH_Parameters_NB_r13__maxNumPreambleAttemptCE_r13_spare1 }
 
 #define NPDSCH_NRS_POWER_OKRANGE                                {-60,50}
-#define NPUSCH_ACK_NACK_NUMREPETITIONS_NB_OKVALUES              {0}
+
+#define NPUSCH_ACK_NACK_NUMREPETITIONS_NB_OKVALUES              {1,2,4,8,16,32,64,128}
+#define PREF9(A)                                                ACK_NACK_NumRepetitions_NB_r13_ ## A 
+#define NPUSCH_ACK_NACK_NUMREPETITIONS_NB_MODVALUES             { PREF9(r1),   PREF9(r2),   PREF9(r4),   PREF9(r8), \
+                                                                  PREF9(r16),  PREF9(r32),  PREF9(r64),  PREF9(r128) }
+
 #define NPUSCH_SRS_SUBFRAMECONFIG_NB_OKRANGE                    {0,15}
 #define NPUSCH_THREETONE_CYCLICSHIFT_R13_OKRANGE                {0,2}
 #define NPUSCH_SIXTONE_CYCLICSHIFT_R13_OKRANGE                  {0,3}
@@ -89,13 +124,13 @@
 
 
 #define NBIOT_RRCPARAMS_CHECK_DESC { \
-             { .s1= { config_check_intval,             RACH_RARESPONSEWINDOWSIZE_NB_OKVALUES,8}}, 	     	    	  \
-             { .s1= { config_check_intval,             RACH_MACCONTENTIONRESOLUTIONTIMER_NB_OKVALUES,8}} ,     	    	  \
-             { .s1= { config_check_intval,             RACH_POWERRAMPINGSTEP_NB_OKVALUES,4}} ,		     	    	  \
+             { .s1a= { config_check_modify_integer,    RACH_RARESPONSEWINDOWSIZE_NB_OKVALUES,          RACH_RARESPONSEWINDOWSIZE_NB_MODVALUES,          8}}, 	 \
+             { .s1a= { config_check_modify_integer,    RACH_MACCONTENTIONRESOLUTIONTIMER_NB_OKVALUES,  RACH_MACCONTENTIONRESOLUTIONTIMER_NB_MODVALUES,  8}},	 \
+             { .s1a= { config_check_modify_integer,    RACH_POWERRAMPINGSTEP_NB_OKVALUES,              RACH_POWERRAMPINGSTEP_NB_MODVALUES,              4}} ,    \
              { .s2= { config_check_intrange,           RACH_PREAMBLEINITIALRECEIVEDTARGETPOWER_NB_OKRANGE}},   	    	  \
-             { .s1= { config_check_intval,             RACH_PREAMBLETRANSMAX_CE_NB_OKVALUES,11}} ,	     	    	  \
-             { .s1= { NULL,		     BCCH_MODIFICATIONPERIODCOEFF_NB_OKVALUES,0}} ,	     	    	  \
-             { .s1= { NULL,		     PCCH_DEFAULTPAGINGCYCLE_NB_OKVALUES,4}} ,  	     	    	  \
+             { .s1a= { config_check_modify_integer,    RACH_PREAMBLETRANSMAX_CE_NB_OKVALUES,           RACH_PREAMBLETRANSMAX_CE_NB_MODVALUES,          11}} ,    \
+             { .s1a= { config_check_modify_integer,    BCCH_MODIFICATIONPERIODCOEFF_NB_OKVALUES,       BCCH_MODIFICATIONPERIODCOEFF_NB_MODVALUES,       4}} ,    \
+             { .s1a= { config_check_modify_integer,    PCCH_DEFAULTPAGINGCYCLE_NB_OKVALUES,            PCCH_DEFAULTPAGINGCYCLE_NB_MODVALUES,            4}} ,  	 \
              { .s1= { NULL,		     NPRACH_CP_LENGTH_OKVALUES ,4}} ,			     	    	  \
              { .s1= { NULL,		     NPRACH_RSRP_RANGE_OKVALUES,4}} ,			     	    	  \
              { .s3a= { config_checkstr_assign_integer, MSG3RANGESTART_OKVALUES,           MSG3RANGESTART_MODVALUES,4}} ,    \

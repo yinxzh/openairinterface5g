@@ -233,7 +233,7 @@ int config_check_modify_integer(paramdef_t *param)
     	    return 0; 
     	}
    }
-    print_intvalueerror(param,"config_check_modify_integer", param->chkPptr->s1.okintval,param->chkPptr->s1.num_okintval);
+    print_intvalueerror(param,"config_check_modify_integer", param->chkPptr->s1a.okintval,param->chkPptr->s1a.num_okintval);
     return -1;
 }
 
