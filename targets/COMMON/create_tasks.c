@@ -107,13 +107,6 @@ int create_tasks(uint32_t enb_nb, uint32_t ue_nb, uint32_t nbiot)
       }
 
     }
-
-    if (ue_nb > 0) {
-      if (itti_create_task (TASK_RRC_UE, rrc_ue_task, NULL) < 0) {
-        LOG_E(RRC, "Create task for RRC UE failed\n");
-        return -1;
-      }
-
     if (nbiot > 0) {
       LOG_I(RRC,"Creating NB-IoT RRC Task\n");
 
@@ -123,6 +116,13 @@ int create_tasks(uint32_t enb_nb, uint32_t ue_nb, uint32_t nbiot)
       }
 
     }
+    if (ue_nb > 0) {
+      if (itti_create_task (TASK_RRC_UE, rrc_ue_task, NULL) < 0) {
+        LOG_E(RRC, "Create task for RRC UE failed\n");
+        return -1;
+      }
+
+
 #   if ENABLE_RAL
 
       if (itti_create_task (TASK_RAL_UE, mRAL_task, NULL) < 0) {

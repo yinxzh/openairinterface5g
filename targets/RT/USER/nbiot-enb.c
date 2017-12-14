@@ -417,7 +417,7 @@ static void* nb_iot_eNB_thread_prach( void* param ) {
   // set default return value
   eNB_thread_prach_status = 0;
 
-  thread_top_init("eNB_thread_prach",1,500000L,1000000L,20000000L);
+  thread_top_init("nb_iot_eNB_thread_prach",1,500000L,1000000L,20000000L);
 
 
   while (!oai_exit) {
@@ -427,7 +427,7 @@ static void* nb_iot_eNB_thread_prach( void* param ) {
     
     if (wait_on_condition(&proc->mutex_prach,&proc->cond_prach,&proc->instance_cnt_prach,"eNB_prach_thread") < 0) break;
 
-    LOG_D(PHY,"Running eNB prach procedures\n");
+    LOG_D(PHY,"Running Nb-IoT prach procedures\n");
     prach_procedures(eNB
 #ifdef Rel14
 		     ,0
@@ -437,7 +437,7 @@ static void* nb_iot_eNB_thread_prach( void* param ) {
     if (release_thread(&proc->mutex_prach,&proc->instance_cnt_prach,"eNB_prach_thread") < 0) break;
   }
 
-  LOG_I(PHY, "Exiting eNB thread PRACH\n");
+  LOG_I(PHY, "Exiting Nb-IoT thread PRACH\n");
 
 
   eNB_thread_prach_status = 0;

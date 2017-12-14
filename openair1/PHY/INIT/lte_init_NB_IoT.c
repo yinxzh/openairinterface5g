@@ -48,7 +48,6 @@
 
 
 void phy_config_mib_eNB_NB_IoT(int  			Mod_id,
-							   int              CC_id,
 							   int              eutra_band,
 							   int              Nid_cell,
 							   int              Ncp,
@@ -64,11 +63,11 @@ void phy_config_mib_eNB_NB_IoT(int  			Mod_id,
 
   AssertFatal(PHY_vars_eNB_NB_IoT_g != NULL, "PHY_vars_eNB_NB_IoT_g instance pointer doesn't exist\n");
   AssertFatal(PHY_vars_eNB_NB_IoT_g[Mod_id] != NULL, "PHY_vars_eNB_NB_IoT_g instance %d doesn't exist\n",Mod_id);
-  AssertFatal(PHY_vars_eNB_NB_IoT_g[Mod_id][CC_id] != NULL, "PHY_vars_eNB_NB_IoT_g instance %d, CCid %d doesn't exist\n",Mod_id,CC_id);
+  
 
-  NB_IoT_DL_FRAME_PARMS *fp = &PHY_vars_eNB_NB_IoT_g[Mod_id][CC_id]->frame_parms_NB_IoT;
+  NB_IoT_DL_FRAME_PARMS *fp = &(RC.L1_NB_IoT[Mod_id]->frame_parms_NB_IoT);
 
-   LOG_I(PHY,"Configuring MIB-NB for instance %d, CCid %d : (band %d,Nid_cell %d,p %d,EARFCN %u)\n",Mod_id, CC_id, eutra_band, Nid_cell, p_eNB,EARFCN);
+   LOG_I(PHY,"Configuring MIB-NB for instance %d: (band %d,Nid_cell %d,p %d,EARFCN %u)\n",Mod_id, eutra_band, Nid_cell, p_eNB,EARFCN);
 
 //  fp->N_RB_DL
 //  fp->N_RB_UL						also this two values need to be known when we are dealing with in-band and guard-band operating mode
@@ -190,14 +189,14 @@ void phy_config_mib_eNB_NB_IoT(int  			Mod_id,
 //}
 
 void phy_config_sib2_eNB_NB_IoT(uint8_t 								  Mod_id,
-				int 									  CC_id,
+
 				nfapi_nb_iot_config_t 					  *config,
 				nfapi_rf_config_t 						  *rf_config,
 				nfapi_uplink_reference_signal_config_t	  *ul_nrs_config,
 				extra_phyConfig_t						  *extra_phy_parms)
 {
-	NB_IoT_DL_FRAME_PARMS *fp = &PHY_vars_eNB_NB_IoT_g[Mod_id][CC_id]->frame_parms;
-	LOG_D(PHY,"[eNB%d] CCid %d: Applying config_NB_IoT from sib2_NB\n",Mod_id,CC_id);
+	NB_IoT_DL_FRAME_PARMS *fp = &(RC.L1_NB_IoT[Mod_id]->frame_parms);
+	LOG_D(PHY,"[eNB%d] Applying config_NB_IoT from sib2_NB\n",Mod_id);
 	  
 	/*NPRACH_ConfigSIB_NB_r13----------------------------------------------------------*/
 
@@ -290,7 +289,7 @@ void phy_config_sib2_eNB_NB_IoT(uint8_t 								  Mod_id,
 	  }
 
 	  //TODO: Should modify to compute_nprach_seq --> nprach.
-	  //compute_prach_seq(&fp->prach_config_common,fp->frame_type,PHY_vars_eNB_NB_IoT_g[Mod_id][CC_id]->X_u);
+	  //compute_prach_seq(&fp->prach_config_common,fp->frame_type,PHY_vars_eNB_NB_IoT_g[Mod_id]->X_u);
 	  
 
 	  /*NPDSCH ConfigCommon-------------------------------------------------------------------*/
@@ -350,11 +349,10 @@ void phy_config_sib2_eNB_NB_IoT(uint8_t 								  Mod_id,
 
 
 void phy_config_dedicated_eNB_NB_IoT(uint8_t 			Mod_id,
-                              		 int 				CC_id,
                              		 uint16_t 			rnti,
 							 		 extra_phyConfig_t  *extra_parms)
 {
-	PHY_VARS_eNB_NB_IoT *eNB = PHY_vars_eNB_NB_IoT_g[Mod_id][CC_id];
+	PHY_VARS_eNB_NB_IoT *eNB = RC.L1_NB_IoT[Mod_id];
 	NB_IoT_eNB_NPDCCH_t *npdcch;
 	uint8_t UE_id = find_ue_NB_IoT(rnti,eNB);
 	

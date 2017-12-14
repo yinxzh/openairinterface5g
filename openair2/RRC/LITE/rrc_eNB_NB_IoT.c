@@ -245,15 +245,15 @@ void rrc_eNB_generate_RRCConnectionReestablishmentReject_NB_IoT(
   T(T_ENB_RRC_CONNECTION_REESTABLISHMENT_REJECT, T_INT(ctxt_pP->module_id), T_INT(ctxt_pP->frame),
     T_INT(ctxt_pP->subframe), T_INT(ctxt_pP->rnti));
 
-  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Srb0.Tx_buffer.payload_size =
+  RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].Srb0.Tx_buffer.payload_size =
     do_RRCConnectionReestablishmentReject_NB_IoT(ctxt_pP->module_id,
-                          (uint8_t*) eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Srb0.Tx_buffer.Payload);
+                          (uint8_t*) RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].Srb0.Tx_buffer.Payload);
 
 #ifdef RRC_MSG_PRINT
   LOG_F(RRC,"[MSG] RRCConnectionReestablishmentReject\n");
 
-  for (cnt = 0; cnt < eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Srb0.Tx_buffer.payload_size; cnt++) {
-    LOG_F(RRC,"%02x ", ((uint8_t*)eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].Srb0.Tx_buffer.Payload)[cnt]);
+  for (cnt = 0; cnt < RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].Srb0.Tx_buffer.payload_size; cnt++) {
+    LOG_F(RRC,"%02x ", ((uint8_t*)RC.nb_iot_rrc[ctxt_pP->module_id]->Srb0.Tx_buffer.Payload)[cnt]);
   }
 
   LOG_F(RRC,"\n");
@@ -262,17 +262,17 @@ void rrc_eNB_generate_RRCConnectionReestablishmentReject_NB_IoT(
   MSC_LOG_TX_MESSAGE(
     MSC_RRC_ENB,
     MSC_RRC_UE,
-    eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Srb0.Tx_buffer.Header,
-    eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Srb0.Tx_buffer.payload_size,
+    RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].Srb0.Tx_buffer.Header,
+    RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].Srb0.Tx_buffer.payload_size,
     MSC_AS_TIME_FMT" RRCConnectionReestablishmentReject UE %x size %u",
     MSC_AS_TIME_ARGS(ctxt_pP),
     ue_context_pP == NULL ? -1 : ue_context_pP->ue_context.rnti,
-    eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Srb0.Tx_buffer.payload_size);
+    RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].Srb0.Tx_buffer.payload_size);
 
   LOG_I(RRC,
         PROTOCOL_RRC_CTXT_UE_FMT" [RAPROC] Logical Channel DL-CCCH, Generating RRCConnectionReestablishmentReject (bytes %d)\n",
         PROTOCOL_RRC_CTXT_UE_ARGS(ctxt_pP),
-        eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Srb0.Tx_buffer.payload_size);
+        RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].Srb0.Tx_buffer.payload_size);
 }
 
 //-----------------------------------------------------------------------------
@@ -333,7 +333,7 @@ rrc_eNB_ue_context_random_exist_NB_IoT(
 {
   struct rrc_eNB_ue_context_NB_IoT_s*        ue_context_p = NULL;
   //FIXME: there is a warning related to the new  type rrc_ue_tree_NB_IoT_s
-  RB_FOREACH(ue_context_p, rrc_ue_tree_NB_IoT_s, &(eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].rrc_ue_head)) {
+  RB_FOREACH(ue_context_p, rrc_ue_tree_NB_IoT_s, &(RC.nb_iot_rrc[ctxt_pP->module_id]->rrc_ue_head)) {
     if (ue_context_p->ue_context.random_ue_identity == ue_identityP)
       return ue_context_p;
   }
@@ -355,7 +355,7 @@ rrc_eNB_get_next_free_ue_context_NB_IoT(
                    ctxt_pP->rnti);
 
   if (ue_context_p == NULL) {
-    RB_FOREACH(ue_context_p, rrc_ue_tree_NB_IoT_s, &(eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].rrc_ue_head)) {
+    RB_FOREACH(ue_context_p, rrc_ue_tree_NB_IoT_s, &(RC.nb_iot_rrc[ctxt_pP->module_id]->rrc_ue_head)) {
       if (ue_context_p->ue_context.random_ue_identity == ue_identityP) {
         LOG_D(RRC,
               PROTOCOL_RRC_CTXT_UE_FMT" Cannot create new UE context, already exist rand UE id 0x%"PRIx64", uid %u\n",
@@ -377,7 +377,7 @@ rrc_eNB_get_next_free_ue_context_NB_IoT(
     ue_context_p->ue_id_rnti                    = ctxt_pP->rnti; // here ue_id_rnti is just a key, may be something else
     ue_context_p->ue_context.rnti               = ctxt_pP->rnti; // yes duplicate, 1 may be removed
     ue_context_p->ue_context.random_ue_identity = ue_identityP;
-    RB_INSERT(rrc_ue_tree_NB_IoT_s, &eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].rrc_ue_head, ue_context_p);
+    RB_INSERT(rrc_ue_tree_NB_IoT_s, &RC.nb_iot_rrc[ctxt_pP->module_id]->rrc_ue_head, ue_context_p);
     LOG_D(RRC,
           PROTOCOL_RRC_CTXT_UE_FMT" Created new UE context uid %u\n",
           PROTOCOL_RRC_CTXT_UE_ARGS(ctxt_pP),
@@ -403,7 +403,7 @@ rrc_eNB_ue_context_stmsi_exist_NB(
 //-----------------------------------------------------------------------------
 {
   struct rrc_eNB_ue_context_NB_IoT_s*        ue_context_p = NULL;
-  RB_FOREACH(ue_context_p, rrc_ue_tree_NB_IoT_s, &(eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].rrc_ue_head)) {
+  RB_FOREACH(ue_context_p, rrc_ue_tree_NB_IoT_s, &(RC.nb_iot_rrc[ctxt_pP->module_id]->rrc_ue_head)) {
     LOG_I(RRC,"checking for UE S-TMSI %x, mme %x (%p): rnti %x",
 	  m_tmsiP, mme_codeP, ue_context_p,
 	  ue_context_p->ue_context.rnti);
@@ -449,15 +449,15 @@ void rrc_eNB_generate_RRCConnectionReject_NB_IoT(
   T(T_ENB_RRC_CONNECTION_REJECT, T_INT(ctxt_pP->module_id), T_INT(ctxt_pP->frame),
     T_INT(ctxt_pP->subframe), T_INT(ctxt_pP->rnti));
 
-  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Srb0.Tx_buffer.payload_size =
+  RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].Srb0.Tx_buffer.payload_size =
     do_RRCConnectionReject_NB_IoT(ctxt_pP->module_id,
-                                  (uint8_t*) eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Srb0.Tx_buffer.Payload);
+                                  (uint8_t*) RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].Srb0.Tx_buffer.Payload);
 
 #ifdef RRC_MSG_PRINT
   LOG_F(RRC,"[MSG] RRCConnectionReject-NB\n");
 
-  for (cnt = 0; cnt < eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Srb0.Tx_buffer.payload_size; cnt++) {
-    LOG_F(RRC,"%02x ", ((uint8_t*)eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].Srb0.Tx_buffer.Payload)[cnt]);
+  for (cnt = 0; cnt < RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].Srb0.Tx_buffer.payload_size; cnt++) {
+    LOG_F(RRC,"%02x ", ((uint8_t*)RC.nb_iot_rrc[ctxt_pP->module_id]->Srb0.Tx_buffer.Payload)[cnt]);
   }
 
   LOG_F(RRC,"\n");
@@ -466,17 +466,17 @@ void rrc_eNB_generate_RRCConnectionReject_NB_IoT(
   MSC_LOG_TX_MESSAGE(
     MSC_RRC_ENB,
     MSC_RRC_UE,
-    eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Srb0.Tx_buffer.Header,
-    eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Srb0.Tx_buffer.payload_size,
+    RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].Srb0.Tx_buffer.Header,
+    RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].Srb0.Tx_buffer.payload_size,
     MSC_AS_TIME_FMT" RRCConnectionReject-NB UE %x size %u",
     MSC_AS_TIME_ARGS(ctxt_pP),
     ue_context_pP == NULL ? -1 : ue_context_pP->ue_context.rnti,
-    eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Srb0.Tx_buffer.payload_size);
+    RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].Srb0.Tx_buffer.payload_size);
 
   LOG_I(RRC,
         PROTOCOL_RRC_CTXT_UE_FMT" [RAPROC] Logical Channel DL-CCCH, Generating RRCConnectionReject-NB (bytes %d)\n",
         PROTOCOL_RRC_CTXT_UE_ARGS(ctxt_pP),
-        eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Srb0.Tx_buffer.payload_size);
+        RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].Srb0.Tx_buffer.payload_size);
 }
 
 //-----------------------------------------------------------------------------
@@ -511,11 +511,11 @@ void rrc_eNB_generate_RRCConnectionSetup_NB_IoT(
 
   SRB_configList = &ue_context_pP->ue_context.SRB_configList;
 
-  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Srb0.Tx_buffer.payload_size =
+  RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].Srb0.Tx_buffer.payload_size =
     do_RRCConnectionSetup_NB_IoT(ctxt_pP,
                                  ue_context_pP,
                                  CC_id,
-                                 (uint8_t*) eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Srb0.Tx_buffer.Payload,
+                                 (uint8_t*) RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].Srb0.Tx_buffer.Payload,
                                  rrc_eNB_get_next_transaction_identifier_NB_IoT(ctxt_pP->module_id),
                                  fp,
                                  SRB_configList, //MP:should contain only SRb1bis for the moment
@@ -524,8 +524,8 @@ void rrc_eNB_generate_RRCConnectionSetup_NB_IoT(
 #ifdef RRC_MSG_PRINT
   LOG_F(RRC,"[MSG] RRC Connection Setup\n");
 
-  for (cnt = 0; cnt < eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Srb0.Tx_buffer.payload_size; cnt++) {
-    LOG_F(RRC,"%02x ", ((uint8_t*)eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].Srb0.Tx_buffer.Payload)[cnt]);
+  for (cnt = 0; cnt < RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].Srb0.Tx_buffer.payload_size; cnt++) {
+    LOG_F(RRC,"%02x ", ((uint8_t*)RC.nb_iot_rrc[ctxt_pP->module_id]->Srb0.Tx_buffer.Payload)[cnt]);
   }
 
   LOG_F(RRC,"\n");
@@ -594,18 +594,18 @@ void rrc_eNB_generate_RRCConnectionSetup_NB_IoT(
   MSC_LOG_TX_MESSAGE(
     MSC_RRC_ENB,
     MSC_RRC_UE,
-    eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Srb0.Tx_buffer.Header, // LG WARNING
-    eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Srb0.Tx_buffer.payload_size,
+    RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].Srb0.Tx_buffer.Header, // LG WARNING
+    RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].Srb0.Tx_buffer.payload_size,
     MSC_AS_TIME_FMT" RRCConnectionSetup-NB UE %x size %u",
     MSC_AS_TIME_ARGS(ctxt_pP),
     ue_context_pP->ue_context.rnti,
-    eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Srb0.Tx_buffer.payload_size);
+    RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].Srb0.Tx_buffer.payload_size);
 
 
   LOG_I(RRC,
         PROTOCOL_RRC_CTXT_UE_FMT" [RAPROC] Logical Channel DL-CCCH, Generating RRCConnectionSetup-NB (bytes %d)\n",
         PROTOCOL_RRC_CTXT_UE_ARGS(ctxt_pP),
-        eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Srb0.Tx_buffer.payload_size);
+        RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].Srb0.Tx_buffer.payload_size);
 
   // activate release timer, if RRCSetupComplete-NB not received after 10 frames, remove UE
   ue_context_pP->ue_context.ue_release_timer=1;
@@ -1615,28 +1615,28 @@ static void init_SI_NB_IoT(
 
 
   //copy basic parameters
-  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].physCellId      = configuration->Nid_cell;
-  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].p_rx_eNB	 = 1;
-  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Ncp             = configuration->prefix_type; //DL Cyclic prefix
-  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].Ncp_UL			     = configuration->prefix_type_UL;//UL cyclic prefix
-  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].dl_CarrierFreq  = configuration->downlink_frequency;
-  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].ul_CarrierFreq  = configuration->downlink_frequency+ configuration->uplink_frequency_offset;
+  RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].physCellId      = configuration->Nid_cell;
+  RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].p_rx_eNB	 = 1;
+  RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].Ncp             = configuration->prefix_type; //DL Cyclic prefix
+  RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].Ncp_UL			     = configuration->prefix_type_UL;//UL cyclic prefix
+  RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].dl_CarrierFreq  = configuration->downlink_frequency;
+  RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].ul_CarrierFreq  = configuration->downlink_frequency+ configuration->uplink_frequency_offset;
 
 
   //TODO: verify who allocate memory for sib1_NB_IoT, sib2_NB_IoT, sib3_NB and mib_nb in the carrier before being passed as parameter
 
-  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].sizeof_SIB1_NB_IoT  = 0;
-  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].sizeof_SIB23_NB_IoT = 0;
-  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].sizeof_MIB_NB_IoT   = 0;
+  RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].sizeof_SIB1_NB_IoT  = 0;
+  RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].sizeof_SIB23_NB_IoT = 0;
+  RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].sizeof_MIB_NB_IoT   = 0;
 
   //MIB
-  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].MIB_NB_IoT = (uint8_t*) malloc16(32); //MIB is 34 bits=5bytes needed
+  RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].MIB_NB_IoT = (uint8_t*) malloc16(32); //MIB is 34 bits=5bytes needed
 
 
-  if (eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].MIB_NB_IoT)
+  if (RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].MIB_NB_IoT)
   {
-	  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].sizeof_MIB_NB_IoT =
-	  			  do_MIB_NB_IoT(&eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id],
+	  RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].sizeof_MIB_NB_IoT =
+	  			  do_MIB_NB_IoT(&RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id],
 	  					  	configuration->N_RB_DL,
 					        0 //FIXME is correct to pass frame = 0??
 					        );
@@ -1648,18 +1648,18 @@ static void init_SI_NB_IoT(
     }
 
 
-  if (eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].sizeof_MIB_NB_IoT == 255) {
+  if (RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].sizeof_MIB_NB_IoT == 255) {
      // exit here
     }
 
  //SIB1_NB_IoT
-  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].SIB1_NB_IoT = (uint8_t*) malloc16(32);//allocation of buffer memory for SIB1_NB_IOT
+  RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].SIB1_NB_IoT = (uint8_t*) malloc16(32);//allocation of buffer memory for SIB1_NB_IOT
 
-  if (eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].SIB1_NB_IoT)
-    eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].sizeof_SIB1_NB_IoT = do_SIB1_NB_IoT( //follow the new implementation
+  if (RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].SIB1_NB_IoT)
+    RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].sizeof_SIB1_NB_IoT = do_SIB1_NB_IoT( //follow the new implementation
     				ctxt_pP->module_id,
 					CC_id,
-					&eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id],
+					&(RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id]),
 					configuration,
 					0 //FIXME is correct to pass frame = 0??
     				);
@@ -1670,22 +1670,22 @@ static void init_SI_NB_IoT(
     //exit here
   }
 
-  if (eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].sizeof_SIB1_NB_IoT == 255) {
+  if (RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].sizeof_SIB1_NB_IoT == 255) {
     //exit here
   }
 
   //SIB23_NB_IoT
-  eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].SIB23_NB_IoT = (uint8_t*) malloc16(64);
+  RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].SIB23_NB_IoT = (uint8_t*) malloc16(64);
 
-  if (eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].SIB23_NB_IoT) {
-    eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].sizeof_SIB23_NB_IoT = do_SIB23_NB_IoT(
+  if (RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].SIB23_NB_IoT) {
+    RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].sizeof_SIB23_NB_IoT = do_SIB23_NB_IoT(
           ctxt_pP->module_id,
           CC_id,
-		  &eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id],
+		  &(RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id]),
 		  configuration
         );
 
-    if (eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].sizeof_SIB23_NB_IoT == 255) {
+    if (RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].sizeof_SIB23_NB_IoT == 255) {
       //exit here
     }
 
@@ -1700,7 +1700,7 @@ static void init_SI_NB_IoT(
     //Use the following as an example
 //    LOG_T(RRC, PROTOCOL_RRC_CTXT_FMT" npusch_config_common.groupAssignmentNPUSCH = %ld\n",
 //          PROTOCOL_RRC_CTXT_ARGS(ctxt_pP),
-//          eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].sib2_NB_IoT->radioResourceConfigCommon_r13.npusch_ConfigCommon_r13.
+//          RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].sib2_NB_IoT->radioResourceConfigCommon_r13.npusch_ConfigCommon_r13.
 //		  ul_ReferenceSignalsNPUSCH_r13.groupAssignmentNPUSCH_r13);
 
 
@@ -1713,9 +1713,9 @@ static void init_SI_NB_IoT(
          rrc_mac_config_req_NB_IoT(ctxt_pP->module_id,
                                   CC_id,
                                   0,
-                                  &eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id],
-                                  (SystemInformationBlockType1_NB_t*) &eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].sib1_NB_IoT,
-                                  (RadioResourceConfigCommonSIB_NB_r13_t *) &eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].carrier[CC_id].sib2_NB_IoT->radioResourceConfigCommon_r13,
+                                  &RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id],
+                                  (SystemInformationBlockType1_NB_t*) &RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].sib1_NB_IoT,
+                                  (RadioResourceConfigCommonSIB_NB_r13_t *) &RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].sib2_NB_IoT->radioResourceConfigCommon_r13,
                                   (struct PhysicalConfigDedicated_NB_r13 *)NULL,
                                   (struct LogicalChannelConfig_NB_r13 *)NULL,
                                   &mac_inst->rrc_config,
@@ -1732,41 +1732,38 @@ static void init_SI_NB_IoT(
 //-----------------------------------------------------------------------------
 //aka openair_rrc_eNB_init
 char openair_rrc_eNB_configuration_NB_IoT(
-  const module_id_t enb_mod_idP,
+  const module_id_t nbiot_mod_idP,
   NbIoTRrcConfigurationReq* configuration //MP: previously was insiede ITTI but actually I put it out
 )
 //-----------------------------------------------------------------------------
 {
   protocol_ctxt_t ctxt;
-  int             CC_id;
 
-  PROTOCOL_CTXT_SET_BY_MODULE_ID(&ctxt, enb_mod_idP, ENB_FLAG_YES, NOT_A_RNTI, 0, 0,enb_mod_idP);
+  PROTOCOL_CTXT_SET_BY_MODULE_ID(&ctxt, nbiot_mod_idP, ENB_FLAG_YES, NOT_A_RNTI, 0, 0,nbiot_mod_idP);
   LOG_I(RRC,
         PROTOCOL_RRC_CTXT_FMT" Init...\n",
         PROTOCOL_RRC_CTXT_ARGS(&ctxt));
 
 #if OCP_FRAMEWORK
-while ( eNB_rrc_inst_NB_IoT == NULL ) {
-  LOG_E(RRC, "eNB_rrc_inst_NB_IoT not yet initialized, waiting 1 second\n");
+while ( RC.nb_iot_rrc[nbiot_mod_idP] == NULL ) {
+  LOG_E(RRC, "RC.nb_iot_rrc %i not yet initialized, waiting 1 second\n",nbiot_mod_idP);
   sleep(1);
 }
 #endif
-  AssertFatal(eNB_rrc_inst_NB_IoT != NULL, "eNB_rrc_nb_iot_inst not initialized!");
+  AssertFatal(RC.nb_iot_rrc[nbiot_mod_idP] != NULL, "eNB_rrc_nb_iot_inst not initialized!");
   AssertFatal(NUMBER_OF_UE_MAX_NB_IoT < (module_id_t)0xFFFFFFFFFFFFFFFF, " variable overflow");
 
-  eNB_rrc_inst_NB_IoT[ctxt.module_id].Nb_ue = 0;
+  RC.nb_iot_rrc[ctxt.module_id]->Nb_ue = 0;
 
-  for (CC_id = 0; CC_id < MAX_NUM_CCs; CC_id++) {
-    eNB_rrc_inst_NB_IoT[ctxt.module_id].carrier[CC_id].Srb0.Active = 0;
-  }
 
-  uid_linear_allocator_init_NB_IoT(&eNB_rrc_inst_NB_IoT[ctxt.module_id].uid_allocator); //rrc_eNB_UE_context
-  RB_INIT(&eNB_rrc_inst_NB_IoT[ctxt.module_id].rrc_ue_head);
 
-  eNB_rrc_inst_NB_IoT[ctxt.module_id].initial_id2_s1ap_ids = hashtable_create (NUMBER_OF_UE_MAX_NB_IoT * 2, NULL, NULL);
-  eNB_rrc_inst_NB_IoT[ctxt.module_id].s1ap_id2_s1ap_ids    = hashtable_create (NUMBER_OF_UE_MAX_NB_IoT * 2, NULL, NULL);
+  uid_linear_allocator_init_NB_IoT(&RC.nb_iot_rrc[ctxt.module_id]->uid_allocator); //rrc_eNB_UE_context
+  RB_INIT(&RC.nb_iot_rrc[ctxt.module_id]->rrc_ue_head);
 
-  memcpy(&eNB_rrc_inst_NB_IoT[ctxt.module_id].configuration,configuration,sizeof(RrcConfigurationReq));
+  RC.nb_iot_rrc[ctxt.module_id]->initial_id2_s1ap_ids = hashtable_create (NUMBER_OF_UE_MAX_NB_IoT * 2, NULL, NULL);
+  RC.nb_iot_rrc[ctxt.module_id]->s1ap_id2_s1ap_ids    = hashtable_create (NUMBER_OF_UE_MAX_NB_IoT * 2, NULL, NULL);
+
+  memcpy(&RC.nb_iot_rrc[ctxt.module_id]->configuration,configuration,sizeof(NbIoTRrcConfigurationReq));
 
   /// System Information INIT
 
@@ -1775,20 +1772,17 @@ while ( eNB_rrc_inst_NB_IoT == NULL ) {
 
   LOG_I(RRC, PROTOCOL_RRC_CTXT_FMT" NB-IoT Rel13 detected\n",PROTOCOL_RRC_CTXT_ARGS(&ctxt));
 
-  //no CBA
-
-  //init SI
-  for (CC_id = 0; CC_id < MAX_NUM_CCs; CC_id++) {
-    init_SI_NB_IoT(&ctxt, CC_id,configuration);
-  }
-
+   init_SI_NB_IoT(&ctxt,
+            0,
+            configuration
+           );
   /*New implementation Raymond*/
   //MP: NEW defined in rrc_common_nb_iot.h // no more called in MAC/main.c but directly here
-  //rrc_init_global_param_NB();
+  rrc_init_global_param_NB_IoT();
 
   //XXX following the old implementation: openair_rrc_top_init is called in MAC/main.c
   //In Rymond version actually is called here
-  //openair_rrc_top_init_eNB_NB_IoT();
+  openair_rrc_top_init_eNB_NB_IoT();
 
   //init ch SRB0, SRB1 & BDTCH
   openair_eNB_rrc_on_NB_IoT(&ctxt);
@@ -1996,11 +1990,11 @@ int rrc_eNB_decode_ccch_NB_IoT(
               /* for that, remove the context from the RB tree */
 
 	      ///FIXME MP: warning --> implicit declaration because I insert the new type "rrc_ue_tree_NB_IoT_s"
-              RB_REMOVE(rrc_ue_tree_NB_IoT_s, &eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].rrc_ue_head, ue_context_p);
+              RB_REMOVE(rrc_ue_tree_NB_IoT_s, &RC.nb_iot_rrc[ctxt_pP->module_id]->rrc_ue_head, ue_context_p);
               /* and insert again, after changing rnti everywhere it has to be changed */
               ue_context_p->ue_id_rnti = ctxt_pP->rnti;
 	      ue_context_p->ue_context.rnti = ctxt_pP->rnti;
-              RB_INSERT(rrc_ue_tree_NB_IoT_s, &eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].rrc_ue_head, ue_context_p);
+              RB_INSERT(rrc_ue_tree_NB_IoT_s, &RC.nb_iot_rrc[ctxt_pP->module_id]->rrc_ue_head, ue_context_p);
               /* reset timers */
               ue_context_p->ue_context.ul_failure_timer = 0;
               ue_context_p->ue_context.ue_release_timer = 0;
@@ -2074,7 +2068,7 @@ int rrc_eNB_decode_ccch_NB_IoT(
 //                ue_context_p->ue_context.random_ue_identity);
 //#endif
           if (stmsi_received == 0)
-	    eNB_rrc_inst_NB_IoT[ctxt_pP->module_id].Nb_ue++;
+	    RC.nb_iot_rrc[ctxt_pP->module_id]->Nb_ue++;
 
         } else {
           // no context available
@@ -2827,12 +2821,12 @@ void* rrc_enb_task_NB_IoT(
       break;
 
     case S1AP_PAGING_IND:
-      LOG_E(RRC, "[eNB %d] Received not yet implemented message %s\n", instance, msg_name_p);
+      LOG_E(RRC, "[NB-IoT %d] Received not yet implemented message %s\n", instance, msg_name_p);
       break;
 
     case S1AP_E_RAB_SETUP_REQ:
       rrc_eNB_process_S1AP_E_RAB_SETUP_REQ(msg_p, msg_name_p, instance);
-      LOG_D(RRC, "[eNB %d] Received the message %s\n", instance, msg_name_p);
+      LOG_D(RRC, "[NB-IoT %d] Received the message %s\n", instance, msg_name_p);
       break;
 
     case S1AP_UE_CONTEXT_RELEASE_REQ:
@@ -2845,20 +2839,20 @@ void* rrc_enb_task_NB_IoT(
 
     case GTPV1U_ENB_DELETE_TUNNEL_RESP:
       /* Nothing to do. Apparently everything is done in S1AP processing */
-      //LOG_I(RRC, "[eNB %d] Received message %s, not processed because procedure not synched\n",
+      //LOG_I(RRC, "[NB-IoT %d] Received message %s, not processed because procedure not synched\n",
       //instance, msg_name_p);
       break;
 
 #   endif
 
       /* Messages from eNB app */
-    case RRC_CONFIGURATION_REQ:
-      LOG_I(RRC, "[eNB %d] Received %s\n", instance, msg_name_p);
+    case NBIOTRRC_CONFIGURATION_REQ:
+      LOG_I(RRC, "[NB-IoT  %d] Received %s\n", instance, msg_name_p);
       openair_rrc_eNB_configuration_NB_IoT(ENB_INSTANCE_TO_MODULE_ID(instance), &NBIOTRRC_CONFIGURATION_REQ(msg_p));
       break;
 
     default:
-      LOG_E(RRC, "[eNB %d] Received unexpected message %s\n", instance, msg_name_p);
+      LOG_E(RRC, "[NB-IoT  %d] Received unexpected message %s\n", instance, msg_name_p);
       break;
     }
 

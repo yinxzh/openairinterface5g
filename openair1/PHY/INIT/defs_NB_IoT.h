@@ -39,7 +39,6 @@
 
 /*brief Configure LTE_DL_FRAME_PARMS with components derived after initial synchronization (MIB-NB decoding + primary/secondary synch).*/
 void phy_config_mib_eNB_NB_IoT(int  		Mod_id,
-						   	   int      	CC_id,
 						   	   int          eutra_band,
 						       int          Nid_cell,
 						       int          Ncp,
@@ -61,14 +60,12 @@ void phy_config_mib_eNB_NB_IoT(int  		Mod_id,
 //                         );
 
 void phy_config_sib2_eNB_NB_IoT(uint8_t Mod_id,
-				int CC_id,
 				nfapi_nb_iot_config_t *config,
 				nfapi_rf_config_t *rf_config,
 				nfapi_uplink_reference_signal_config_t* ul_nrs_config,
 				extra_phyConfig_t* extra_phy_parms);
 
 void phy_config_dedicated_eNB_NB_IoT(module_id_t Mod_id,
-				     int CC_id,
 				     rnti_t rnti,
 				     extra_phyConfig_t* extra_phy_parms); 
 
