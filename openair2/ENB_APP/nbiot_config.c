@@ -55,6 +55,7 @@
 
 #include "common/config/config_userapi.h"
 #include "RRC_config_tools.h"
+#include "RRC_paramsvalues.h"
 #include "nbiot_paramdef.h"
 #include "L1_paramdef.h"
 #include "MACRLC_paramdef.h"
@@ -114,6 +115,7 @@ void RCconfig_NbIoTmacrlc(void) {
   paramdef_t NbIoT_MacRLC_Params[] = MACRLCPARAMS_DESC;
   paramlist_def_t NbIoT_MacRLC_ParamList = {NBIOT_MACRLCLIST_CONFIG_STRING,NULL,0};
 
+
 /* No component carrier for NbIoT, ignore number of CC */
 //  NbIoT_MacRLC_Params[MACRLC_CC_IDX ].paramflags = PARAMFLAG_DONOTREAD;
 
@@ -170,7 +172,7 @@ void RCconfig_NbIoTmacrlc(void) {
 int RCconfig_NbIoTRRC(MessageDef *msg_p, int nbiotrrc_id,eNB_RRC_INST_NB_IoT *nbiotrrc) {
 
 
-  char instprefix[MAX_OPTNAME_SIZE*2 + 16];
+  char instprefix[MAX_OPTNAME_SIZE*3 + 32];
   
  
   checkedparam_t NBIoTCheckParams[] = NBIOT_RRCPARAMS_CHECK_DESC;
@@ -180,6 +182,9 @@ int RCconfig_NbIoTRRC(MessageDef *msg_p, int nbiotrrc_id,eNB_RRC_INST_NB_IoT *nb
   checkedparam_t NBIoTPrachCheckParams[] = NBIOT_RRCLIST_NPRACHPARAMSCHECK_DESC;
 
   paramdef_t     NBIoTRRCRefParams[]      = NBIOTRRCPARAMS_RRCREF_DESC;
+
+  paramdef_t     NBIoTLteCCParams[] = NBIOT_LTECCPARAMS_DESC;
+  checkedparam_t NBIoTLteCCCheckParams[] = NBIOT_LTECCPARAMS_CHECK_DESC;
 /* map parameter checking array instances to parameter definition array instances */
   for (int i=0; (i<sizeof(NBIoTParams)/sizeof(paramdef_t)) && (i<sizeof(NBIoTCheckParams)/sizeof(checkedparam_t)); i++ ) {
      NBIoTParams[i].chkPptr = &(NBIoTCheckParams[i]); 
@@ -246,7 +251,20 @@ int RCconfig_NbIoTRRC(MessageDef *msg_p, int nbiotrrc_id,eNB_RRC_INST_NB_IoT *nb
 
   sprintf(instprefix, NBIOT_RRCLIST_CONFIG_STRING ".[%i]." NBIOT_LTERRCREF_CONFIG_STRING, nbiotrrc_id );
   config_get( NBIoTRRCRefParams,sizeof(NBIoTRRCRefParams)/sizeof(paramdef_t),instprefix); 
+
+  sprintf(instprefix, ENB_CONFIG_STRING_ENB_LIST ".[%i]."  ENB_CONFIG_STRING_COMPONENT_CARRIERS ".[%i]",
+          *(NBIoTRRCRefParams[NBIOT_RRCINST_IDX].uptr), *(NBIoTRRCRefParams[NBIOT_CCINST_IDX].uptr)); 
+
+  NBIoTLteCCParams[LTECCPARAMS_TDD_CONFIG_IDX  ].uptr	     = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).tdd_config);
+  NBIoTLteCCParams[LTECCPARAMS_TDD_CONFIG_S_IDX].uptr	     = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).tdd_config_s);
  
+
+  for (int i=0; (i<sizeof(NBIoTLteCCParams)/sizeof(paramdef_t)) && (i<sizeof(NBIoTLteCCCheckParams)/sizeof(checkedparam_t)); i++ ) {
+     NBIoTLteCCParams[i].chkPptr = &(NBIoTLteCCCheckParams[i]);
+  }
+  config_get( NBIoTLteCCParams,sizeof(NBIoTLteCCParams)/sizeof(paramdef_t),instprefix); 
+  NBIOTRRC_CONFIGURATION_REQ (msg_p).frame_type = config_get_processedint( &(NBIoTLteCCParams[LTECCPARAMS_FRAME_TYPE_IDX]) ); 
+  NBIOTRRC_CONFIGURATION_REQ (msg_p).prefix_type = config_get_processedint( &(NBIoTLteCCParams[LTECCPARAMS_PREFIX_TYPE_IDX]) );
 return 0;
 }
 

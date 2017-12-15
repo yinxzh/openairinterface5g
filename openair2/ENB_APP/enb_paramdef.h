@@ -192,8 +192,7 @@ static int DEFENBS[] = {0};
 
 /*------------------------------------------------------------------------------------------------------------------------------------------*/
 /*------------------------------------------------------------------------------------------------------------------------------------------*/
-/*    cell configuration section name */
-#define ENB_CONFIG_STRING_ENB_LIST                      "eNBs"
+
 
 /* cell configuration parameters names */
 #define ENB_CONFIG_STRING_ENB_ID                        "eNB_ID"
@@ -248,21 +247,9 @@ static int DEFENBS[] = {0};
 /*-------------------------------------------------------------------------------------------------------------------------------------------------*/
 /*-------------------------------------------------------------------------------------------------------------------------------------------------*/		  
 
-/* component carriers configuration section name */		
-#define ENB_CONFIG_STRING_COMPONENT_CARRIERS                            "component_carriers"		 
 
 /* component carries configuration parameters name */
-#define ENB_CONFIG_STRING_FRAME_TYPE                                    "frame_type"
-#define ENB_CONFIG_STRING_PBCH_REPETITION                               "pbch_repetition"
-#define ENB_CONFIG_STRING_TDD_CONFIG                                    "tdd_config"
-#define ENB_CONFIG_STRING_TDD_CONFIG_S                                  "tdd_config_s"
-#define ENB_CONFIG_STRING_PREFIX_TYPE                                   "prefix_type"
-#define ENB_CONFIG_STRING_EUTRA_BAND                                    "eutra_band"
-#define ENB_CONFIG_STRING_DOWNLINK_FREQUENCY                            "downlink_frequency"
-#define ENB_CONFIG_STRING_UPLINK_FREQUENCY_OFFSET                       "uplink_frequency_offset"
-#define ENB_CONFIG_STRING_NID_CELL                                      "Nid_cell"
-#define ENB_CONFIG_STRING_N_RB_DL                                       "N_RB_DL"
-#define ENB_CONFIG_STRING_CELL_MBSFN                                    "Nid_cell_mbsfn"
+
 #define ENB_CONFIG_STRING_NB_ANT_PORTS                                  "nb_antenna_ports"
 #define ENB_CONFIG_STRING_NB_ANT_TX                                     "nb_antennas_tx"
 #define ENB_CONFIG_STRING_NB_ANT_RX                                     "nb_antennas_rx"

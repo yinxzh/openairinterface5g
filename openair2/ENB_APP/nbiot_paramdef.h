@@ -38,8 +38,51 @@
 #include "BCCH-Config-NB-r13.h"
 #include "PCCH-Config-NB-r13.h"
 #include "ACK-NACK-NumRepetitions-NB-r13.h"
+#include "TDD-Config.h"
 
-#include "RRC_paramsvalues.h"
+
+
+
+ 
+/*
+  int16_t                 eutra_band;
+  uint32_t                downlink_frequency;
+  int32_t                 uplink_frequency_offset;
+  int16_t                 Nid_cell;// for testing, change later
+  int16_t                 N_RB_DL;// for testing, change later
+*/
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* SIB1 parameters possibly coming  from LTE RRC (in band deployment)                                                */
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/*                                     component carriers configuration parameters                                                                                                                   */
+/*   optname                                                   helpstr   paramflags    XXXptr                                        defXXXval                    type         numelt  checked_param */
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+#define NBIOT_LTECCPARAMS_CHECK_DESC { \
+             { .s3a= { config_checkstr_assign_integer, FRAMETYPE_OKVALUES, FRAMETYPE_MODVALUES,2}} ,      \
+             { .s2= { config_check_intrange,           TDDCONFIG_OKRANGE}},                               \
+             { .s2= { config_check_intrange,           TDDCONFIGS_OKRANGE}},                              \
+             { .s3a= { config_checkstr_assign_integer, PREFIX_OKVALUES, PREFIX_MODVALUES,2}} ,            \
+}
+
+
+#define NBIOT_LTECCPARAMS_DESC { \
+{ENB_CONFIG_STRING_FRAME_TYPE,                                   NULL,   0,           strptr:NULL,                                    defstrval:"FDD",           TYPE_STRING,     0},  \
+{ENB_CONFIG_STRING_TDD_CONFIG,                                   NULL,   0,           iptr:NULL,                                      defintval:3,               TYPE_UINT,       0},  \
+{ENB_CONFIG_STRING_TDD_CONFIG_S,                                 NULL,   0,           iptr:NULL,                                      defintval:0,               TYPE_UINT,       0},  \
+{ENB_CONFIG_STRING_PREFIX_TYPE,                                  NULL,   0,           strptr:NULL,                                    defstrval:"NORMAL",        TYPE_STRING,     0},  \
+{ENB_CONFIG_STRING_EUTRA_BAND,                                   NULL,   0,           iptr:NULL,                                      defintval:7,               TYPE_UINT,       0},  \
+{ENB_CONFIG_STRING_DOWNLINK_FREQUENCY,                           NULL,   0,           i64ptr:NULL,                                    defint64val:2680000000,    TYPE_UINT64,     0},  \
+{ENB_CONFIG_STRING_UPLINK_FREQUENCY_OFFSET,                      NULL,   0,           iptr:NULL,                                      defintval:-120000000,      TYPE_INT,        0},  \
+{ENB_CONFIG_STRING_NID_CELL,                                     NULL,   0,           iptr:NULL,                                      defintval:0,               TYPE_UINT,       0},  \
+{ENB_CONFIG_STRING_N_RB_DL,                                      NULL,   0,           iptr:NULL,                                      defintval:25,              TYPE_UINT,       0},  \
+{ENB_CONFIG_STRING_CELL_MBSFN,                                   NULL,   0,           iptr:NULL,                                      defintval:0,               TYPE_INT,        0},  \
+}
+#define LTECCPARAMS_FRAME_TYPE_IDX             0
+#define LTECCPARAMS_TDD_CONFIG_IDX             1
+#define LTECCPARAMS_TDD_CONFIG_S_IDX           2
+#define LTECCPARAMS_PREFIX_TYPE_IDX            3
+/*-------------------------------------------------------------------------------------------------------------------*/
+
 /* NB-Iot RRC list section name */		
 #define NBIOT_RRCLIST_CONFIG_STRING          "NB-IoT_RRCs"		 
 
@@ -234,6 +277,8 @@
 {"CC_inst",                          NULL,   0,            uptr:NULL,     defintval:0, 	  TYPE_UINT,	   0},  \
 }
 /*--------------------------------------------------------------------------------------------------------------*/
+#define NBIOT_RRCINST_IDX             0
+#define NBIOT_CCINST_IDX              1
 
 #define NBIOT_RRCLIST_NPRACHPARAMS_CONFIG_STRING        "NPRACH-NB-r13"
 

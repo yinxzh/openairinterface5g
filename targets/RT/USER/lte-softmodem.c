@@ -327,7 +327,7 @@ void exit_fun(const char* s)
 
   oai_exit = 1;
 
-  if (UE_flag==0) {
+  if (UE_flag==0 && RC.ru != NULL) {
     for (ru_id=0; ru_id<RC.nb_RU;ru_id++) {
       if (RC.ru[ru_id]->rfdevice.trx_end_func)
 	RC.ru[ru_id]->rfdevice.trx_end_func(&RC.ru[ru_id]->rfdevice);

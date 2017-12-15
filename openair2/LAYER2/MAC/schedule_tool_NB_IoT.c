@@ -26,7 +26,10 @@ void init_tool_sib1(eNB_MAC_INST_NB_IoT *mac_inst){
 		}
 		mac_inst->sib1_count[i]=j;
 	}
-
+        if ( mac_inst->rrc_config.sib1_NB_IoT_sched_config.repetitions == 0 ) {
+             mac_inst->rrc_config.sib1_NB_IoT_sched_config.repetitions =2;
+             printf("[NBIOT MAC sib1_NB_IoT_sched_config.repetition was 0\n");
+        }
 	mac_inst->sib1_period = 256 / mac_inst->rrc_config.sib1_NB_IoT_sched_config.repetitions;
 
 	return ;

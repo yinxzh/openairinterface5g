@@ -368,7 +368,7 @@ uint8_t do_SIB1_NB_IoT(uint8_t Mod_id, int CC_id,
 #endif
   {
 	//FIXME in NB-IoT mandatory to be FDD --> so must give an error
-	  LOG_E(RRC,"[eNB %d] Frame Type is TDD --> not supported by NB-IoT, exiting\n", Mod_id); //correct?
+	  LOG_E(RRC,"[NB-IoT %d] Frame Type is TDD --> not supported by NB-IoT, exiting\n", Mod_id); //correct?
 	  exit(-1);
   }
 
@@ -390,7 +390,7 @@ uint8_t do_SIB1_NB_IoT(uint8_t Mod_id, int CC_id,
   xer_fprint(stdout, &asn_DEF_BCCH_DL_SCH_Message_NB, (void*)bcch_message);
 #endif
 
-
+/*
   enc_rval = uper_encode_to_buffer(&asn_DEF_BCCH_DL_SCH_Message_NB,
                                    (void*)bcch_message,
                                    carrier->SIB1_NB_IoT,
@@ -401,9 +401,9 @@ uint8_t do_SIB1_NB_IoT(uint8_t Mod_id, int CC_id,
 
 
 #ifdef USER_MODE
-  LOG_D(RRC,"[eNB] SystemInformationBlockType1-NB Encoded %zd bits (%zd bytes)\n",enc_rval.encoded,(enc_rval.encoded+7)/8);
+  LOG_D(RRC,"[NB-IoT] SystemInformationBlockType1-NB Encoded %zd bits (%zd bytes)\n",enc_rval.encoded,(enc_rval.encoded+7)/8);
 #endif
-
+*/
   if (enc_rval.encoded==-1) {
     return(-1);
   }
@@ -446,23 +446,23 @@ uint8_t do_SIB23_NB_IoT(uint8_t Mod_id,
   if (bcch_message) {
     memset(bcch_message,0,sizeof(BCCH_DL_SCH_Message_NB_t));
   } else {
-    LOG_E(RRC,"[eNB %d] BCCH_MESSAGE_NB is null, exiting\n", Mod_id);
+    LOG_E(RRC,"[NB-IoT %d] BCCH_MESSAGE_NB is null, exiting\n", Mod_id);
     exit(-1);
   }
 
   //before schould be allocated memory somewhere?
-  if (!carrier->sib2_NB_IoT) {
-    LOG_E(RRC,"[eNB %d] sib2_NB_IoT is null, exiting\n", Mod_id);
-    exit(-1);
-  }
+//  if (!carrier->sib2_NB_IoT) {
+//    LOG_E(RRC,"[NB-IoT %d] sib2_NB_IoT is null, exiting\n", Mod_id);
+//    exit(-1);
+//  }
+//
+//  if (!carrier->sib3_NB_IoT) {
+//    LOG_E(RRC,"[NB-IoT %d] sib3_NB_IoT is null, exiting\n", Mod_id);
+//    exit(-1);
+//  }
 
-  if (!carrier->sib3_NB_IoT) {
-    LOG_E(RRC,"[eNB %d] sib3_NB_IoT is null, exiting\n", Mod_id);
-    exit(-1);
-  }
 
-
-  LOG_I(RRC,"[eNB %d] Configuration SIB2/3\n", Mod_id);
+  LOG_I(RRC,"[NB-IoT %d] Configuration SIB2/3\n", Mod_id);
 
   sib2_NB_part = CALLOC(1,sizeof(struct SystemInformation_NB_r13_IEs__sib_TypeAndInfo_r13__Member));
   sib3_NB_part = CALLOC(1,sizeof(struct SystemInformation_NB_r13_IEs__sib_TypeAndInfo_r13__Member));
@@ -641,14 +641,14 @@ uint8_t do_SIB23_NB_IoT(uint8_t Mod_id,
                                    (void*)bcch_message,
                                    carrier->SIB23_NB_IoT,
                                    900);
-  AssertFatal (enc_rval.encoded > 0, "ASN1 message encoding failed (%s, %lu)!\n",
-               enc_rval.failed_type->name, enc_rval.encoded);
+//  AssertFatal (enc_rval.encoded > 0, "ASN1 message encoding failed (%s, %lu)!\n",
+//               enc_rval.failed_type->name, enc_rval.encoded);
 
 //#if defined(ENABLE_ITTI).....
 
 
 #ifdef USER_MODE
-  LOG_D(RRC,"[eNB] SystemInformation-NB Encoded %zd bits (%zd bytes)\n",enc_rval.encoded,(enc_rval.encoded+7)/8);
+  LOG_D(RRC,"[NB-IoT] SystemInformation-NB Encoded %zd bits (%zd bytes)\n",enc_rval.encoded,(enc_rval.encoded+7)/8);
 #endif
 
   if (enc_rval.encoded==-1) {
@@ -914,7 +914,7 @@ uint8_t do_SecurityModeCommand_NB_IoT(
 //# if !defined(DISABLE_XER_SPRINT)....
 
 #ifdef USER_MODE
-  LOG_D(RRC,"[eNB %d] securityModeCommand-NB for UE %x Encoded %zd bits (%zd bytes)\n",
+  LOG_D(RRC,"[NB-IoT %d] securityModeCommand-NB for UE %x Encoded %zd bits (%zd bytes)\n",
         ctxt_pP->module_id,
         ctxt_pP->rnti,
         enc_rval.encoded,
@@ -922,7 +922,7 @@ uint8_t do_SecurityModeCommand_NB_IoT(
 #endif
 
   if (enc_rval.encoded==-1) {
-    LOG_E(RRC,"[eNB %d] ASN1 : securityModeCommand-NB encoding failed for UE %x\n",
+    LOG_E(RRC,"[NB-IoT %d] ASN1 : securityModeCommand-NB encoding failed for UE %x\n",
           ctxt_pP->module_id,
           ctxt_pP->rnti);
     return(-1);
@@ -972,7 +972,7 @@ uint8_t do_UECapabilityEnquiry_NB_IoT(
 //# if !defined(DISABLE_XER_SPRINT)....
 
 #ifdef USER_MODE
-  LOG_D(RRC,"[eNB %d] UECapabilityEnquiry-NB for UE %x Encoded %zd bits (%zd bytes)\n",
+  LOG_D(RRC,"[NB-IoT %d] UECapabilityEnquiry-NB for UE %x Encoded %zd bits (%zd bytes)\n",
         ctxt_pP->module_id,
         ctxt_pP->rnti,
         enc_rval.encoded,
@@ -980,7 +980,7 @@ uint8_t do_UECapabilityEnquiry_NB_IoT(
 #endif
 
   if (enc_rval.encoded==-1) {
-    LOG_E(RRC,"[eNB %d] ASN1 : UECapabilityEnquiry-NB encoding failed for UE %x\n",
+    LOG_E(RRC,"[NB-IoT %d] ASN1 : UECapabilityEnquiry-NB encoding failed for UE %x\n",
           ctxt_pP->module_id,
           ctxt_pP->rnti);
     return(-1);
@@ -1114,7 +1114,7 @@ uint8_t do_RRCConnectionReestablishmentReject_NB_IoT(
     if ((message_string_size = xer_sprint(message_string, sizeof(message_string), &asn_DEF_DL_CCCH_Message_NB, (void *) &dl_ccch_msg_NB_IoT)) > 0) {
       MessageDef *msg_p;
 
-      msg_p = itti_alloc_new_message_sized (TASK_RRC_ENB, RRC_DL_CCCH, message_string_size + sizeof (IttiMsgText));
+      msg_p = itti_alloc_new_message_sized (TASK_RRC_ENB_NB_IoT, RRC_DL_CCCH, message_string_size + sizeof (IttiMsgText));
       msg_p->ittiMsg.rrc_dl_ccch.size = message_string_size;
       memcpy(&msg_p->ittiMsg.rrc_dl_ccch.text, message_string, message_string_size);
 
@@ -1181,7 +1181,7 @@ uint8_t do_RRCConnectionReject_NB_IoT(
     if ((message_string_size = xer_sprint(message_string, sizeof(message_string), &asn_DEF_DL_CCCH_Message_NB, (void *) &dl_ccch_msg_NB_IoT)) > 0) {
       MessageDef *msg_p;
 
-      msg_p = itti_alloc_new_message_sized (TASK_RRC_ENB, RRC_DL_CCCH, message_string_size + sizeof (IttiMsgText));
+      msg_p = itti_alloc_new_message_sized (TASK_RRC_ENB_NB_IoT, RRC_DL_CCCH, message_string_size + sizeof (IttiMsgText));
       msg_p->ittiMsg.rrc_dl_ccch.size = message_string_size;
       memcpy(&msg_p->ittiMsg.rrc_dl_ccch.text, message_string, message_string_size);
 
@@ -1238,7 +1238,7 @@ uint8_t do_DLInformationTransfer_NB_IoT(
     if ((message_string_size = xer_sprint(message_string, sizeof(message_string), &asn_DEF_DL_DCCH_Message_NB, (void *)&dl_dcch_msg_NB_IoT)) > 0) {
       MessageDef *msg_p;
 
-      msg_p = itti_alloc_new_message_sized (TASK_RRC_ENB, RRC_DL_DCCH, message_string_size + sizeof (IttiMsgText));
+      msg_p = itti_alloc_new_message_sized (TASK_RRC_ENB_NB_IoT, RRC_DL_DCCH, message_string_size + sizeof (IttiMsgText));
       msg_p->ittiMsg.rrc_dl_dcch.size = message_string_size;
       memcpy(&msg_p->ittiMsg.rrc_dl_dcch.text, message_string, message_string_size);
 
@@ -1310,7 +1310,7 @@ uint8_t do_RRCConnectionReestablishment_NB_IoT(
     if ((message_string_size = xer_sprint(message_string, sizeof(message_string), &asn_DEF_DL_CCCH_Message_NB, (void *) &dl_ccch_msg_NB_IoT)) > 0) {
       MessageDef *msg_p;
 
-      msg_p = itti_alloc_new_message_sized (TASK_RRC_ENB, RRC_DL_CCCH, message_string_size + sizeof (IttiMsgText));
+      msg_p = itti_alloc_new_message_sized (TASK_RRC_ENB_NB_IoT, RRC_DL_CCCH, message_string_size + sizeof (IttiMsgText));
       msg_p->ittiMsg.rrc_dl_ccch.size = message_string_size;
       memcpy(&msg_p->ittiMsg.rrc_dl_ccch.text, message_string, message_string_size);
 
