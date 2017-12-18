@@ -93,8 +93,8 @@ void init_mac_NB_IoT(eNB_MAC_INST_NB_IoT *mac_inst)
     }
   }
 
-  //mac_inst->si_window_length = ms160;
-  //mac_inst->sibs_NB_IoT_sched[0].si_periodicity = rf64;
+  mac_inst->rrc_config.si_window_length = ms160;
+  mac_inst->rrc_config.sibs_NB_IoT_sched[0].si_periodicity = rf64;
 
   for(i=0;i<256;++i){
     mac_inst->sibs_table[i] = -1;
@@ -137,7 +137,8 @@ void init_mac_NB_IoT(eNB_MAC_INST_NB_IoT *mac_inst)
   mac_inst->num_uss_list = NUM_USS_PP;
   for(i=0;i<NUM_USS_PP;++i)
   {
-    //rrc_mac_config_req_NB_IoT(&mac_inst->rrc_config, 0, 0, 1, i);
+
+//    rrc_mac_config_req_NB_IoT(&mac_inst->rrc_config, 0, 0, 1, i);
     (mac_inst->UE_list_spec+i)->head = -1;
     (mac_inst->UE_list_spec+i)->tail = -1;
     (mac_inst->UE_list_spec+i)->NPDCCH_config_dedicated.R_max = mac_inst->rrc_config.npdcch_ConfigDedicated[i].R_max;
@@ -195,7 +196,8 @@ void init_mac_NB_IoT(eNB_MAC_INST_NB_IoT *mac_inst)
   //Initialize uplink resource from nprach configuration
   Initialize_Resource();
   //add_UL_Resource(mac_inst);    
-  extend_available_resource_DL(mac_inst, mac_inst->current_subframe + 1 + 160);
+  extend_available_resource_DL(mac_inst, mac_inst->current_subframe + 1 + 160);  
+
 }
 
 

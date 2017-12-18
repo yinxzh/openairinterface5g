@@ -586,7 +586,7 @@ void rrc_mac_config_req_NB_IoT(
     //return 0;
 
       init_mac_NB_IoT(eNB);
-
+      RC.L1_NB_IoT[Mod_idP]->configured=1;
 
    /*if( ded_flag!=0 )
    {
