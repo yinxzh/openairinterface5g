@@ -197,5 +197,6 @@ typedef struct IF_Module_NB_IoT_s{
 void IF_Module_init_L1_NB_IoT(void);
 void IF_Module_init_L2_NB_IoT(void);
 
-
+/*Interface for Downlink, transmitting the DLSCH SDU, DCI SDU*/
+void Schedule_Response_NB_IoT(Sched_Rsp_NB_IoT_t *Sched_INFO);
 #endif

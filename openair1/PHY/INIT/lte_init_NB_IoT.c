@@ -39,12 +39,26 @@
 #include "PHY/INIT/defs_NB_IoT.h"   // nfapi_interface.h & IF_Module_NB_IoT.h are included here
 //#include "RadioResourceConfigCommonSIB-NB-r13.h"
 //#include "RadioResourceConfigDedicated-NB-r13.h"
-//#include "openair2/PHY_INTERFACE/IF_Module_NB_IoT.h"
-//#include "openair2/RRC/LITE/proto_NB_IoT.h"
+#include "openair2/PHY_INTERFACE/IF_Module_NB_IoT.h"
+#include "openair1/SCHED/IF_Module_L1_primitives_NB_IoT.h"
+
 
 //extern uint16_t prach_root_sequence_map0_3[838];
 //extern uint16_t prach_root_sequence_map4[138];
 //uint8_t dmrs1_tab[8] = {0,2,3,4,6,8,9,10};
+int l1_north_init_NB_IoT() {
+
+  int i;
+  AssertFatal(RC.nb_nb_iot_L1_inst>0,"nb_nb_iot_L1_inst=%d\n",RC.nb_nb_iot_L1_inst);
+  AssertFatal(RC.L1_NB_IoT !=NULL,"RC.L1_NB_IoT is null\n");
+  for (i=0;i<RC.nb_nb_iot_L1_inst;i++) {
+    AssertFatal(RC.L1_NB_IoT[i]!=NULL,"RC.L1_NB_IoT[%d] is null\n",i);
+      if ((RC.L1_NB_IoT[i]->if_inst =  IF_Module_init(i))<0) return(-1); 
+      RC.L1_NB_IoT[i]->if_inst->PHY_config_req = phy_config_request;
+      RC.L1_NB_IoT[i]->if_inst->schedule_response = schedule_response_NB_IoT;
+  }
+  return(0);
+}
 
 
 void phy_config_mib_eNB_NB_IoT(int  			Mod_id,
@@ -61,8 +75,8 @@ void phy_config_mib_eNB_NB_IoT(int  			Mod_id,
 {
 
 
-  AssertFatal(PHY_vars_eNB_NB_IoT_g != NULL, "PHY_vars_eNB_NB_IoT_g instance pointer doesn't exist\n");
-  AssertFatal(PHY_vars_eNB_NB_IoT_g[Mod_id] != NULL, "PHY_vars_eNB_NB_IoT_g instance %d doesn't exist\n",Mod_id);
+  AssertFatal(RC.L1_NB_IoT != NULL, "PHY_vars_eNB_NB_IoT_g instance pointer doesn't exist\n");
+  AssertFatal(RC.L1_NB_IoT[Mod_id] != NULL, "PHY_vars_eNB_NB_IoT_g instance %d doesn't exist\n",Mod_id);
   
 
   NB_IoT_DL_FRAME_PARMS *fp = &(RC.L1_NB_IoT[Mod_id]->frame_parms_NB_IoT);

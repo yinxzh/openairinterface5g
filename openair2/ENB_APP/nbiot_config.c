@@ -88,21 +88,21 @@ void RCconfig_NbIoTL1(void) {
 
       }
       else if (strcmp(*(NbIoT_L1_ParamList.paramarray[j][L1_TRANSPORT_N_PREFERENCE_IDX].strptr), "nfapi") == 0) {
-/*	RC.eNB[j][0]->eth_params_n.local_if_name            = strdup(*(L1_ParamList.paramarray[j][L1_LOCAL_N_IF_NAME_IDX].strptr));
-	RC.eNB[j][0]->eth_params_n.my_addr                  = strdup(*(L1_ParamList.paramarray[j][L1_LOCAL_N_ADDRESS_IDX].strptr));
-	RC.eNB[j][0]->eth_params_n.remote_addr              = strdup(*(L1_ParamList.paramarray[j][L1_REMOTE_N_ADDRESS_IDX].strptr));
-	RC.eNB[j][0]->eth_params_n.my_portc                 = *(L1_ParamList.paramarray[j][L1_LOCAL_N_PORTC_IDX].iptr);
-	RC.eNB[j][0]->eth_params_n.remote_portc             = *(L1_ParamList.paramarray[j][L1_REMOTE_N_PORTC_IDX].iptr);
-	RC.eNB[j][0]->eth_params_n.my_portd                 = *(L1_ParamList.paramarray[j][L1_LOCAL_N_PORTD_IDX].iptr);
-	RC.eNB[j][0]->eth_params_n.remote_portd             = *(L1_ParamList.paramarray[j][L1_REMOTE_N_PORTD_IDX].iptr);
-	RC.eNB[j][0]->eth_params_n.transp_preference        = ETH_UDP_MODE;*/
+	RC.L1_NB_IoT[j]->eth_params_n.local_if_name	       = strdup(*(NbIoT_L1_ParamList.paramarray[j][L1_LOCAL_N_IF_NAME_IDX].strptr));
+	RC.L1_NB_IoT[j]->eth_params_n.my_addr		      = strdup(*(NbIoT_L1_ParamList.paramarray[j][L1_LOCAL_N_ADDRESS_IDX].strptr));
+	RC.L1_NB_IoT[j]->eth_params_n.remote_addr	      = strdup(*(NbIoT_L1_ParamList.paramarray[j][L1_REMOTE_N_ADDRESS_IDX].strptr));
+	RC.L1_NB_IoT[j]->eth_params_n.my_portc  	      = *(NbIoT_L1_ParamList.paramarray[j][L1_LOCAL_N_PORTC_IDX].iptr);
+	RC.L1_NB_IoT[j]->eth_params_n.remote_portc	      = *(NbIoT_L1_ParamList.paramarray[j][L1_REMOTE_N_PORTC_IDX].iptr);
+	RC.L1_NB_IoT[j]->eth_params_n.my_portd  	      = *(NbIoT_L1_ParamList.paramarray[j][L1_LOCAL_N_PORTD_IDX].iptr);
+	RC.L1_NB_IoT[j]->eth_params_n.remote_portd	      = *(NbIoT_L1_ParamList.paramarray[j][L1_REMOTE_N_PORTD_IDX].iptr);
+	RC.L1_NB_IoT[j]->eth_params_n.transp_preference       = ETH_UDP_MODE;
       }
       
       else { // other midhaul
       }	
     }// j=0..num_inst
-//    printf("Initializing northbound interface for NB-IoT L1\n");
-//    l1_north_init_eNB();
+    printf("Initializing northbound interface for NB-IoT L1\n");
+    l1_north_init_NB_IoT();
   } else {
     LOG_I(PHY,"No " NBIOT_L1LIST_CONFIG_STRING " configuration found");    
   }
@@ -123,41 +123,39 @@ void RCconfig_NbIoTmacrlc(void) {
   
 
   if ( NbIoT_MacRLC_ParamList.numelt > 0) {
+//    l2_init_eNB_NB_IoT();
+    for (int j=0;j<RC.nb_nb_iot_macrlc_inst;j++) {
 
-    
-/*    mac_top_init_eNB();   
-    for (j=0;j<RC.nb_macrlc_inst;j++) {
-
-      if (strcmp(*(MacRLC_ParamList.paramarray[j][MACRLC_TRANSPORT_N_PREFERENCE_IDX].strptr), "local_RRC") == 0) {
+      if (strcmp(*(NbIoT_MacRLC_ParamList.paramarray[j][MACRLC_TRANSPORT_N_PREFERENCE_IDX].strptr), "local_RRC") == 0) {
 	// check number of instances is same as RRC/PDCP
 	
-      } else if (strcmp(*(MacRLC_ParamList.paramarray[j][MACRLC_TRANSPORT_N_PREFERENCE_IDX].strptr), "cudu") == 0) {
-	RC.mac[j]->eth_params_n.local_if_name            = strdup(*(MacRLC_ParamList.paramarray[j][MACRLC_LOCAL_N_IF_NAME_IDX].strptr));
-	RC.mac[j]->eth_params_n.my_addr                  = strdup(*(MacRLC_ParamList.paramarray[j][MACRLC_LOCAL_N_ADDRESS_IDX].strptr));
-	RC.mac[j]->eth_params_n.remote_addr              = strdup(*(MacRLC_ParamList.paramarray[j][MACRLC_REMOTE_N_ADDRESS_IDX].strptr));
-	RC.mac[j]->eth_params_n.my_portc                 = *(MacRLC_ParamList.paramarray[j][MACRLC_LOCAL_N_PORTC_IDX].iptr);
-	RC.mac[j]->eth_params_n.remote_portc             = *(MacRLC_ParamList.paramarray[j][MACRLC_REMOTE_N_PORTC_IDX].iptr);
-	RC.mac[j]->eth_params_n.my_portd                 = *(MacRLC_ParamList.paramarray[j][MACRLC_LOCAL_N_PORTD_IDX].iptr);
-	RC.mac[j]->eth_params_n.remote_portd             = *(MacRLC_ParamList.paramarray[j][MACRLC_REMOTE_N_PORTD_IDX].iptr);;
-	RC.mac[j]->eth_params_n.transp_preference        = ETH_UDP_MODE;
+      } else if (strcmp(*(NbIoT_MacRLC_ParamList.paramarray[j][MACRLC_TRANSPORT_N_PREFERENCE_IDX].strptr), "cudu") == 0) {
+	RC.nb_iot_mac[j]->eth_params_n.local_if_name            = strdup(*(NbIoT_MacRLC_ParamList.paramarray[j][MACRLC_LOCAL_N_IF_NAME_IDX].strptr));
+	RC.nb_iot_mac[j]->eth_params_n.my_addr                  = strdup(*(NbIoT_MacRLC_ParamList.paramarray[j][MACRLC_LOCAL_N_ADDRESS_IDX].strptr));
+	RC.nb_iot_mac[j]->eth_params_n.remote_addr              = strdup(*(NbIoT_MacRLC_ParamList.paramarray[j][MACRLC_REMOTE_N_ADDRESS_IDX].strptr));
+	RC.nb_iot_mac[j]->eth_params_n.my_portc                 = *(NbIoT_MacRLC_ParamList.paramarray[j][MACRLC_LOCAL_N_PORTC_IDX].iptr);
+	RC.nb_iot_mac[j]->eth_params_n.remote_portc             = *(NbIoT_MacRLC_ParamList.paramarray[j][MACRLC_REMOTE_N_PORTC_IDX].iptr);
+	RC.nb_iot_mac[j]->eth_params_n.my_portd                 = *(NbIoT_MacRLC_ParamList.paramarray[j][MACRLC_LOCAL_N_PORTD_IDX].iptr);
+	RC.nb_iot_mac[j]->eth_params_n.remote_portd             = *(NbIoT_MacRLC_ParamList.paramarray[j][MACRLC_REMOTE_N_PORTD_IDX].iptr);;
+	RC.nb_iot_mac[j]->eth_params_n.transp_preference        = ETH_UDP_MODE;
       } else { // other midhaul
-	AssertFatal(1==0,"MACRLC %d: %s unknown northbound midhaul\n",j, *(MacRLC_ParamList.paramarray[j][MACRLC_TRANSPORT_N_PREFERENCE_IDX].strptr));
+	AssertFatal(1==0,"MACRLC %d: %s unknown northbound midhaul\n",j, *(NbIoT_MacRLC_ParamList.paramarray[j][MACRLC_TRANSPORT_N_PREFERENCE_IDX].strptr));
       }	
 
-      if (strcmp(*(MacRLC_ParamList.paramarray[j][MACRLC_TRANSPORT_S_PREFERENCE_IDX].strptr), "local_L1") == 0) {
+      if (strcmp(*(NbIoT_MacRLC_ParamList.paramarray[j][MACRLC_TRANSPORT_S_PREFERENCE_IDX].strptr), "local_L1") == 0) {
 
 	
-      } else if (strcmp(*(MacRLC_ParamList.paramarray[j][MACRLC_TRANSPORT_S_PREFERENCE_IDX].strptr), "nfapi") == 0) {
-	RC.mac[j]->eth_params_s.local_if_name            = strdup(*(MacRLC_ParamList.paramarray[j][MACRLC_LOCAL_S_IF_NAME_IDX].strptr));
-	RC.mac[j]->eth_params_s.my_addr                  = strdup(*(MacRLC_ParamList.paramarray[j][MACRLC_LOCAL_S_ADDRESS_IDX].strptr));
-	RC.mac[j]->eth_params_s.remote_addr              = strdup(*(MacRLC_ParamList.paramarray[j][MACRLC_REMOTE_S_ADDRESS_IDX].strptr));
-	RC.mac[j]->eth_params_s.my_portc                 = *(MacRLC_ParamList.paramarray[j][MACRLC_LOCAL_S_PORTC_IDX].iptr);
-	RC.mac[j]->eth_params_s.remote_portc             = *(MacRLC_ParamList.paramarray[j][MACRLC_REMOTE_S_PORTC_IDX].iptr);
-	RC.mac[j]->eth_params_s.my_portd                 = *(MacRLC_ParamList.paramarray[j][MACRLC_LOCAL_S_PORTD_IDX].iptr);
-	RC.mac[j]->eth_params_s.remote_portd             = *(MacRLC_ParamList.paramarray[j][MACRLC_REMOTE_S_PORTD_IDX].iptr);
-	RC.mac[j]->eth_params_s.transp_preference        = ETH_UDP_MODE;
+      } else if (strcmp(*(NbIoT_MacRLC_ParamList.paramarray[j][MACRLC_TRANSPORT_S_PREFERENCE_IDX].strptr), "nfapi") == 0) {
+	RC.nb_iot_mac[j]->eth_params_s.local_if_name		= strdup(*(NbIoT_MacRLC_ParamList.paramarray[j][MACRLC_LOCAL_S_IF_NAME_IDX].strptr));
+	RC.nb_iot_mac[j]->eth_params_s.my_addr  		= strdup(*(NbIoT_MacRLC_ParamList.paramarray[j][MACRLC_LOCAL_S_ADDRESS_IDX].strptr));
+	RC.nb_iot_mac[j]->eth_params_s.remote_addr		= strdup(*(NbIoT_MacRLC_ParamList.paramarray[j][MACRLC_REMOTE_S_ADDRESS_IDX].strptr));
+	RC.nb_iot_mac[j]->eth_params_s.my_portc 		= *(NbIoT_MacRLC_ParamList.paramarray[j][MACRLC_LOCAL_S_PORTC_IDX].iptr);
+	RC.nb_iot_mac[j]->eth_params_s.remote_portc             = *(NbIoT_MacRLC_ParamList.paramarray[j][MACRLC_REMOTE_S_PORTC_IDX].iptr);
+	RC.nb_iot_mac[j]->eth_params_s.my_portd                 = *(NbIoT_MacRLC_ParamList.paramarray[j][MACRLC_LOCAL_S_PORTD_IDX].iptr);
+	RC.nb_iot_mac[j]->eth_params_s.remote_portd             = *(NbIoT_MacRLC_ParamList.paramarray[j][MACRLC_REMOTE_S_PORTD_IDX].iptr);
+	RC.nb_iot_mac[j]->eth_params_s.transp_preference        = ETH_UDP_MODE;
       } else { // other midhaul
-	AssertFatal(1==0,"MACRLC %d: %s unknown southbound midhaul\n",j,*(MacRLC_ParamList.paramarray[j][MACRLC_TRANSPORT_S_PREFERENCE_IDX].strptr));
+	AssertFatal(1==0,"MACRLC %d: %s unknown southbound midhaul\n",j,*(NbIoT_MacRLC_ParamList.paramarray[j][MACRLC_TRANSPORT_S_PREFERENCE_IDX].strptr));
       }	
     }// j=0..num_inst */
   } else {// MacRLC_ParamList.numelt > 0
@@ -213,13 +211,13 @@ int RCconfig_NbIoTRRC(MessageDef *msg_p, int nbiotrrc_id,eNB_RRC_INST_NB_IoT *nb
   NBIoTParams[NBIOT_NPUSCH_SRS_SUBFRAMECONFIG_NB_IDX].uptr		 = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p). npusch_srs_SubframeConfig_NB);
   NBIoTParams[NBIOT_NPUSCH_THREETONE_CYCLICSHIFT_R13_IDX].uptr 	         = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).npusch_threeTone_CyclicShift_r13);
   NBIoTParams[NBIOT_NPUSCH_SIXTONE_CYCLICSHIFT_R13_IDX].uptr             = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).npusch_sixTone_CyclicShift_r13);
-  NBIoTParams[NBIOT_NPUSCH_GROUPHOPPINGENABLED_IDX].uptr                 = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).npusch_groupHoppingEnabled);
+  
   NBIoTParams[NBIOT_NPUSCH_GROUPASSIGNMENTNPUSCH_R13_IDX].uptr           = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).npusch_groupAssignmentNPUSCH_r13);
   NBIoTParams[NBIOT_DL_GAPTHRESHOLD_NB_IDX].uptr                         = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).dl_GapThreshold_NB);	 
   NBIoTParams[NBIOT_DL_GAPPERIODICITY_NB_IDX].uptr                       = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).dl_GapPeriodicity_NB);	 
   
   NBIoTParams[NBIOT_NPUSCH_P0_NOMINALNPUSCH_IDX].uptr                    = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).npusch_p0_NominalNPUSCH);	  
-  NBIoTParams[NBIOT_NPUSCH_ALPHA_IDX].uptr                               = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).npusch_alpha);			  
+  		  
   NBIoTParams[NBIOT_DELTAPREAMBLEMSG3_IDX].uptr                          = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).deltaPreambleMsg3); 	  
   NBIoTParams[NBIOT_UE_TIMERSANDCONSTANTS_T300_NB_IDX].uptr              = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).ue_TimersAndConstants_t300_NB);						 
   NBIoTParams[NBIOT_UE_TIMERSANDCONSTANTS_T301_NB_IDX].uptr              = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).ue_TimersAndConstants_t301_NB);
@@ -232,8 +230,9 @@ int RCconfig_NbIoTRRC(MessageDef *msg_p, int nbiotrrc_id,eNB_RRC_INST_NB_IoT *nb
   config_get( NBIoTParams,sizeof(NBIoTParams)/sizeof(paramdef_t),instprefix); 
 
   NBIOTRRC_CONFIGURATION_REQ (msg_p).nprach_SubcarrierMSG3_RangeStart    = config_get_processedint( &(NBIoTParams[NBIOT_NPRACH_SUBCARRIERMSG3_RANGESTART_IDX]) );
-  NBIOTRRC_CONFIGURATION_REQ (msg_p).dl_GapDurationCoeff_NB              = config_get_processedint( &(NBIoTParams[NBIOT_DL_GAPDURATIONCOEFF_NB_IDX] ) ); 	 
-
+  NBIOTRRC_CONFIGURATION_REQ (msg_p).npusch_groupHoppingEnabled          = config_get_processedint( &(NBIoTParams[NBIOT_NPUSCH_GROUPHOPPINGENABLED_IDX]      ) ); 
+  NBIOTRRC_CONFIGURATION_REQ (msg_p).dl_GapDurationCoeff_NB              = config_get_processedint( &(NBIoTParams[NBIOT_DL_GAPDURATIONCOEFF_NB_IDX]          ) ); 	 
+  NBIOTRRC_CONFIGURATION_REQ (msg_p).npusch_alpha                        = config_get_processedint( &(NBIoTParams[NBIOT_NPUSCH_ALPHA_IDX]                    ) );
   for (int i=0; i<MAX_NUM_NBIOT_CELEVELS; i++) {
        char *tmpptr=NULL;
        NBIoTPrachParams[NBIOT_NPRACH_PERIODICITY_IDX ].uptr	            = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).nprach_Periodicity[i]);		

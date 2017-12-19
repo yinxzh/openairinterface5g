@@ -1,3 +1,9 @@
+#include "openair1/PHY/defs_L1.h"
+#include "openair1/PHY/extern.h"
+#include "LAYER2/MAC/extern.h"
+#include "LAYER2/MAC/proto.h"
+#include "common/ran_context.h"
+
 #include "openair2/PHY_INTERFACE/IF_Module_NB_IoT.h"
 #include "openair2/PHY_INTERFACE/IF_Module_L2_primitives_NB_IoT.h"
 #include "openair1/SCHED/IF_Module_L1_primitives_NB_IoT.h"

@@ -39,6 +39,7 @@
 #include <string.h>
 #include <math.h>
 #include "common_lib.h"
+#include "openair2/PHY_INTERFACE/IF_Module_NB_IoT.h"
 
 //#include <complex.h>
 #include "assertions.h"
@@ -516,7 +517,10 @@ typedef struct PHY_VARS_eNB_NB_IoT_s {
   eNB_proc_NB_IoT_t             proc;
   int                           num_RU;
   RU_t                          *RU_list[MAX_NUM_RU_PER_eNB];
-  eth_params_t                  *eth_params;
+  /// Ethernet parameters for northbound midhaul interface (L1 to Mac)
+  eth_params_t         eth_params_n;
+  /// Ethernet parameters for fronthaul interface (upper L1 to Radio head)
+  eth_params_t         eth_params;
   int                           single_thread_flag;
   openair0_rf_map               rf_map;
   int                           abstraction_flag;
@@ -542,6 +546,7 @@ typedef struct PHY_VARS_eNB_NB_IoT_s {
   uint32_t                      rx_total_gain_dB;
   NB_IoT_DL_FRAME_PARMS         frame_parms;
   PHY_MEASUREMENTS_eNB_NB_IoT   measurements[NUMBER_OF_eNB_SECTORS_MAX_NB_IoT]; /// Measurement variables
+  IF_Module_NB_IoT_t            *if_inst;
   NB_IoT_eNB_COMMON             common_vars;
   NB_IoT_eNB_SRS                srs_vars[NUMBER_OF_UE_MAX_NB_IoT];
   NB_IoT_eNB_PBCH               pbch;

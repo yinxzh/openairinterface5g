@@ -189,8 +189,10 @@ void RCconfig_RU(void) {
 
       RC.ru[j]->nb_tx                             = *(RUParamList.paramarray[j][RU_NB_TX_IDX].uptr);
       RC.ru[j]->nb_rx                             = *(RUParamList.paramarray[j][RU_NB_RX_IDX].uptr);
-      for (int i=0; i<RUParamList.paramarray[j][RU_NBIOTRRC_LIST_IDX].numelt; i++) {
-           RC.ru[j]->NB_IoT_eNB_list[i] = RC.L1_NB_IoT[RUParamList.paramarray[j][RU_NBIOTRRC_LIST_IDX].uptr[i]];
+      if (RC.ru[j]->NB_IoT_eNB_list != NULL) {
+          for (int i=0; (RC.ru[j]->NB_IoT_eNB_list[i] != NULL) && (i<RUParamList.paramarray[j][RU_NBIOTRRC_LIST_IDX].numelt); i++) {
+               RC.ru[j]->NB_IoT_eNB_list[i] = RC.L1_NB_IoT[RUParamList.paramarray[j][RU_NBIOTRRC_LIST_IDX].uptr[i]];
+          }
       }
     }// j=0..num_rus
   } else {

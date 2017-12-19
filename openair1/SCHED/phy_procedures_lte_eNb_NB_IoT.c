@@ -30,8 +30,8 @@
  * \warning
  */
 
-
 #include "PHY/defs_L1_NB_IoT.h"
+
 #include "PHY/LTE_ESTIMATION/defs_NB_IoT.h"
 //#include "PHY/extern_NB_IoT.h" //where we get the global Sched_Rsp_t structure filled
 //#include "SCHED/defs.h"

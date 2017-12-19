@@ -1006,6 +1006,7 @@ add_library(SECU_CN ${SECU_CN_SRC})
 ################################"
 set(SCHED_SRC
   ${OPENAIR1_DIR}/SCHED/fapi_l1.c
+  ${OPENAIR1_DIR}/SCHED/IF_Module_L1_primitives_NB_IoT.c
   ${OPENAIR1_DIR}/SCHED/phy_procedures_lte_eNb.c
   ${OPENAIR1_DIR}/SCHED/phy_procedures_lte_eNb_NB_IoT.c
   ${OPENAIR1_DIR}/SCHED/phy_procedures_lte_ue.c

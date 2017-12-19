@@ -203,10 +203,11 @@ void *eNB_app_task(void *args_p)
   itti_mark_task_ready (TASK_ENB_APP);
 
   RCconfig_L1();
-  RCconfig_NbIoTL1();
-
+  if (RC.nb_nb_iot_L1_inst>0) 
+      RCconfig_NbIoTL1();
   RCconfig_macrlc();
-  RCconfig_NbIoTmacrlc();
+  if (RC.nb_nb_iot_macrlc_inst>0) 
+      RCconfig_NbIoTmacrlc();
   if (RC.nb_L1_inst>0) AssertFatal(l1_north_init_eNB()==0,"could not initialize L1 north interface\n");
 
   # if defined(ENABLE_ITTI)

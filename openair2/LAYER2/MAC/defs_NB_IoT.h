@@ -478,7 +478,10 @@ typedef struct RA_template_list_s{
 
 /*! \brief top level eNB MAC structure */
 typedef struct eNB_MAC_INST_NB_IoT_s {
-
+  /// Ethernet parameters for northbound midhaul interface
+  eth_params_t         eth_params_n;
+  /// Ethernet parameters for fronthaul interface
+  eth_params_t         eth_params_s;
   //  System
   uint32_t hyper_system_frame;
   uint32_t system_frame;

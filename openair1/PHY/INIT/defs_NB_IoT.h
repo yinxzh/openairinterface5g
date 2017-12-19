@@ -71,7 +71,7 @@ void phy_config_dedicated_eNB_NB_IoT(module_id_t Mod_id,
 
 // void phy_init_lte_top_NB_IoT(NB_IoT_DL_FRAME_PARMS *frame_parms); 
 
-
+int l1_north_init_NB_IoT(void);
 
 #endif
 
