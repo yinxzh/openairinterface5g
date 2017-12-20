@@ -1719,7 +1719,7 @@ static void init_SI_NB_IoT(
                                   (struct PhysicalConfigDedicated_NB_r13 *)NULL,
                                   (struct LogicalChannelConfig_NB_r13 *)NULL,
                                   &RC.nb_iot_mac[ctxt_pP->module_id]->rrc_config,
-                                  0,
+                                  
                                   0
                                   );
   } else {
