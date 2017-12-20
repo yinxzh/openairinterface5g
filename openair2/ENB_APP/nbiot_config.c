@@ -247,16 +247,21 @@ int RCconfig_NbIoTRRC(MessageDef *msg_p, int nbiotrrc_id,eNB_RRC_INST_NB_IoT *nb
        config_get( NBIoTPrachParams,sizeof(NBIoTPrachParams)/sizeof(paramdef_t),instprefix); 
        NBIOTRRC_CONFIGURATION_REQ (msg_p).npdcch_Offset_RA[i] = config_get_processedint( &(NBIoTPrachParams[NBIOT_NPDCCH_OFFSET_RA_IDX]) ); 
   }
-
+/* get the LTE RRC and CC this NB-IoT RRC instance is attached to */
   sprintf(instprefix, NBIOT_RRCLIST_CONFIG_STRING ".[%i]." NBIOT_LTERRCREF_CONFIG_STRING, nbiotrrc_id );
   config_get( NBIoTRRCRefParams,sizeof(NBIoTRRCRefParams)/sizeof(paramdef_t),instprefix); 
 
+/* read SIB1 parameters in the LTE RRC and CC sections */
   sprintf(instprefix, ENB_CONFIG_STRING_ENB_LIST ".[%i]."  ENB_CONFIG_STRING_COMPONENT_CARRIERS ".[%i]",
           *(NBIoTRRCRefParams[NBIOT_RRCINST_IDX].uptr), *(NBIoTRRCRefParams[NBIOT_CCINST_IDX].uptr)); 
 
-  NBIoTLteCCParams[LTECCPARAMS_TDD_CONFIG_IDX  ].uptr	     = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).tdd_config);
-  NBIoTLteCCParams[LTECCPARAMS_TDD_CONFIG_S_IDX].uptr	     = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).tdd_config_s);
- 
+  NBIoTLteCCParams[LTECCPARAMS_TDD_CONFIG_IDX  ].uptr	         = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).tdd_config);
+  NBIoTLteCCParams[LTECCPARAMS_TDD_CONFIG_S_IDX].uptr	         = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).tdd_config_s);
+  NBIoTLteCCParams[LTECCPARAMS_EUTRA_BAND_IDX ].uptr	         = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).eutra_band);             
+  NBIoTLteCCParams[LTECCPARAMS_DOWNLINK_FREQUENCY_IDX].uptr      = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).downlink_frequency);      
+  NBIoTLteCCParams[LTECCPARAMS_UPLINK_FREQUENCY_OFFSET_IDX].uptr = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).uplink_frequency_offset);
+  NBIoTLteCCParams[LTECCPARAMS_NID_CELL_IDX].uptr	         = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).Nid_cell);                 
+  NBIoTLteCCParams[LTECCPARAMS_N_RB_DL_IDX].uptr	         = (uint32_t *)&(NBIOTRRC_CONFIGURATION_REQ (msg_p).N_RB_DL);                   
 
   for (int i=0; (i<sizeof(NBIoTLteCCParams)/sizeof(paramdef_t)) && (i<sizeof(NBIoTLteCCCheckParams)/sizeof(checkedparam_t)); i++ ) {
      NBIoTLteCCParams[i].chkPptr = &(NBIoTLteCCCheckParams[i]);
@@ -264,6 +269,7 @@ int RCconfig_NbIoTRRC(MessageDef *msg_p, int nbiotrrc_id,eNB_RRC_INST_NB_IoT *nb
   config_get( NBIoTLteCCParams,sizeof(NBIoTLteCCParams)/sizeof(paramdef_t),instprefix); 
   NBIOTRRC_CONFIGURATION_REQ (msg_p).frame_type = config_get_processedint( &(NBIoTLteCCParams[LTECCPARAMS_FRAME_TYPE_IDX]) ); 
   NBIOTRRC_CONFIGURATION_REQ (msg_p).prefix_type = config_get_processedint( &(NBIoTLteCCParams[LTECCPARAMS_PREFIX_TYPE_IDX]) );
+  NBIOTRRC_CONFIGURATION_REQ (msg_p).prefix_type = config_get_processedint( &(NBIoTLteCCParams[LTECCPARAMS_PREFIX_TYPE_UL_IDX]) );
 return 0;
 }
 

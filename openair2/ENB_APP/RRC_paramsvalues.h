@@ -41,6 +41,7 @@
 #define ENB_CONFIG_STRING_TDD_CONFIG                                    "tdd_config"
 #define ENB_CONFIG_STRING_TDD_CONFIG_S                                  "tdd_config_s"
 #define ENB_CONFIG_STRING_PREFIX_TYPE                                   "prefix_type"
+#define ENB_CONFIG_STRING_PREFIX_TYPE_UL                                "prefix_type_UL"
 #define ENB_CONFIG_STRING_EUTRA_BAND                                    "eutra_band"
 #define ENB_CONFIG_STRING_DOWNLINK_FREQUENCY                            "downlink_frequency"
 #define ENB_CONFIG_STRING_UPLINK_FREQUENCY_OFFSET                       "uplink_frequency_offset"
@@ -60,6 +61,11 @@
 
 #define PREFIX_OKVALUES                                         {"NORMAL","EXTENDED"}
 #define PREFIX_MODVALUES                                        { NORMAL, EXTENDED} 
+
+#define PREFIXUL_OKVALUES                                       {"NORMAL","EXTENDED"}
+#define PREFIXUL_MODVALUES                                      { NORMAL, EXTENDED} 
+
+#define NRBDL_OKVALUES                                          {6,15,25,50,75,100}
 
 #define UETIMER_T300_OKVALUES                                   {100,200,300,400,600,1000,1500,2000}
 #define UETT300(A)                                              UE_TimersAndConstants__t300_ ## A
