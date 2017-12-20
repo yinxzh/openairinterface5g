@@ -219,4 +219,9 @@ uint8_t *parse_ulsch_header_NB_IoT( uint8_t *mac_header, uint8_t *num_ce, uint8_
 
 void rx_sdu_NB_IoT(module_id_t module_id, int CC_id, frame_t frame, sub_frame_t subframe, uint16_t rnti, uint8_t *sdu, uint16_t  length);
 
+// main
+
+void mac_top_init_eNB_NB_IoT(void);
+
+
 #endif

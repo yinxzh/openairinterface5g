@@ -11,6 +11,7 @@
 #ifndef __MAC_EXTERN_NB_IOT_H__
 #define __MAC_EXTERN_NB_IOT_H__
 
+#include "common/extern.h"
 
 // #ifdef USER_MODE
 // //#include "stdio.h"
@@ -30,23 +31,7 @@
 extern IF_Module_NB_IoT_t *if_inst_NB_IoT;
 extern eNB_MAC_INST_NB_IoT *mac_inst_NB_IoT;
 
-// //extern uint32_t EBSR_Level[63];
-// extern const uint32_t Extended_BSR_TABLE[BSR_TABLE_SIZE];
-// //extern uint32_t Extended_BSR_TABLE[63];  ----currently not used 
 
-// extern const uint8_t cqi2fmt0_agg[MAX_SUPPORTED_BW][CQI_VALUE_RANGE];
-
-// extern const uint8_t cqi2fmt1x_agg[MAX_SUPPORTED_BW][CQI_VALUE_RANGE];
-
-// extern const uint8_t cqi2fmt2x_agg[MAX_SUPPORTED_BW][CQI_VALUE_RANGE];
-
-// extern UE_MAC_INST *UE_mac_inst;
-// extern eNB_MAC_INST *eNB_mac_inst;
-// extern eNB_RRC_INST *eNB_rrc_inst;
-//extern UE_RRC_INST_NB_IoT *UE_rrc_inst_NB_IoT;
-// extern UE_MAC_INST *ue_mac_inst;
-// extern MAC_RLC_XFACE *Mac_rlc_xface;
-// extern uint8_t Is_rrc_registered;
 
 
 //#ifndef USER_MODE

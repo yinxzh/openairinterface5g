@@ -15,29 +15,10 @@
 #include "vars_NB_IoT.h"
 #include "RRC/LITE/proto_NB_IoT.h"
 
+#include "common/ran_context.h"
+
 #define NUM_USS_PP 3
 #define USER_NUM_USS 10
-
-int mac_init_global_param_NB_IoT(void)
-{
-
-  if (rlc_module_init()!=0) {
-    return(-1);
- }
-
-  LOG_I(MAC,"[MAIN] RRC NB-IoT initialization of global params\n");
-  rrc_init_global_param_NB_IoT();
-
-
-  LOG_I(MAC,"[MAIN] PDCP layer init\n");
-#ifdef USER_MODE
-  pdcp_layer_init ();
-#else
-  pdcp_module_init ();
-#endif
-
-  return 0;
-}
 
 
 // Initial function of the intialization for NB-IoT MAC
@@ -200,10 +181,70 @@ void init_mac_NB_IoT(eNB_MAC_INST_NB_IoT *mac_inst)
 
 }
 
+void mac_top_init_eNB_NB_IoT(void)
+{
+
+  module_id_t    i;
+
+  //UE_list_t *UE_list;
+  //eNB_MAC_INST_NB_IoT *mac;
+  
+  LOG_I(MAC,"[NB-IoT MAIN] Init function start:nb_macrlc_inst=%d\n",RC.nb_nb_iot_macrlc_inst);
+
+  if (RC.nb_nb_iot_macrlc_inst>0) {
+    RC.nb_iot_mac = (eNB_MAC_INST_NB_IoT**)malloc16(RC.nb_nb_iot_macrlc_inst*sizeof(eNB_MAC_INST_NB_IoT*));
+    AssertFatal(RC.nb_iot_mac != NULL,"can't ALLOCATE %zu Bytes for %d eNB_MAC_INST with size %zu \n",
+    RC.nb_nb_iot_macrlc_inst*sizeof(eNB_MAC_INST_NB_IoT*),
+    RC.nb_nb_iot_macrlc_inst,
+    sizeof(eNB_MAC_INST_NB_IoT));
+    for (i=0;i<RC.nb_nb_iot_macrlc_inst;i++) {
+      RC.nb_iot_mac[i] = (eNB_MAC_INST_NB_IoT*)malloc16(sizeof(eNB_MAC_INST_NB_IoT));
+      AssertFatal(RC.nb_iot_mac != NULL,
+      "can't ALLOCATE %zu Bytes for %d eNB_MAC_INST with size %zu \n",
+      RC.nb_macrlc_inst*sizeof(eNB_MAC_INST_NB_IoT*),RC.nb_nb_iot_macrlc_inst,sizeof(eNB_MAC_INST_NB_IoT));
+      LOG_D(MAC,"[NB-IoT MAIN] ALLOCATE %zu Bytes for %d eNB_MAC_INST @ %p\n",sizeof(eNB_MAC_INST_NB_IoT),RC.nb_nb_iot_macrlc_inst,RC.nb_iot_mac);
+      bzero(RC.nb_iot_mac[i],sizeof(eNB_MAC_INST_NB_IoT));
+      RC.nb_iot_mac[i]->Mod_id = i;
+
+      //reserve for fapi structure initialization
+    }
+
+    AssertFatal(rlc_module_init()==0,"Could not initialize RLC layer\n");
+
+    // These should be out of here later
+    pdcp_layer_init ();
+
+    rrc_init_global_param();
+
+  } else {
+    RC.nb_iot_mac = NULL;
+  }
+  
+  // for NB-IoT UE list initialization will be in init_mac_NB_IoT
+
+}
+
+int rlcmac_init_global_param_NB_IoT(void)
+{
+
+
+  LOG_I(MAC,"[MAIN] CALLING RLC_MODULE_INIT...\n");
+
+  if (rlc_module_init()!=0) {
+    return(-1);
+  }
+
+  pdcp_layer_init ();
+
+  LOG_I(MAC,"[MAIN] Init Global Param Done\n");
+
+  return 0;
+}
+
 
 int l2_init_eNB_NB_IoT(void)
 {
-  LOG_I(MAC,"[MAIN] Mapping L2 IF-Module functions\n");
+  /*LOG_I(MAC,"[MAIN] Mapping L2 IF-Module functions\n");
   //IF_Module_init_L2();
 
   LOG_I(MAC,"[MAIN] MAC_INIT_GLOBAL_PARAM NB-IoT IN...\n");
@@ -212,9 +253,15 @@ int l2_init_eNB_NB_IoT(void)
 
   Is_rrc_registered_NB_IoT=0;
   mac_init_global_param_NB_IoT();
-  Is_rrc_registered_NB_IoT=1;
+  Is_rrc_registered_NB_IoT=1;*/
 
-  init_mac_NB_IoT(mac_inst);
+  LOG_I(MAC,"[NB-IoT] MAC_INIT_GLOBAL_PARAM IN...\n");
+
+  rlcmac_init_global_param_NB_IoT();
+
+  LOG_D(MAC,"[NB-IoT] ALL INIT OK\n");
+
+  //init_mac_NB_IoT(mac_inst);
 
   return(1);
 }

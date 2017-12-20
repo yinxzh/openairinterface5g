@@ -438,7 +438,11 @@ void rrc_mac_config_req_NB_IoT(
      * 2)Call the PHY_config_req for trigger the NB_phy_config_mib_eNB() at the end
      */
 
-      l2_init_eNB_NB_IoT();
+      if (RC.nb_iot_mac == NULL) l2_init_eNB_NB_IoT();
+
+      mac_top_init_eNB_NB_IoT();
+
+      //l2_init_eNB_NB_IoT();
       
       eNB = RC.nb_iot_mac[Mod_idP];
     //Mapping OAI params into FAPI params

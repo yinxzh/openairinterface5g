@@ -482,6 +482,8 @@ typedef struct eNB_MAC_INST_NB_IoT_s {
   eth_params_t         eth_params_n;
   /// Ethernet parameters for fronthaul interface
   eth_params_t         eth_params_s;
+
+  uint8_t Mod_id;
   //  System
   uint32_t hyper_system_frame;
   uint32_t system_frame;

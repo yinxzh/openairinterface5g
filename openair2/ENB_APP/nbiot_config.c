@@ -59,7 +59,7 @@
 #include "nbiot_paramdef.h"
 #include "L1_paramdef.h"
 #include "MACRLC_paramdef.h"
-
+#include "LAYER2/MAC/proto_NB_IoT.h"
 
 
 void RCconfig_NbIoTL1(void) {
@@ -124,6 +124,7 @@ void RCconfig_NbIoTmacrlc(void) {
 
   if ( NbIoT_MacRLC_ParamList.numelt > 0) {
 //    l2_init_eNB_NB_IoT();
+    mac_top_init_eNB_NB_IoT();
     for (int j=0;j<RC.nb_nb_iot_macrlc_inst;j++) {
 
       if (strcmp(*(NbIoT_MacRLC_ParamList.paramarray[j][MACRLC_TRANSPORT_N_PREFERENCE_IDX].strptr), "local_RRC") == 0) {
