@@ -129,7 +129,6 @@ void rrc_mac_config_req_NB_IoT(
     RadioResourceConfigCommonSIB_NB_r13_t   *radioResourceConfigCommon,
     PhysicalConfigDedicated_NB_r13_t        *physicalConfigDedicated,
     LogicalChannelConfig_NB_r13_t           *logicalChannelConfig,            //FIXME: decide how to use it
-    rrc_config_NB_IoT_t                     *mac_config,
     uint8_t                                 ded_flag,
     uint8_t                                 ue_list_ded_num);
 
