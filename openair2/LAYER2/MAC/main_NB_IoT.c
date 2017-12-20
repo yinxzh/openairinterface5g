@@ -189,7 +189,7 @@ void mac_top_init_eNB_NB_IoT(void)
   //UE_list_t *UE_list;
   //eNB_MAC_INST_NB_IoT *mac;
   
-  LOG_I(MAC,"[NB-IoT MAIN] Init function start:nb_macrlc_inst=%d\n",RC.nb_nb_iot_macrlc_inst);
+  LOG_I(MAC,"[NB-IoT MAIN] Init function start:nb_nbiot_macrlc_inst=%d\n",RC.nb_nb_iot_macrlc_inst);
 
   if (RC.nb_nb_iot_macrlc_inst>0) {
     RC.nb_iot_mac = (eNB_MAC_INST_NB_IoT**)malloc16(RC.nb_nb_iot_macrlc_inst*sizeof(eNB_MAC_INST_NB_IoT*));

@@ -440,13 +440,13 @@ void rrc_mac_config_req_NB_IoT(
 
       if (RC.nb_iot_mac == NULL) l2_init_eNB_NB_IoT();
 
-      mac_top_init_eNB_NB_IoT();
+//      mac_top_init_eNB_NB_IoT();
 
       //l2_init_eNB_NB_IoT();
       
       eNB = RC.nb_iot_mac[Mod_idP];
     //Mapping OAI params into FAPI params
-      config_mib_fapi_NB_IoT( rntiP,
+      config_mib_fapi_NB_IoT( Mod_idP,
 			      carrier->physCellId,
 			      sib1_NB_IoT->freqBandIndicator_r13,
 			      carrier->Ncp,
@@ -465,35 +465,40 @@ void rrc_mac_config_req_NB_IoT(
     if(sib1_NB_IoT != NULL)
     {
         mac_config->sib1_NB_IoT_sched_config.repetitions = 4;
-        mac_config->sib1_NB_IoT_sched_config.starting_rf = sib1_NB_IoT->si_RadioFrameOffset_r13[0];
+        if (sib1_NB_IoT->si_RadioFrameOffset_r13 != NULL) {
+           mac_config->sib1_NB_IoT_sched_config.starting_rf = sib1_NB_IoT->si_RadioFrameOffset_r13[0];
+        }
         mac_config->si_window_length = sib1_NB_IoT->si_WindowLength_r13;
 
         SchedulingInfo_NB_r13_t *scheduling_info_list;
 
         ///CE level 0
+        if ( sib1_NB_IoT->schedulingInfoList_r13.list.array != NULL){ 
         scheduling_info_list = sib1_NB_IoT->schedulingInfoList_r13.list.array[0];
 
         mac_config->sibs_NB_IoT_sched[0].si_periodicity =           scheduling_info_list->si_Periodicity_r13 ;
         mac_config->sibs_NB_IoT_sched[0].si_repetition_pattern =    scheduling_info_list->si_RepetitionPattern_r13 ;
         mac_config->sibs_NB_IoT_sched[0].sib_mapping_info =         scheduling_info_list->sib_MappingInfo_r13.list.array[0][0] | scheduling_info_list->sib_MappingInfo_r13.list.array[1][0];
         mac_config->sibs_NB_IoT_sched[0].si_tb =                    scheduling_info_list->si_TB_r13  ;
-
+        }
         ///CE level 1
-        scheduling_info_list = sib1_NB_IoT->schedulingInfoList_r13.list.array[1];
+       if ( sib1_NB_IoT->schedulingInfoList_r13.list.array != NULL) {
+            scheduling_info_list = sib1_NB_IoT->schedulingInfoList_r13.list.array[1];
 
         mac_config->sibs_NB_IoT_sched[1].si_periodicity =           scheduling_info_list->si_Periodicity_r13 ;
         mac_config->sibs_NB_IoT_sched[1].si_repetition_pattern =    scheduling_info_list->si_RepetitionPattern_r13 ;
         mac_config->sibs_NB_IoT_sched[1].sib_mapping_info =         scheduling_info_list->sib_MappingInfo_r13.list.array[0][0] | scheduling_info_list->sib_MappingInfo_r13.list.array[1][0];
         mac_config->sibs_NB_IoT_sched[1].si_tb =                    scheduling_info_list->si_TB_r13  ;
-
+        }
         ///CE level 2
-        scheduling_info_list = sib1_NB_IoT->schedulingInfoList_r13.list.array[2];
+      if ( sib1_NB_IoT->schedulingInfoList_r13.list.array != NULL) {
+           scheduling_info_list = sib1_NB_IoT->schedulingInfoList_r13.list.array[2];
 
         mac_config->sibs_NB_IoT_sched[2].si_periodicity =           scheduling_info_list->si_Periodicity_r13 ;
         mac_config->sibs_NB_IoT_sched[2].si_repetition_pattern =    scheduling_info_list->si_RepetitionPattern_r13 ;
         mac_config->sibs_NB_IoT_sched[2].sib_mapping_info =         scheduling_info_list->sib_MappingInfo_r13.list.array[0][0] | scheduling_info_list->sib_MappingInfo_r13.list.array[1][0];
         mac_config->sibs_NB_IoT_sched[2].si_tb =                    scheduling_info_list->si_TB_r13  ;
-
+       }
         mac_config->sibs_NB_IoT_sched[3].sib_mapping_info = 0x0;
         mac_config->sibs_NB_IoT_sched[4].sib_mapping_info = 0x0;
         mac_config->sibs_NB_IoT_sched[5].sib_mapping_info = 0x0;
@@ -515,29 +520,33 @@ void rrc_mac_config_req_NB_IoT(
         NPRACH_Parameters_NB_r13_t* nprach_parameter;
 
         ///CE level 0
+        if ( radioResourceConfigCommon->nprach_Config_r13.nprach_ParametersList_r13.list.array[0] != NULL) {
         nprach_parameter = radioResourceConfigCommon->nprach_Config_r13.nprach_ParametersList_r13.list.array[0];
 
         mac_config->mac_NPRACH_ConfigSIB[0].mac_numRepetitionsPerPreambleAttempt_NB_IoT = nprach_parameter->numRepetitionsPerPreambleAttempt_r13;
         mac_config->mac_NPRACH_ConfigSIB[0].mac_npdcch_NumRepetitions_RA_NB_IoT         = nprach_parameter->npdcch_NumRepetitions_RA_r13;
         mac_config->mac_NPRACH_ConfigSIB[0].mac_npdcch_StartSF_CSS_RA_NB_IoT            = nprach_parameter->npdcch_StartSF_CSS_RA_r13;
         mac_config->mac_NPRACH_ConfigSIB[0].mac_npdcch_Offset_RA_NB_IoT                 = nprach_parameter->npdcch_Offset_RA_r13;
-
+        }
         ///CE level 1
+
+        if ( radioResourceConfigCommon->nprach_Config_r13.nprach_ParametersList_r13.list.array[1] != NULL) {
         nprach_parameter = radioResourceConfigCommon->nprach_Config_r13.nprach_ParametersList_r13.list.array[1];
 
         mac_config->mac_NPRACH_ConfigSIB[1].mac_numRepetitionsPerPreambleAttempt_NB_IoT = nprach_parameter->numRepetitionsPerPreambleAttempt_r13;
         mac_config->mac_NPRACH_ConfigSIB[1].mac_npdcch_NumRepetitions_RA_NB_IoT         = nprach_parameter->npdcch_NumRepetitions_RA_r13;
         mac_config->mac_NPRACH_ConfigSIB[1].mac_npdcch_StartSF_CSS_RA_NB_IoT            = nprach_parameter->npdcch_StartSF_CSS_RA_r13;
         mac_config->mac_NPRACH_ConfigSIB[1].mac_npdcch_Offset_RA_NB_IoT                 = nprach_parameter->npdcch_Offset_RA_r13;
-
+        }
         ///CE level 2
+        if ( radioResourceConfigCommon->nprach_Config_r13.nprach_ParametersList_r13.list.array[2] != NULL) {
         nprach_parameter = radioResourceConfigCommon->nprach_Config_r13.nprach_ParametersList_r13.list.array[2];
 
         mac_config->mac_NPRACH_ConfigSIB[2].mac_numRepetitionsPerPreambleAttempt_NB_IoT = nprach_parameter->numRepetitionsPerPreambleAttempt_r13;
         mac_config->mac_NPRACH_ConfigSIB[2].mac_npdcch_NumRepetitions_RA_NB_IoT         = nprach_parameter->npdcch_NumRepetitions_RA_r13;
         mac_config->mac_NPRACH_ConfigSIB[2].mac_npdcch_StartSF_CSS_RA_NB_IoT            = nprach_parameter->npdcch_StartSF_CSS_RA_r13;
         mac_config->mac_NPRACH_ConfigSIB[2].mac_npdcch_Offset_RA_NB_IoT                 = nprach_parameter->npdcch_Offset_RA_r13;
-
+        }
 
         //eNB_mac_inst_NB_IoT[Mod_idP].common_channels[CC_idP].radioResourceConfigCommon  = radioResourceConfigCommon;
         if (carrier->ul_CarrierFreq>0)
@@ -581,7 +590,7 @@ void rrc_mac_config_req_NB_IoT(
     }
 
     //Now trigger the phy_config_xxx for configuring PHY through the PHY_config_req
-    AssertFatal(if_inst_NB_IoT->PHY_config_req != NULL, "rrc_mac_config_req_eNB_NB_IoT: PHY_config_req pointer function is NULL\n");
+    AssertFatal( RC.L1_NB_IoT[Mod_idP]->if_inst->PHY_config_req != NULL, "rrc_mac_config_req_eNB_NB_IoT: PHY_config_req pointer function is NULL\n");
     /*PHY_Config_t phycfg;
     phycfg.Mod_id = Mod_idP;
     phycfg.CC_id  = 0;
@@ -589,7 +598,7 @@ void rrc_mac_config_req_NB_IoT(
  
     //return 0;
 
-      init_mac_NB_IoT(eNB);
+      init_mac_NB_IoT(RC.L1_NB_IoT[Mod_idP]);
       RC.L1_NB_IoT[Mod_idP]->configured=1;
 
    /*if( ded_flag!=0 )

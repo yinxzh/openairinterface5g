@@ -123,7 +123,6 @@ void RCconfig_NbIoTmacrlc(void) {
   
 
   if ( NbIoT_MacRLC_ParamList.numelt > 0) {
-//    l2_init_eNB_NB_IoT();
     mac_top_init_eNB_NB_IoT();
     for (int j=0;j<RC.nb_nb_iot_macrlc_inst;j++) {
 
