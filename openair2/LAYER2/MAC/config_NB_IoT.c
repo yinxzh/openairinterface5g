@@ -474,6 +474,8 @@ void rrc_mac_config_req_NB_IoT(
     {
         mac_config->sib1_NB_IoT_sched_config.repetitions = 4;
 
+        //printf("[ASN Debug] SI P: %ld\n",sib1_NB_IoT->schedulingInfoList_r13.list.array[0]->si_Periodicity_r13);
+
 
 
         mac_config->sib1_NB_IoT_sched_config.starting_rf = sib1_NB_IoT->si_RadioFrameOffset_r13;
@@ -485,6 +487,8 @@ void rrc_mac_config_req_NB_IoT(
         ///CE level 0
         if ( sib1_NB_IoT->schedulingInfoList_r13.list.array != NULL){ 
             scheduling_info_list = sib1_NB_IoT->schedulingInfoList_r13.list.array[0];
+
+            printf("Pass first SIBs Asn\n");
 
             mac_config->sibs_NB_IoT_sched[0].si_periodicity =		scheduling_info_list->si_Periodicity_r13 ;
             mac_config->sibs_NB_IoT_sched[0].si_repetition_pattern =	scheduling_info_list->si_RepetitionPattern_r13 ;
@@ -625,7 +629,7 @@ void rrc_mac_config_req_NB_IoT(
  
     //return 0;
 
-      init_mac_NB_IoT(RC.L1_NB_IoT[Mod_idP]);
+      init_mac_NB_IoT(RC.nb_iot_mac[Mod_idP]);
       RC.L1_NB_IoT[Mod_idP]->configured=1;
 
    /*if( ded_flag!=0 )
