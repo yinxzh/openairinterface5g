@@ -2542,8 +2542,8 @@ int rrc_eNB_decode_dcch_NB_IoT(
 
 //MP: the integrity protection is still not used in OAI --> MAC-I is padded always to 0 so no need to modify it
 
-      rrc_pdcp_config_asn1_req(
-    		  	  	  	  	  	  ctxt_pP,
+/*      rrc_pdcp_config_asn1_req_NB_IoT(
+    		  	  	   	  	  	          ctxt_pP,
 								  ue_context_p->ue_context.SRB_configList,
 								  (DRB_ToAddModList_NB_r13_t *)NULL,
 								  (DRB_ToReleaseList_NB_r13_t*)NULL,
@@ -2553,7 +2553,7 @@ int rrc_eNB_decode_dcch_NB_IoT(
 								  NULL,
 								  NULL,
 								  DCCH1_NB_IoT//its only for check purposes (if correctly called could be deleted)
-      	  	  	  	  	  	  	  );
+      	  	  	  	  	  	  	  );*/
 
       rrc_eNB_generate_UECapabilityEnquiry_NB_IoT(ctxt_pP, ue_context_p);
 
