@@ -1709,6 +1709,10 @@ static void init_SI_NB_IoT(
           PROTOCOL_RRC_CTXT_FMT" RRC_UE --- MAC_CONFIG_REQ (SIB1_NB_IoT & SIB2_NB params) ---> MAC_UE\n",
           PROTOCOL_RRC_CTXT_ARGS(ctxt_pP));
 
+    printf("[ASN SI Debug] value %d\n",RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].sib1_NB_IoT->hyperSFN_MSB_r13.size);
+
+      printf("[ASN Debug] SI P: %ld\n",RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].sib1_NB_IoT->schedulingInfoList_r13.list.array[0]->si_Periodicity_r13);
+
     //
          rrc_mac_config_req_NB_IoT(ctxt_pP->module_id,
                                   CC_id,

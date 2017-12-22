@@ -169,13 +169,14 @@ uint8_t do_SIB1_NB_IoT(uint8_t Mod_id, int CC_id,
                )
 {
   BCCH_DL_SCH_Message_NB_t *bcch_message= &(carrier->siblock1_NB_IoT);
-  SystemInformationBlockType1_NB_t *sib1_NB_IoT;
+  SystemInformationBlockType1_NB_t **sib1_NB_IoT= &(carrier->sib1_NB_IoT);
+  uint8_t *buffer                      = carrier->SIB1_NB_IoT;
 
   asn_enc_rval_t enc_rval;
 
   PLMN_IdentityInfo_NB_r13_t PLMN_identity_info_NB_IoT;
   MCC_MNC_Digit_t dummy_mcc[3],dummy_mnc[3];
-  SchedulingInfo_NB_r13_t schedulingInfo_NB_IoT[3];
+  SchedulingInfo_NB_r13_t *schedulingInfo_NB_IoT;
   SIB_Type_NB_r13_t sib_type_NB_IoT[3];
 
 
@@ -192,8 +193,7 @@ uint8_t do_SIB1_NB_IoT(uint8_t Mod_id, int CC_id,
   bcch_message->message.choice.c1.present = BCCH_DL_SCH_MessageType_NB__c1_PR_systemInformationBlockType1_r13;
 
   //allocation
-  carrier->sib1_NB_IoT = &bcch_message->message.choice.c1.choice.systemInformationBlockType1_r13;
-  sib1_NB_IoT = carrier->sib1_NB_IoT;
+  *sib1_NB_IoT = &bcch_message->message.choice.c1.choice.systemInformationBlockType1_r13;
 
 
   /*TS 36.331 v14.2.0 pag 589
@@ -204,19 +204,11 @@ uint8_t do_SIB1_NB_IoT(uint8_t Mod_id, int CC_id,
   uint8_t hyperSFN_MSB = (uint8_t) ((frame>>2)& 0xff);
 
   //XXX to be checked
-  sib1_NB_IoT->hyperSFN_MSB_r13.buf = &hyperSFN_MSB;
-  sib1_NB_IoT->hyperSFN_MSB_r13.size = 1;
-  sib1_NB_IoT->hyperSFN_MSB_r13.bits_unused = 0;
+  (*sib1_NB_IoT)->hyperSFN_MSB_r13.buf = &hyperSFN_MSB;
+  (*sib1_NB_IoT)->hyperSFN_MSB_r13.size = 1;
+  (*sib1_NB_IoT)->hyperSFN_MSB_r13.bits_unused = 0;
 
   memset(&PLMN_identity_info_NB_IoT,0,sizeof(PLMN_IdentityInfo_NB_r13_t));
-  memset(&schedulingInfo_NB_IoT[0],0,sizeof(SchedulingInfo_NB_r13_t));
-  memset(&schedulingInfo_NB_IoT[1],0,sizeof(SchedulingInfo_NB_r13_t));
-  memset(&schedulingInfo_NB_IoT[2],0,sizeof(SchedulingInfo_NB_r13_t));    
-  memset(&sib_type_NB_IoT[0],0,sizeof(SIB_Type_NB_r13_t));
-  memset(&sib_type_NB_IoT[1],0,sizeof(SIB_Type_NB_r13_t));
-  memset(&sib_type_NB_IoT[2],0,sizeof(SIB_Type_NB_r13_t));
-
-
 
   PLMN_identity_info_NB_IoT.plmn_Identity_r13.mcc = CALLOC(1,sizeof(*PLMN_identity_info_NB_IoT.plmn_Identity_r13.mcc));
   memset(PLMN_identity_info_NB_IoT.plmn_Identity_r13.mcc,0,sizeof(*PLMN_identity_info_NB_IoT.plmn_Identity_r13.mcc));
@@ -277,53 +269,53 @@ uint8_t do_SIB1_NB_IoT(uint8_t Mod_id, int CC_id,
   *attachWithoutPDN_Connectivity = 0;
   PLMN_identity_info_NB_IoT.attachWithoutPDN_Connectivity_r13 = attachWithoutPDN_Connectivity;
 
-  ASN_SEQUENCE_ADD(&sib1_NB_IoT->cellAccessRelatedInfo_r13.plmn_IdentityList_r13.list,&PLMN_identity_info_NB_IoT);
+  ASN_SEQUENCE_ADD(&(*sib1_NB_IoT)->cellAccessRelatedInfo_r13.plmn_IdentityList_r13.list,&PLMN_identity_info_NB_IoT);
 
   // 16 bits = 2 byte
-  sib1_NB_IoT->cellAccessRelatedInfo_r13.trackingAreaCode_r13.buf = MALLOC(2); //MALLOC works in byte
+  (*sib1_NB_IoT)->cellAccessRelatedInfo_r13.trackingAreaCode_r13.buf = MALLOC(2); //MALLOC works in byte
 
   //lefts as it is?
 #if defined(ENABLE_ITTI)
-  sib1_NB_IoT->cellAccessRelatedInfo_r13.trackingAreaCode_r13.buf[0] = (configuration->tac >> 8) & 0xff;
-  sib1_NB_IoT->cellAccessRelatedInfo_r13.trackingAreaCode_r13.buf[1] = (configuration->tac >> 0) & 0xff;
+  (*sib1_NB_IoT)->cellAccessRelatedInfo_r13.trackingAreaCode_r13.buf[0] = (configuration->tac >> 8) & 0xff;
+  (*sib1_NB_IoT)->cellAccessRelatedInfo_r13.trackingAreaCode_r13.buf[1] = (configuration->tac >> 0) & 0xff;
 #else
-  sib1_NB_IoT->cellAccessRelatedInfo_r13.trackingAreaCode_r13.buf[0] = 0x00;
-  sib1_NB_IoT->cellAccessRelatedInfo_r13.trackingAreaCode_r13.buf[1] = 0x01;
+  (*sib1_NB_IoT)->cellAccessRelatedInfo_r13.trackingAreaCode_r13.buf[0] = 0x00;
+  (*sib1_NB_IoT)->cellAccessRelatedInfo_r13.trackingAreaCode_r13.buf[1] = 0x01;
 #endif
-  sib1_NB_IoT->cellAccessRelatedInfo_r13.trackingAreaCode_r13.size=2;
-  sib1_NB_IoT->cellAccessRelatedInfo_r13.trackingAreaCode_r13.bits_unused=0;
+  (*sib1_NB_IoT)->cellAccessRelatedInfo_r13.trackingAreaCode_r13.size=2;
+  (*sib1_NB_IoT)->cellAccessRelatedInfo_r13.trackingAreaCode_r13.bits_unused=0;
 
   // 28 bits --> i have to use 32 bits = 4 byte
-  sib1_NB_IoT->cellAccessRelatedInfo_r13.cellIdentity_r13.buf = MALLOC(8); // why allocate 8 byte?
+  (*sib1_NB_IoT)->cellAccessRelatedInfo_r13.cellIdentity_r13.buf = MALLOC(8); // why allocate 8 byte?
 #if defined(ENABLE_ITTI)
-  sib1_NB_IoT->cellAccessRelatedInfo_r13.cellIdentity_r13.buf[0] = (configuration->cell_identity >> 20) & 0xff;
-  sib1_NB_IoT->cellAccessRelatedInfo_r13.cellIdentity_r13.buf[1] = (configuration->cell_identity >> 12) & 0xff;
-  sib1_NB_IoT->cellAccessRelatedInfo_r13.cellIdentity_r13.buf[2] = (configuration->cell_identity >>  4) & 0xff;
-  sib1_NB_IoT->cellAccessRelatedInfo_r13.cellIdentity_r13.buf[3] = (configuration->cell_identity <<  4) & 0xf0;
+  (*sib1_NB_IoT)->cellAccessRelatedInfo_r13.cellIdentity_r13.buf[0] = (configuration->cell_identity >> 20) & 0xff;
+  (*sib1_NB_IoT)->cellAccessRelatedInfo_r13.cellIdentity_r13.buf[1] = (configuration->cell_identity >> 12) & 0xff;
+  (*sib1_NB_IoT)->cellAccessRelatedInfo_r13.cellIdentity_r13.buf[2] = (configuration->cell_identity >>  4) & 0xff;
+  (*sib1_NB_IoT)->cellAccessRelatedInfo_r13.cellIdentity_r13.buf[3] = (configuration->cell_identity <<  4) & 0xf0;
 #else
-  sib1_NB_IoT->cellAccessRelatedInfo_r13.cellIdentity_r13.buf[0] = 0x00;
-  sib1_NB_IoT->cellAccessRelatedInfo_r13.cellIdentity_r13.buf[1] = 0x00;
-  sib1_NB_IoT->cellAccessRelatedInfo_r13.cellIdentity_r13.buf[2] = 0x00;
-  sib1_NB_IoT->cellAccessRelatedInfo_r13.cellIdentity_r13.buf[3] = 0x10;
+  (*sib1_NB_IoT)->cellAccessRelatedInfo_r13.cellIdentity_r13.buf[0] = 0x00;
+  (*sib1_NB_IoT)->cellAccessRelatedInfo_r13.cellIdentity_r13.buf[1] = 0x00;
+  (*sib1_NB_IoT)->cellAccessRelatedInfo_r13.cellIdentity_r13.buf[2] = 0x00;
+  (*sib1_NB_IoT)->cellAccessRelatedInfo_r13.cellIdentity_r13.buf[3] = 0x10;
 #endif
-  sib1_NB_IoT->cellAccessRelatedInfo_r13.cellIdentity_r13.size=4;
-  sib1_NB_IoT->cellAccessRelatedInfo_r13.cellIdentity_r13.bits_unused=4;
+  (*sib1_NB_IoT)->cellAccessRelatedInfo_r13.cellIdentity_r13.size=4;
+  (*sib1_NB_IoT)->cellAccessRelatedInfo_r13.cellIdentity_r13.bits_unused=4;
 
   //Still set to "notBarred" as in the previous case
-  sib1_NB_IoT->cellAccessRelatedInfo_r13.cellBarred_r13=SystemInformationBlockType1_NB__cellAccessRelatedInfo_r13__cellBarred_r13_notBarred;
+  (*sib1_NB_IoT)->cellAccessRelatedInfo_r13.cellBarred_r13=SystemInformationBlockType1_NB__cellAccessRelatedInfo_r13__cellBarred_r13_notBarred;
 
   //Still Set to "notAllowed" like in the previous case
-  sib1_NB_IoT->cellAccessRelatedInfo_r13.intraFreqReselection_r13=SystemInformationBlockType1_NB__cellAccessRelatedInfo_r13__intraFreqReselection_r13_notAllowed;
+  (*sib1_NB_IoT)->cellAccessRelatedInfo_r13.intraFreqReselection_r13=SystemInformationBlockType1_NB__cellAccessRelatedInfo_r13__intraFreqReselection_r13_notAllowed;
 
 
-  sib1_NB_IoT->cellSelectionInfo_r13.q_RxLevMin_r13=-65; //which value?? TS 36.331 V14.2.1 pag. 589
-  sib1_NB_IoT->cellSelectionInfo_r13.q_QualMin_r13 = 0; //FIXME new parameter for SIB1-NB, not present in SIB1 (for cell reselection but if not used the UE should apply the default value)
+  (*sib1_NB_IoT)->cellSelectionInfo_r13.q_RxLevMin_r13=-65; //which value?? TS 36.331 V14.2.1 pag. 589
+  (*sib1_NB_IoT)->cellSelectionInfo_r13.q_QualMin_r13 = 0; //FIXME new parameter for SIB1-NB, not present in SIB1 (for cell reselection but if not used the UE should apply the default value)
 
-  sib1_NB_IoT->p_Max_r13 = CALLOC(1, sizeof(P_Max_t));
-  *(sib1_NB_IoT->p_Max_r13) = 23;
+  (*sib1_NB_IoT)->p_Max_r13 = CALLOC(1, sizeof(P_Max_t));
+  *((*sib1_NB_IoT)->p_Max_r13) = 23;
 
   //FIXME
-  sib1_NB_IoT->freqBandIndicator_r13 =
+  (*sib1_NB_IoT)->freqBandIndicator_r13 =
 #if defined(ENABLE_ITTI)
     configuration->eutra_band;
 #else
@@ -339,15 +331,24 @@ uint8_t do_SIB1_NB_IoT(uint8_t Mod_id, int CC_id,
        */
 
 
-   sib1_NB_IoT->downlinkBitmap_r13 = CALLOC(1, sizeof(struct DL_Bitmap_NB_r13));
-   (sib1_NB_IoT->downlinkBitmap_r13)->present= DL_Bitmap_NB_r13_PR_NOTHING;
+   (*sib1_NB_IoT)->downlinkBitmap_r13 = CALLOC(1, sizeof(struct DL_Bitmap_NB_r13));
+   ((*sib1_NB_IoT)->downlinkBitmap_r13)->present= DL_Bitmap_NB_r13_PR_NOTHING;
 
    *eutraControlRegionSize = 0;
-   sib1_NB_IoT->eutraControlRegionSize_r13 = eutraControlRegionSize;
+   (*sib1_NB_IoT)->eutraControlRegionSize_r13 = eutraControlRegionSize;
 
 
    *nrs_CRS_PowerOffset= 0;
-   sib1_NB_IoT->nrs_CRS_PowerOffset_r13 = nrs_CRS_PowerOffset;
+   (*sib1_NB_IoT)->nrs_CRS_PowerOffset_r13 = nrs_CRS_PowerOffset;
+
+   schedulingInfo_NB_IoT = (SchedulingInfo_NB_r13_t*) malloc (3*sizeof(SchedulingInfo_NB_r13_t));
+
+  memset(&schedulingInfo_NB_IoT[0],0,sizeof(SchedulingInfo_NB_r13_t));
+  memset(&schedulingInfo_NB_IoT[1],0,sizeof(SchedulingInfo_NB_r13_t));
+  memset(&schedulingInfo_NB_IoT[2],0,sizeof(SchedulingInfo_NB_r13_t));    
+  memset(&sib_type_NB_IoT[0],0,sizeof(SIB_Type_NB_r13_t));
+  memset(&sib_type_NB_IoT[1],0,sizeof(SIB_Type_NB_r13_t));
+  memset(&sib_type_NB_IoT[2],0,sizeof(SIB_Type_NB_r13_t));
 
 
   // Now, follow the scheduler SIB configuration
@@ -365,9 +366,9 @@ uint8_t do_SIB1_NB_IoT(uint8_t Mod_id, int CC_id,
   sib_type_NB_IoT[0]=SIB_Type_NB_r13_sibType3_NB_r13;
 
   ASN_SEQUENCE_ADD(&schedulingInfo_NB_IoT[0].sib_MappingInfo_r13.list,&sib_type_NB_IoT[0]);
-  ASN_SEQUENCE_ADD(&sib1_NB_IoT->schedulingInfoList_r13.list,&schedulingInfo_NB_IoT[0]);
+  ASN_SEQUENCE_ADD(&(*sib1_NB_IoT)->schedulingInfoList_r13.list,&schedulingInfo_NB_IoT[0]);
 
-  printf("[ASN Debug] SI P: %ld\n",sib1_NB_IoT->schedulingInfoList_r13.list.array[0]->si_Periodicity_r13);
+  printf("[ASN Debug] SI P: %ld\n",(*sib1_NB_IoT)->schedulingInfoList_r13.list.array[0]->si_Periodicity_r13);
 
 #if defined(ENABLE_ITTI)
 
@@ -380,17 +381,17 @@ uint8_t do_SIB1_NB_IoT(uint8_t Mod_id, int CC_id,
   }
 
   //FIXME which value chose for the following parameter
-  sib1_NB_IoT->si_WindowLength_r13=SystemInformationBlockType1_NB__si_WindowLength_r13_ms160;
-  sib1_NB_IoT->si_RadioFrameOffset_r13= 0;
+  (*sib1_NB_IoT)->si_WindowLength_r13=SystemInformationBlockType1_NB__si_WindowLength_r13_ms160;
+  (*sib1_NB_IoT)->si_RadioFrameOffset_r13= 0;
 
   /*In Nb-IoT change/update of specific SI message can additionally be indicated by a SI message specific value tag
    * systemInfoValueTagSI (there is no SystemInfoValueTag in SIB1-NB but only in MIB-NB)
    *contained in systemInfoValueTagList_r13
    **/
   //FIXME correct?
-  sib1_NB_IoT->systemInfoValueTagList_r13 = CALLOC(1, sizeof(struct SystemInfoValueTagList_NB_r13));
-  asn_set_empty(&sib1_NB_IoT->systemInfoValueTagList_r13->list);
-  ASN_SEQUENCE_ADD(&sib1_NB_IoT->systemInfoValueTagList_r13->list,&systemInfoValueTagSI);
+  (*sib1_NB_IoT)->systemInfoValueTagList_r13 = CALLOC(1, sizeof(struct SystemInfoValueTagList_NB_r13));
+  asn_set_empty(&(*sib1_NB_IoT)->systemInfoValueTagList_r13->list);
+  ASN_SEQUENCE_ADD(&(*sib1_NB_IoT)->systemInfoValueTagList_r13->list,&systemInfoValueTagSI);
 
 
 #ifdef XER_PRINT //generate xml files
