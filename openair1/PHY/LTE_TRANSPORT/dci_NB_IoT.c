@@ -483,7 +483,7 @@ uint8_t generate_dci_top_NB_IoT(NB_IoT_eNB_NPDCCH_t		*npdcch,
   //temporary variable
   uint16_t rnti[2];
   uint8_t  L = 0;
-
+ 
 
   /* PARAMETERS may not needed
   **e_ptr : store the encoding result, and as a input to modulation
@@ -554,46 +554,48 @@ uint8_t generate_dci_top_NB_IoT(NB_IoT_eNB_NPDCCH_t		*npdcch,
 	  		  break;
 	  	  default:
 	  		  LOG_E (PHY,"npdcch_start_symbol has unwanted value\n");
+                          return 0;
 	  		  break;
   }
-
+  
+  for (i=0; i<Num_dci; i++) {
    //NB-IoT encoding
-//  dci_encoding_NB_IoT(
-//		  	  	  	  a,
-//					  4, // total length (in byte) of a [assume max 2 pdus of  ??]
-//					  G,
-//					  npdcch->e,
-//					  rnti,
-//					  Num_dci,
-//					  L
-//		  	  	  	  );
+      dci_encoding_NB_IoT(
+					&(dci_alloc[i].dci_pdu),
+					4, // total length (in byte) of a [assume max 2 pdus of  ??]
+					G,
+					npdcch->e,
+					rnti,
+					Num_dci,
+					L
+					);
 
 
 
-  //NB-IoT scrambling
-//  npdcch_scrambling_NB_IoT(
-//		  	  	  	  	  fp,
-//						  npdcch->e,
-//						  G,
-//						  subframe,
-//						  Num_dci,
-//						  L
-//		  	  	  	  	   );
+//NB-IoT scrambling
+      npdcch_scrambling_NB_IoT(
+						fp,
+						npdcch->e,
+						G,
+						subframe,
+						Num_dci,
+						L
+						 );
 
 
-  //NB-IoT Modulation
-//  dci_modulation_NB_IoT(
-//		  	  	  	  txdataF,
-//					  amp,
-//					  fp,
-//					  npdcch_start_symbol,
-//					  npdcch->e,
-//					  G,
-//					  Num_dci,
-//					  L
-//		  	  	  	  );
+//NB-IoT Modulation
+      dci_modulation_NB_IoT(
+					txdataF,
+					amp,
+					fp,
+					npdcch_start_symbol,
+					npdcch->e,
+					G,
+					Num_dci,
+					L
+					);
 
-
+  }
 
   return 0;
 }

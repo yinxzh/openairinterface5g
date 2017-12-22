@@ -490,7 +490,8 @@ typedef struct eNB_MAC_INST_NB_IoT_s {
   uint32_t sub_frame;
 
   uint32_t current_subframe;
-
+  /// Pointer to IF module instance for PHY
+  IF_Module_t *if_inst;
   //  RA
   RA_template_list_t RA_msg2_list;
   RA_template_list_t RA_msg3_list;

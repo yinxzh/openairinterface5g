@@ -33,7 +33,7 @@
 //#include "PHY/defs.h"
 //#include "PHY/extern.h"
 #include "PHY/LTE_TRANSPORT/proto_NB_IoT.h"
-
+#include "UTIL/LOG/log.h"
 // Section 16.5.1.1 in 36.213
 uint16_t get_UL_sc_start_NB_IoT(uint16_t I_sc)
 {
@@ -50,9 +50,8 @@ uint16_t get_UL_sc_start_NB_IoT(uint16_t I_sc)
 	if (I_sc==18){
 		return 0; 
 	}
-	if (I_sc>18){
-		return -1; 
-	}
+        LOG_E(PHY,"I_sc parameter out of bounds (%d, valid range: 0 18) )\n",I_sc);
+	return -1; 
 
 }
 

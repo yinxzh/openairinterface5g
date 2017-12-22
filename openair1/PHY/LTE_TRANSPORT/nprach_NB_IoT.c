@@ -44,7 +44,7 @@ uint8_t NPRACH_detection_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,
 								uint16_t sub_sampling_rate, 
 								uint32_t FRAME_LENGTH_COMPLEX_SUB_SAMPLES){
 
-	uint32_t P_noise ; // needs to be defined or calculated
+//	uint32_t P_noise ; // needs to be defined or calculated
 	uint16_t FFT_size; 
 	uint16_t delta_t; // size, in samples, between 2 successive FFTs
 	uint16_t Nb_packets,n_subcarriers; 
@@ -81,6 +81,10 @@ uint8_t NPRACH_detection_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,
 			delta_t = 10; 
 			N_sample_per_sc = 32; 
 		break; 
+                default:
+                        LOG_E(PHY,"%i: Invalid sub_sampling_rate\n",sub_sampling_rate);
+                        return 0;
+                break;
 	}
 
 	Nb_packets = (uint16_t)(FRAME_LENGTH_COMPLEX_SUB_SAMPLES-FFT_size)/delta_t + 1; // Number of sections of FFT_size complex samples
@@ -355,11 +359,11 @@ int16_t* sub_sampling_NB_IoT(int16_t *input_buffer, uint32_t length_input, uint3
 
 void RX_NPRACH_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB, int16_t *Rx_buffer){ 
 
-	uint32_t estimated_TA, estimated_TA_coarse; 
+	uint32_t estimated_TA, estimated_TA_coarse=0; 
 	int16_t *Rx_sub_sampled_buffer_128,*Rx_sub_sampled_buffer_16; 
 	uint16_t sub_sampling_rate; //NB-IoT: to be defined somewhere
-	uint32_t FRAME_LENGTH_COMPLEX_SAMPLES; // NB-IoT: length of input buffer, to be defined somewhere 
-	uint32_t FRAME_LENGTH_COMPLEX_SUB_SAMPLES; // Length of buffer after sub-sampling
+	uint32_t FRAME_LENGTH_COMPLEX_SAMPLES=0; // NB-IoT: length of input buffer, to be defined somewhere 
+	uint32_t FRAME_LENGTH_COMPLEX_SUB_SAMPLES=0; // Length of buffer after sub-sampling
 	uint32_t *length_ouput; // Length of buffer after sub-sampling 
 	char coarse=1; // flag that indicate the level of TA estimation
 

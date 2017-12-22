@@ -497,15 +497,15 @@ void rrc_eNB_generate_RRCConnectionSetup_NB_IoT(
 //  LogicalChannelConfig_NB_r13_t             *SRB1_logicalChannelConfig;
 
   SRB_ToAddModList_NB_r13_t           **SRB_configList; //for both SRB1 and SRB1bis
-  SRB_ToAddMod_NB_r13_t						    *SRB1bis_config;
-  LogicalChannelConfig_NB_r13_t				*SRB1bis_logicalChannelConfig;
+  
+  //LogicalChannelConfig_NB_r13_t				*SRB1bis_logicalChannelConfig;
 
   int  										cnt;
 
 
   //XXX MP:warning due to function still not completed at PHY (get_lte_frame_parms)
   //XXX this approach is gone most probably
-  NB_IoT_DL_FRAME_PARMS *fp = get_NB_IoT_frame_parms(ctxt_pP->module_id,CC_id);
+  NB_IoT_DL_FRAME_PARMS *fp = get_NB_IoT_frame_parms(ctxt_pP->module_id);
   T(T_ENB_RRC_CONNECTION_SETUP, T_INT(ctxt_pP->module_id), T_INT(ctxt_pP->frame),
     T_INT(ctxt_pP->subframe), T_INT(ctxt_pP->rnti));
 
@@ -529,7 +529,7 @@ void rrc_eNB_generate_RRCConnectionSetup_NB_IoT(
   }
 
   LOG_F(RRC,"\n");
-  //////////////////////////////////
+ 
 #endif
 
   // configure SRB1bis, PhysicalConfigDedicated, MAC_MainConfig for UE
@@ -538,7 +538,7 @@ void rrc_eNB_generate_RRCConnectionSetup_NB_IoT(
 
 	  // MP: the list should contain just one element
 	  for(cnt = 0; cnt < (*SRB_configList)->list.count; cnt++){
-
+/*
         SRB1bis_config = (*SRB_configList)->list.array[cnt];
 
         if (SRB1bis_config->logicalChannelConfig_r13) {
@@ -552,7 +552,7 @@ void rrc_eNB_generate_RRCConnectionSetup_NB_IoT(
         } else {
           SRB1bis_logicalChannelConfig = &SRB1bis_logicalChannelConfig_defaultValue_NB_IoT;
         }
-
+*/
         LOG_D(RRC,
               PROTOCOL_RRC_CTXT_UE_FMT" RRC_eNB --- MAC_CONFIG_REQ  (SRB1bis/SRB1) ---> MAC_eNB\n",
               PROTOCOL_RRC_CTXT_UE_ARGS(ctxt_pP));
@@ -1710,6 +1710,9 @@ static void init_SI_NB_IoT(
           PROTOCOL_RRC_CTXT_ARGS(ctxt_pP));
 
     //
+
+
+
          rrc_mac_config_req_NB_IoT(ctxt_pP->module_id,
                                   CC_id,
                                   0,
@@ -1718,7 +1721,7 @@ static void init_SI_NB_IoT(
                                   (RadioResourceConfigCommonSIB_NB_r13_t *) &RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].sib2_NB_IoT->radioResourceConfigCommon_r13,
                                   (struct PhysicalConfigDedicated_NB_r13 *)NULL,
                                   (struct LogicalChannelConfig_NB_r13 *)NULL,
-                                  &RC.nb_iot_mac[ctxt_pP->module_id]->rrc_config,
+                                  0,
                                   
                                   0
                                   );
@@ -2318,11 +2321,11 @@ int rrc_eNB_decode_dcch_NB_IoT(
 #if defined(ENABLE_USE_MME)
       if (EPC_MODE_ENABLED == 1) {
 	if (dedicated_DRB == 1){
-	  rrc_eNB_send_S1AP_E_RAB_SETUP_RESP(ctxt_pP,
+	  rrc_eNB_send_S1AP_E_RAB_SETUP_RESP_NB_IoT(ctxt_pP,
 					     ue_context_p,
 					     ul_dcch_msg_NB_IoT->message.choice.c1.choice.rrcConnectionReconfigurationComplete_r13.rrc_TransactionIdentifier);
 	}else {
-	  rrc_eNB_send_S1AP_INITIAL_CONTEXT_SETUP_RESP(ctxt_pP,
+	  rrc_eNB_send_S1AP_INITIAL_CONTEXT_SETUP_RESP_NB_IoT(ctxt_pP,
 						       ue_context_p);
 	}
       }

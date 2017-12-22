@@ -108,7 +108,7 @@ uint32_t is_SIB1_NB_IoT(const frame_t          frameP,
   int        period_nb; // the number of the actual period over the 1024 frames
 
         if(schedulingInfoSIB1 > 11 || schedulingInfoSIB1 < 0){
-          LOG_E(RRC, "is_SIB1_NB_IoT: schedulingInfoSIB1 value not allowed");
+          LOG_E(RRC, "is_SIB1_NB_IoT: schedulingInfoSIB1 value not allowed\n");
           return 0;
         }
 
@@ -220,9 +220,26 @@ void common_signal_procedures_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_NB_I
   int                     subframe  =  proc->subframe_tx;
   int                     frame     =  proc->frame_tx;
   uint16_t                Ntti      =  10;                      //ntti = 10
+/*   authorized PRB indexes for NB-IoT:
+3 MHz: 2, 12
+5 MHz: 2,7,17,22
+10MHz: 4,9,14,19,  30, 35, 40, 45
+15MHz: 2, 7, 12, 17, 22, 27, 32, 42, 47, 52, 57, 62, 67, 72
+20MHz: 4, 9, 14, 19, 24, 29, 34, 39, 44, 55, 60, 65, 70, 75, 80, 85, 90, 95
+*/
+    
   int                     RB_IoT_ID;                            // XXX should be initialized (RB reserved for NB-IoT, PRB index)
   int                     With_NSSS;                            // With_NSSS = 1; if the frame include a sub-Frame with NSSS signal
-  
+ 
+ switch(fp->N_RB_DL) {
+         case 50:
+         case 100:
+            RB_IoT_ID=4;
+         break;
+         default:
+             RB_IoT_ID=2;
+         break;        
+}
   /*NSSS only happened in the even frame*/
   if(frame%2==0)
     {
@@ -594,7 +611,7 @@ void phy_procedures_eNB_uespec_RX_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_
 
 void generate_eNB_dlsch_params_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_NB_IoT_t * proc,nfapi_dl_config_request_pdu_t *dl_config_pdu) 
 {
-  int                      UE_id         =  -1;
+
   NB_IoT_DL_FRAME_PARMS    *fp           =  &eNB->frame_parms_NB_IoT;
   int                      frame         =  proc->frame_tx;
   int                      subframe      =  proc->subframe_tx;
@@ -653,7 +670,7 @@ void generate_eNB_dlsch_params_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_NB_
         }
       else
         { //managing data
-
+        int                      UE_id ;
     	  //TODO target/SIMU/USER?init_lte/init_lte_eNB we should allocate the ndlsch structures
     	  UE_id = find_ue_NB_IoT(dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.rnti, eNB);
     	  AssertFatal(UE_id != -1, "no ndlsch context available or no ndlsch context corresponding to that rnti\n");
@@ -727,7 +744,7 @@ void generate_eNB_dlsch_params_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_NB_
 
 void generate_eNB_ulsch_params_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_NB_IoT_t *proc,nfapi_hi_dci0_request_pdu_t *hi_dci0_pdu) {
 
-  int UE_id = -1;
+  int UE_id ;
   //int harq_pid = 0;
 
   DCI_CONTENT *DCI_Content;
@@ -746,9 +763,11 @@ void generate_eNB_ulsch_params_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_NB_
 
 
 
-  UE_id = find_ue_NB_IoT(hi_dci0_pdu->npdcch_dci_pdu.npdcch_dci_pdu_rel13.rnti, eNB);
-  AssertFatal(UE_id == -1, "no ndlsch context available or no ndlsch context corresponding to that rnti\n");
-
+  UE_id = find_ue_NB_IoT(hi_dci0_pdu->npdcch_dci_pdu.npdcch_dci_pdu_rel13.rnti, eNB); /* returns -1 if it doesn't find the UE */
+  if (UE_id <0 ) { 
+        LOG_E(PHY,"Couldn't find NB-IoT UE\n");
+        return;
+  }
 
   /*Log for generate ULSCH DCI*/
 
@@ -791,7 +810,7 @@ void npdsch_procedures(PHY_VARS_eNB_NB_IoT      *eNB,
   int                     subframe                =   proc->subframe_tx;
   NB_IoT_DL_eNB_HARQ_t    *ndlsch_harq            =   ndlsch->harq_process;
   int                     input_buffer_length     =   ndlsch_harq->TBS/8;         // get in byte //the TBS is set in generate_dlsch_param
-  NB_IoT_DL_FRAME_PARMS   *fp                     =   &eNB->frame_parms_NB_IoT;
+  //NB_IoT_DL_FRAME_PARMS   *fp                     =   &eNB->frame_parms_NB_IoT;
   int                     G;
   uint8_t                 *DLSCH_pdu              =   NULL;
   uint8_t                 DLSCH_pdu_tmp[input_buffer_length+4];                   //[768*8];
@@ -921,8 +940,9 @@ void npdsch_procedures(PHY_VARS_eNB_NB_IoT      *eNB,
   		  G =200;
   		break;
   	  default:
-  		  LOG_E (PHY,"npdsch_start_index has unwanted value\n");
+  		  LOG_E (PHY,"npdsch_start_symbol has unwanted value\n");
   		break;
+         LOG_I (PHY,"G=%d\n",G);
 
     }
     //start_meas_NB_IoT(&eNB->dlsch_encoding_stats);

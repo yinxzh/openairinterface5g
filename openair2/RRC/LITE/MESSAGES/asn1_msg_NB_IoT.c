@@ -46,8 +46,8 @@
 #include <asn_application.h>
 #include <asn_internal.h> /* for _ASN_DEFAULT_STACK_MAX */
 #include <per_encoder.h>
+#include "asn1_msg.h"
 
-#include "assertions.h"
 
 
 //#include for NB-IoT-------------------
@@ -129,7 +129,7 @@ uint8_t do_MIB_NB_IoT(
   mib_NB_IoT->message.hyperSFN_LSB_r13.bits_unused = 6;
 
   //XXX to be set??
-  mib_NB_IoT->message.spare.buf = (uint16_t *)&spare;
+  mib_NB_IoT->message.spare.buf = (uint8_t *)&spare;
   mib_NB_IoT->message.spare.size = 2;
   mib_NB_IoT->message.spare.bits_unused = 5;
 
@@ -150,8 +150,10 @@ uint8_t do_MIB_NB_IoT(
                                    (void*)mib_NB_IoT,
                                    carrier->MIB_NB_IoT,
                                    100);
-  AssertFatal (enc_rval.encoded > 0, "ASN1 message encoding failed (%s, %lu)!\n",
+  if(enc_rval.encoded <= 0) {
+      LOG_F(RRC, "ASN1 message encoding failed (%s, %lu)!\n",
                enc_rval.failed_type->name, enc_rval.encoded);
+  }
 
   if (enc_rval.encoded==-1) {
     return(-1);
@@ -390,20 +392,22 @@ uint8_t do_SIB1_NB_IoT(uint8_t Mod_id, int CC_id,
   xer_fprint(stdout, &asn_DEF_BCCH_DL_SCH_Message_NB, (void*)bcch_message);
 #endif
 
-/*
+
   enc_rval = uper_encode_to_buffer(&asn_DEF_BCCH_DL_SCH_Message_NB,
                                    (void*)bcch_message,
                                    carrier->SIB1_NB_IoT,
                                    100);
 
-  AssertFatal (enc_rval.encoded > 0, "ASN1 message encoding failed (%s, %lu)!\n",
+  if (enc_rval.encoded > 0){ 
+       LOG_F(RRC,"ASN1 message encoding failed (%s, %lu)!\n",
                enc_rval.failed_type->name, enc_rval.encoded);
+  }
 
 
 #ifdef USER_MODE
   LOG_D(RRC,"[NB-IoT] SystemInformationBlockType1-NB Encoded %zd bits (%zd bytes)\n",enc_rval.encoded,(enc_rval.encoded+7)/8);
 #endif
-*/
+
   if (enc_rval.encoded==-1) {
     return(-1);
   }
@@ -433,8 +437,8 @@ uint8_t do_SIB23_NB_IoT(uint8_t Mod_id,
   long *connEstFailOffset = NULL;
   connEstFailOffset = CALLOC(1, sizeof(long));
 
-  RSRP_ThresholdsNPRACH_InfoList_NB_r13_t *rsrp_ThresholdsPrachInfoList;
-  RSRP_Range_t rsrp_range;
+//  RSRP_ThresholdsNPRACH_InfoList_NB_r13_t *rsrp_ThresholdsPrachInfoList;
+//  RSRP_Range_t rsrp_range;
   ACK_NACK_NumRepetitions_NB_r13_t ack_nack_repetition;
   struct NPUSCH_ConfigCommon_NB_r13__dmrs_Config_r13 *dmrs_config;
   struct DL_GapConfig_NB_r13	*dl_Gap;
@@ -542,7 +546,7 @@ uint8_t do_SIB23_NB_IoT(uint8_t Mod_id,
   //NPUSCH-Config NB-IoT----------------------------------------------------------------
   //list of size 3 (see maxNPRACH_Resources_NB_r13)
   ack_nack_repetition = configuration-> npusch_ack_nack_numRepetitions_NB; //is an enumerative
-  ASN_SEQUENCE_ADD(&sib2_NB_IoT->radioResourceConfigCommon_r13.npusch_ConfigCommon_r13.ack_NACK_NumRepetitions_Msg4_r13.list,ack_nack_repetition);
+  ASN_SEQUENCE_ADD(&(sib2_NB_IoT->radioResourceConfigCommon_r13.npusch_ConfigCommon_r13.ack_NACK_NumRepetitions_Msg4_r13.list) ,&ack_nack_repetition);
 
   *srs_SubframeConfig = configuration->npusch_srs_SubframeConfig_NB;
   sib2_NB_IoT->radioResourceConfigCommon_r13.npusch_ConfigCommon_r13.srs_SubframeConfig_r13= srs_SubframeConfig; /*OPTIONAL*/
@@ -606,7 +610,7 @@ uint8_t do_SIB23_NB_IoT(uint8_t Mod_id,
 /// SIB3-NB-------------------------------------------------------
 
   sib3_NB_IoT->cellReselectionInfoCommon_r13.q_Hyst_r13=SystemInformationBlockType3_NB_r13__cellReselectionInfoCommon_r13__q_Hyst_r13_dB4;
-  sib3_NB_IoT->cellReselectionServingFreqInfo_r13.s_NonIntraSearch_r13=NULL; //or define in configuration?
+  sib3_NB_IoT->cellReselectionServingFreqInfo_r13.s_NonIntraSearch_r13=0; //or define in configuration?
 
   sib3_NB_IoT->intraFreqCellReselectionInfo_r13.q_RxLevMin_r13 = -70;
   //new
@@ -679,7 +683,7 @@ uint8_t do_RRCConnectionSetup_NB_IoT(
  //MP:logical channel group not defined for Nb-IoT
 
  //MP: logical channel priority pag 605 (is 1 for SRB1 and for SRB1bis should be the same)
- long* prioritySRB1 = NULL;
+ //long* prioritySRB1 = NULL;
  long* prioritySRB1bis = NULL;
  BOOLEAN_t* logicalChannelSR_Prohibit =NULL; //pag 605
  BOOLEAN_t* npusch_AllSymbols= NULL;
@@ -857,9 +861,11 @@ uint8_t do_RRCConnectionSetup_NB_IoT(
                                   (void*)&dl_ccch_msg_NB_IoT,
                                   buffer,
                                   100);
- AssertFatal (enc_rval.encoded > 0, "ASN1 message encoding failed (%s, %lu)!\n",
-              enc_rval.failed_type->name, enc_rval.encoded);
 
+ if (enc_rval.encoded <= 0) {
+     LOG_F(RRC, "ASN1 message encoding failed (%s, %lu)!\n",
+              enc_rval.failed_type->name, enc_rval.encoded);
+ }
 
 #ifdef USER_MODE
  LOG_D(RRC,"RRCConnectionSetup-NB Encoded %zd bits (%zd bytes), ecause %d\n",
@@ -906,8 +912,10 @@ uint8_t do_SecurityModeCommand_NB_IoT(
                                    (void*)&dl_dcch_msg_NB_IoT,
                                    buffer,
                                    100);
-  AssertFatal (enc_rval.encoded > 0, "ASN1 message encoding failed (%s, %lu)!\n",
+  if (enc_rval.encoded <= 0) {
+      LOG_F(RRC, "ASN1 message encoding failed (%s, %lu)!\n",
                enc_rval.failed_type->name, enc_rval.encoded);
+  }
 
 
 //#if defined(ENABLE_ITTI)
@@ -965,8 +973,10 @@ uint8_t do_UECapabilityEnquiry_NB_IoT(
                                    (void*)&dl_dcch_msg_NB_IoT,
                                    buffer,
                                    100);
-  AssertFatal (enc_rval.encoded > 0, "ASN1 message encoding failed (%s, %lu)!\n",
+  if (enc_rval.encoded <= 0) {
+     LOG_F(RRC, "ASN1 message encoding failed (%s, %lu)!\n",
                enc_rval.failed_type->name, enc_rval.encoded);
+    }
 
 //#if defined(ENABLE_ITTI)
 //# if !defined(DISABLE_XER_SPRINT)....
@@ -1057,8 +1067,10 @@ uint16_t do_RRCConnectionReconfiguration_NB_IoT(
                                    (void*)&dl_dcch_msg_NB_IoT,
                                    buffer,
                                    RRC_BUF_SIZE);
-  AssertFatal (enc_rval.encoded > 0, "ASN1 message encoding failed (%s, %l)!\n",
+  if (enc_rval.encoded <= 0) {
+     LOG_F(RRC, "ASN1 message encoding failed %s, %li\n",
                enc_rval.failed_type->name, enc_rval.encoded);
+  }
 
   //changed only asn_DEF_DL_DCCH_Message_NB
 #ifdef XER_PRINT
@@ -1101,8 +1113,10 @@ uint8_t do_RRCConnectionReestablishmentReject_NB_IoT(
                                    (void*)&dl_ccch_msg_NB_IoT,
                                    buffer,
                                    100);
-  AssertFatal (enc_rval.encoded > 0, "ASN1 message encoding failed (%s, %lu)!\n",
+  if (enc_rval.encoded <= 0) {
+     LOG_F(RRC,"ASN1 message encoding failed (%s, %lu)!\n",
                enc_rval.failed_type->name, enc_rval.encoded);
+  }
 
   //Only change in "asn_DEF_DL_CCCH_Message_NB"
 #if defined(ENABLE_ITTI)
@@ -1169,8 +1183,10 @@ uint8_t do_RRCConnectionReject_NB_IoT(
                                    (void*)&dl_ccch_msg_NB_IoT,
                                    buffer,
                                    100);
-  AssertFatal (enc_rval.encoded > 0, "ASN1 message encoding failed (%s, %ld)!\n",
+  if (enc_rval.encoded <= 0) {
+     LOG_F(RRC, "ASN1 message encoding failed (%s, %ld)!\n",
                enc_rval.failed_type->name, enc_rval.encoded);
+  }
 
 #if defined(ENABLE_ITTI)
 # if !defined(DISABLE_XER_SPRINT)
@@ -1294,8 +1310,10 @@ uint8_t do_RRCConnectionReestablishment_NB_IoT(
 	                                   buffer,
 	                                   RRC_BUF_SIZE);
 
-	 AssertFatal (enc_rval.encoded > 0, "ASN1 message encoding failed (%s, %l)!\n",
+	if (enc_rval.encoded <= 0) {
+           LOG_F(RRC, "ASN1 message encoding failed (%s, %li)!\n",
 	               enc_rval.failed_type->name, enc_rval.encoded);
+        }
 
 #ifdef XER_PRINT
   xer_fprint(stdout,&asn_DEF_DL_CCCH_Message_NB,(void*)&dl_ccch_msg_NB_IoT);
@@ -1321,7 +1339,7 @@ uint8_t do_RRCConnectionReestablishment_NB_IoT(
 #endif
 
   LOG_I(RRC,"RRCConnectionReestablishment-NB Encoded %zd bits (%zd bytes)\n",enc_rval.encoded,(enc_rval.encoded+7)/8);
-
+  return 0;
 }
 
 /*do_RRCConnectionRelease_NB--> is used to command the release of an RRC connection*/

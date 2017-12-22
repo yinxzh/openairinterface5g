@@ -1109,10 +1109,10 @@ int8_t find_ue_NB_IoT(uint16_t rnti, PHY_VARS_eNB_NB_IoT *eNB)
   return(-1);
 }
 
-NB_IoT_DL_FRAME_PARMS* get_NB_IoT_frame_parms(module_id_t Mod_id, uint8_t  CC_id)
+NB_IoT_DL_FRAME_PARMS* get_NB_IoT_frame_parms(module_id_t Mod_id)
 {
 
-  return(&RC.eNB[Mod_id][CC_id]->frame_parms);
+  return(&RC.L1_NB_IoT[Mod_id]->frame_parms);
 
 }
 

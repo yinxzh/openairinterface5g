@@ -530,7 +530,7 @@ rrc_eNB_send_S1AP_UPLINK_NAS_NB_IoT(
 }
 
 //------------------------------------------------------------------------------
-void rrc_eNB_send_S1AP_UE_CAPABILITIES_IND(
+void rrc_eNB_send_S1AP_UE_CAPABILITIES_IND_NB_IoT(
   const protocol_ctxt_t* const ctxt_pP,
   rrc_eNB_ue_context_NB_IoT_t*          const ue_context_pP,
   UL_DCCH_Message_NB_t* ul_dcch_msg
@@ -1094,7 +1094,7 @@ void rrc_eNB_send_S1AP_UE_CONTEXT_RELEASE_REQ_NB_IoT (
 
 
 /*------------------------------------------------------------------------------*/
-int rrc_eNB_process_S1AP_UE_CONTEXT_RELEASE_COMMAND (MessageDef *msg_p, const char *msg_name, instance_t instance)
+int rrc_eNB_process_S1AP_UE_CONTEXT_RELEASE_COMMAND_NB_IoT (MessageDef *msg_p, const char *msg_name, instance_t instance)
 {
   uint32_t eNB_ue_s1ap_id;
   protocol_ctxt_t              ctxt;

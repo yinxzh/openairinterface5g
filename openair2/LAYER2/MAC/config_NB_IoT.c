@@ -615,18 +615,19 @@ void rrc_mac_config_req_NB_IoT(
 
         }
     }
+   if (radioResourceConfigCommon!=NULL) {
+       AssertFatal( RC.L1_NB_IoT[Mod_idP]->if_inst->PHY_config_req != NULL, "rrc_mac_config_req_eNB_NB_IoT: PHY_config_req pointer function is NULL\n");
+       PHY_Config_NB_IoT_t phycfg;
+       phycfg.mod_id = Mod_idP;
+       phycfg.cfg    = &RC.nb_iot_mac[Mod_idP]->config;
+    
+      if (RC.nb_iot_mac[Mod_idP]->if_inst->PHY_config_req) RC.nb_iot_mac[Mod_idP]->if_inst->PHY_config_req(&phycfg); 
+   }
 
-    //Now trigger the phy_config_xxx for configuring PHY through the PHY_config_req
-    AssertFatal( RC.L1_NB_IoT[Mod_idP]->if_inst->PHY_config_req != NULL, "rrc_mac_config_req_eNB_NB_IoT: PHY_config_req pointer function is NULL\n");
-    /*PHY_Config_t phycfg;
-    phycfg.Mod_id = Mod_idP;
-    phycfg.CC_id  = 0;
-    phycfg.cfg    = &RC.nb_iot_mac[Mod_idP]->config;*/
- 
     //return 0;
 
-      init_mac_NB_IoT(RC.L1_NB_IoT[Mod_idP]);
-      RC.L1_NB_IoT[Mod_idP]->configured=1;
+      init_mac_NB_IoT(RC.nb_iot_mac[Mod_idP]);
+//      RC.L1_NB_IoT[Mod_idP]->configured=1;
 
    /*if( ded_flag!=0 )
    {

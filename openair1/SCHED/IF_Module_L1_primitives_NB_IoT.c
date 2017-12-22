@@ -23,7 +23,7 @@ void handle_nfapi_dlsch_pdu_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,
 	NB_IoT_eNB_NDLSCH_t *ndlsch;
 	NB_IoT_DL_eNB_HARQ_t *ndlsch_harq;
 	nfapi_dl_config_ndlsch_pdu_rel13_t *rel13 = &dl_config_pdu->ndlsch_pdu.ndlsch_pdu_rel13;
-	int UE_id= -1;
+
 
   //Check for SI PDU since in NB-IoT there is no DCI for that
   //SIB1 (type 0), other DLSCH data (type 1) (include the SI messages) based on our ASSUMPTIONs
@@ -133,15 +133,18 @@ void handle_nfapi_dlsch_pdu_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,
 	  }
 	  else
 	  { //this for ue data
+  	  int UE_id;
 		  //TODO
 		  //program addition DLSCH parameters not from DCI (for the moment we only pass the pdu)
 		  //int UE_id = find_dlsch(rel13->rnti,eNB,SEARCH_EXIST);
 
 
 		  UE_id =  find_ue_NB_IoT(rel13->rnti,eNB);
-	  	  AssertFatal(UE_id==-1,"no existing ue specific dlsch_context\n");
-
-	  	  ndlsch = eNB->ndlsch[(uint8_t)UE_id];
+                  if (UE_id >= NUMBER_OF_UE_MAX_NB_IoT || UE_id < 0) {
+                      LOG_E(PHY, "handle_nfapi_dlsch_pdu_NB_IoT: UE_id %d invalid, should be (0-%d)\n", UE_id ,NUMBER_OF_UE_MAX_NB_IoT); 
+                      return;
+                  }
+	  	  ndlsch = eNB->ndlsch[UE_id];
 	  	  ndlsch_harq     = eNB->ndlsch[(uint8_t)UE_id]->harq_process;
 	  	  AssertFatal(ndlsch_harq!=NULL,"dlsch_harq for ue specific is null\n");
 

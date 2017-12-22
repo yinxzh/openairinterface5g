@@ -610,9 +610,9 @@ typedef struct PHY_VARS_eNB_NB_IoT_s {
   ///
   DCI_ALLOC_NB_IoT_t            dci_alloc[2][NUM_DCI_MAX_NB_IoT];   // dci_alloc from even/odd subframes
   /////////////
-  // PDSCH Varaibles
+  // PDSCH Variables
   PDSCH_CONFIG_DEDICATED_NB_IoT             pdsch_config_dedicated[NUMBER_OF_UE_MAX_NB_IoT];
-  // PUSCH Varaibles
+  // PUSCH Variables
   PUSCH_CONFIG_DEDICATED_NB_IoT             pusch_config_dedicated[NUMBER_OF_UE_MAX_NB_IoT];
   // PUCCH variables
   PUCCH_CONFIG_DEDICATED_NB_IoT             pucch_config_dedicated[NUMBER_OF_UE_MAX_NB_IoT];
