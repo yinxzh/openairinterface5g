@@ -523,6 +523,8 @@ typedef struct eNB_MAC_INST_NB_IoT_s {
   rrc_config_NB_IoT_t rrc_config;
 
   nfapi_config_request_t config;
+
+   IF_Module_NB_IoT_t            *if_inst_NB_IoT;
 } eNB_MAC_INST_NB_IoT;
 
 // actually not here, but for now put it here

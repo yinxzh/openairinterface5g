@@ -514,7 +514,7 @@ void rx_sdu_NB_IoT(module_id_t module_id, int CC_id, frame_t frame, sub_frame_t 
             break;
         case SHORT_BSR:
             // update BSR here
-        UE_info = get_ue_from_rnti(mac_inst, rnti);
+        UE_info = get_ue_from_rnti(RC.nb_iot_mac[module_id], rnti);
         BSR_index = payload_ptr[0] & 0x3f;
         UE_info->ul_total_buffer = BSR_table[BSR_index];
             payload_ptr+=1;

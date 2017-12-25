@@ -13,6 +13,7 @@
 #include "PhysicalConfigDedicated-NB-r13.h"
 //#include "openair2/PHY_INTERFACE/IF_Module_NB_IoT.h"
 #include "openair2/COMMON/platform_types.h"
+//#include "openair1/SCHED/IF_Module_L1_primitives_NB_IoT.h"
 
 //#define SCH_PAYLOAD_SIZE_MAX 4096
 #define BCCH_PAYLOAD_SIZE_MAX_NB_IoT 128
@@ -192,11 +193,23 @@ typedef struct IF_Module_NB_IoT_s{
 
 /*Initial */
 
+/*Interface for Downlink, transmitting the DLSCH SDU, DCI SDU*/
+void schedule_response_NB_IoT(Sched_Rsp_NB_IoT_t *Sched_INFO);
+
+/*Interface for PHY Configuration
+ * Trigger the phy_config_xxx functions using parameters from the shared PHY_Config structure
+ * */
+void PHY_config_req_NB_IoT(PHY_Config_NB_IoT_t* config_INFO);
+
 //int IF_Module_init(IF_Module_t *if_inst);
 
-void IF_Module_init_L1_NB_IoT(void);
-void IF_Module_init_L2_NB_IoT(void);
-
 /*Interface for Downlink, transmitting the DLSCH SDU, DCI SDU*/
-void Schedule_Response_NB_IoT(Sched_Rsp_NB_IoT_t *Sched_INFO);
+//void Schedule_Response_NB_IoT(Sched_Rsp_NB_IoT_t *Sched_INFO);
+
+/*Interface for uplink, transmitting the Preamble(list), ULSCH SDU, NAK, Tick (trigger scheduler)
+*/
+void UL_indication_NB_IoT(UL_IND_NB_IoT_t *UL_INFO);
+
+IF_Module_NB_IoT_t *IF_Module_init_NB_IoT(int Mod_id);
+
 #endif

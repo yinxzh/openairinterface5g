@@ -53,9 +53,9 @@ int l1_north_init_NB_IoT() {
   AssertFatal(RC.L1_NB_IoT !=NULL,"RC.L1_NB_IoT is null\n");
   for (i=0;i<RC.nb_nb_iot_L1_inst;i++) {
     AssertFatal(RC.L1_NB_IoT[i]!=NULL,"RC.L1_NB_IoT[%d] is null\n",i);
-      if ((RC.L1_NB_IoT[i]->if_inst =  IF_Module_init(i))<0) return(-1); 
-      RC.L1_NB_IoT[i]->if_inst->PHY_config_req = phy_config_request;
-      RC.L1_NB_IoT[i]->if_inst->schedule_response = schedule_response_NB_IoT;
+      if ((RC.L1_NB_IoT[i]->if_inst_NB_IoT =  IF_Module_init_NB_IoT(i))<0) return(-1); 
+      RC.L1_NB_IoT[i]->if_inst_NB_IoT->PHY_config_req = PHY_config_req_NB_IoT;
+      RC.L1_NB_IoT[i]->if_inst_NB_IoT->schedule_response = schedule_response_NB_IoT;
   }
   return(0);
 }

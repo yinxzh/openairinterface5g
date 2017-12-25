@@ -21,10 +21,10 @@
 //#include "COMMON/mac_rrc_primitives.h"
 
 
-IF_Module_NB_IoT_t *if_inst_NB_IoT;
+//IF_Module_NB_IoT_t *if_inst_NB_IoT;
 
 //NB-IoT--------------------------------------
-eNB_MAC_INST_NB_IoT *mac_inst;
+//eNB_MAC_INST_NB_IoT *mac_inst;
 
 //BCCH_BCH_Message_NB_t               MIB;
 //BCCH_DL_SCH_Message_NB_t            SIB;
