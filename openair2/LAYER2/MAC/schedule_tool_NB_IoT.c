@@ -181,13 +181,12 @@ void Initialize_Resource(void){
 
 //	extend subframe align to si-period
 void extend_available_resource_DL(eNB_MAC_INST_NB_IoT *mac_inst, int max_subframe){	//	assume max_subframe is found.
-    
+
 	available_resource_DL_t *new_node;
 	//int temp;
 	uint32_t i, i_div_si_window;
 	//uint32_t si_period_div_window;
     
-    printf("%d %d\n", max_subframe, mac_inst->schedule_subframe_DL);
     
 	if(max_subframe > mac_inst->schedule_subframe_DL){
 		//	align to si-period
@@ -228,7 +227,6 @@ void fill_resource_DL(eNB_MAC_INST_NB_IoT *mac_inst, available_resource_DL_t *no
 	//	divided into two node
 	//	keep one node(align left or right)
 	//	delete node
-
 	int align_left = (node->start_subframe==start_subframe)||(calculate_DLSF(mac_inst, node->start_subframe, start_subframe-1) == 0);
 	int align_right = (end_subframe==node->end_subframe)||(calculate_DLSF(mac_inst, end_subframe+1, node->end_subframe) == 0);
 	//print_available_resource_DL();
@@ -326,12 +324,16 @@ available_resource_DL_t *check_sibs_resource(eNB_MAC_INST_NB_IoT *mac_inst, uint
 		}
 		pt = pt->next;
 	}
+
+
+
 	//print_available_resource_DL();
 	//DEBUG("sibs %d", check_start_subframe);
 	if((available_resource_DL_t *)0 == pt){
 		return (available_resource_DL_t *)0;
 	}
 	
+
 	num_dlsf = calculate_DLSF(mac_inst, check_start_subframe, pt->end_subframe);
 
 	if((available_resource_DL_t *)0 == pt){

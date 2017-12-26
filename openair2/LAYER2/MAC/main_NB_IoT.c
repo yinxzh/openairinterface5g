@@ -48,7 +48,6 @@ void init_mac_NB_IoT(eNB_MAC_INST_NB_IoT *mac_inst)
 
   sib1_NB_IoT_sched_t *config = &mac_inst->rrc_config.sib1_NB_IoT_sched_config;
   
-  
   // DLSF Table
   init_dlsf_info(mac_inst, &DLSF_information);
 

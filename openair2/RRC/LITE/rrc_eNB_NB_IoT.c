@@ -1721,7 +1721,7 @@ static void init_SI_NB_IoT(
                                   CC_id,
                                   0,
                                   &RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id],
-                                  (SystemInformationBlockType1_NB_t*) &RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].sib1_NB_IoT,
+                                  (SystemInformationBlockType1_NB_t*) RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].sib1_NB_IoT,
                                   (RadioResourceConfigCommonSIB_NB_r13_t *) &RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].sib2_NB_IoT->radioResourceConfigCommon_r13,
                                   (struct PhysicalConfigDedicated_NB_r13 *)NULL,
                                   (struct LogicalChannelConfig_NB_r13 *)NULL,

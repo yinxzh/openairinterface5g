@@ -179,7 +179,7 @@ uint8_t do_SIB1_NB_IoT(uint8_t Mod_id, int CC_id,
   PLMN_IdentityInfo_NB_r13_t PLMN_identity_info_NB_IoT;
   MCC_MNC_Digit_t dummy_mcc[3],dummy_mnc[3];
   SchedulingInfo_NB_r13_t *schedulingInfo_NB_IoT;
-  SIB_Type_NB_r13_t sib_type_NB_IoT[3];
+  SIB_Type_NB_r13_t *sib_type_NB_IoT;
 
 
   long* attachWithoutPDN_Connectivity = NULL;
@@ -344,6 +344,7 @@ uint8_t do_SIB1_NB_IoT(uint8_t Mod_id, int CC_id,
    (*sib1_NB_IoT)->nrs_CRS_PowerOffset_r13 = nrs_CRS_PowerOffset;
 
    schedulingInfo_NB_IoT = (SchedulingInfo_NB_r13_t*) malloc (3*sizeof(SchedulingInfo_NB_r13_t));
+   sib_type_NB_IoT = (SIB_Type_NB_r13_t *) malloc (3*sizeof(SIB_Type_NB_r13_t));
 
   memset(&schedulingInfo_NB_IoT[0],0,sizeof(SchedulingInfo_NB_r13_t));
   memset(&schedulingInfo_NB_IoT[1],0,sizeof(SchedulingInfo_NB_r13_t));
