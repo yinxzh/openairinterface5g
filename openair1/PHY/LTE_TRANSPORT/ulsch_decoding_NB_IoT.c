@@ -947,7 +947,6 @@ unsigned int  ulsch_decoding_NB_IoT(PHY_VARS_eNB_NB_IoT     *eNB,
   NB_IoT_UL_eNB_HARQ_t    *ulsch_harq;
 
   uint8_t         harq_pid;
-  unsigned short  nb_rb;
   unsigned int    A;
   uint8_t         Q_m;
   unsigned int    i,i2,j,j2;
@@ -1000,7 +999,7 @@ unsigned int  ulsch_decoding_NB_IoT(PHY_VARS_eNB_NB_IoT     *eNB,
 
 /* ----------------------- Segmentation */
 
-  nb_rb = ulsch_harq->nb_rb;  // nb_rb set but not used ??
+  
   A     = ulsch_harq->TBS;
   Q_m   = get_Qm_ul_NB_IoT(ulsch_harq->mcs,ulsch_harq->N_sc_RU);
   //G     = nb_rb * (12 * Q_m) * ulsch_harq->Nsymb_pusch;
@@ -1126,12 +1125,12 @@ unsigned int  ulsch_decoding_NB_IoT(PHY_VARS_eNB_NB_IoT     *eNB,
 // #endif
 
 //   G             = G - Q_RI - Q_CQI;
-  ulsch_harq->G = G;
-
-  if ((int)G < 0) {
-    LOG_E(PHY,"FATAL: ulsch_decoding.c G < 0 (%d) : Q_RI %d, Q_CQI %d\n",G,Q_RI,Q_CQI);
-    return(-1);
-  }
+//  ulsch_harq->G = G;
+//
+// if ((int)G < 0) {
+//    LOG_E(PHY,"FATAL: ulsch_decoding.c G < 0 (%d) : Q_RI %d, Q_CQI %d\n",G,Q_RI,Q_CQI);
+//    return(-1);
+// }
 
   //H      = G + Q_CQI;
   H      = G ;
