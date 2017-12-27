@@ -321,6 +321,8 @@ void schedule_response_NB_IoT(Sched_Rsp_NB_IoT_t *Sched_INFO)
 
 void PHY_config_req_NB_IoT(PHY_Config_NB_IoT_t* config_INFO){
 
+	LOG_I(PHY,"PHY_config_req start\n");
+
 
 	if(config_INFO->get_MIB != 0){
 
@@ -359,5 +361,7 @@ void PHY_config_req_NB_IoT(PHY_Config_NB_IoT_t* config_INFO){
 											&config_INFO->extra_phy_parms);
 
 	}
+
+	LOG_I(PHY,"IF Module for PHY Configuration has been done\n");
 }
 

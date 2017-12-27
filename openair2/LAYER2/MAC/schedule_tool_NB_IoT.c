@@ -176,7 +176,7 @@ void Initialize_Resource(void){
 	add_UL_Resource();
 	add_UL_Resource();
 	
-    printf("Initialization of the UL Resource grid has been done\n");
+    LOG_I(MAC,"[NB-IoT]Initialization of the UL Resource grid has been done\n");
 }
 
 //	extend subframe align to si-period
@@ -192,7 +192,7 @@ void extend_available_resource_DL(eNB_MAC_INST_NB_IoT *mac_inst, int max_subfram
 		//	align to si-period
 
 		max_subframe = ((max_subframe%mac_inst->rrc_config.si_window_length)==0)? max_subframe : (((max_subframe/mac_inst->rrc_config.si_window_length)+1)*mac_inst->rrc_config.si_window_length);
-		printf("max %d last->end %p\n", max_subframe, available_resource_DL_last);
+		//printf("max %d last->end %p\n", max_subframe, available_resource_DL_last);
 		if(mac_inst->schedule_subframe_DL == available_resource_DL_last->end_subframe){
 			available_resource_DL_last->end_subframe = max_subframe;
 			//available_resource_DL_last->DLSF_num += calculate_DLSF(mac_inst, mac_inst->schedule_subframe_DL+1, max_subframe);
@@ -210,13 +210,14 @@ void extend_available_resource_DL(eNB_MAC_INST_NB_IoT *mac_inst, int max_subfram
 		for(i=mac_inst->schedule_subframe_DL;i<max_subframe;i+=mac_inst->rrc_config.si_window_length){
 			i_div_si_window = i / mac_inst->rrc_config.si_window_length;
 			if(-1 != mac_inst->sibs_table[i_div_si_window]){
-				printf("[sibs%d] %d\n", mac_inst->sibs_table[i_div_si_window], i);
+				//printf("[sibs%d] %d\n", mac_inst->sibs_table[i_div_si_window], i);
 				schedule_sibs_NB_IoT(mac_inst, mac_inst->sibs_table[i_div_si_window], i);
 			}
 		}
 
 		mac_inst->schedule_subframe_DL = max_subframe;
 	}
+	LOG_I(MAC,"[NB-IoT] Initialization of the DL Resource grid has been done\n");
 	return ;
 }
 

@@ -26,7 +26,7 @@ void init_mac_NB_IoT(eNB_MAC_INST_NB_IoT *mac_inst)
 {
   int32_t i, j, k;  
 
-  printf("[MAC] Init_MAC_IN\n");
+  LOG_I(MAC,"[NB-IoT] MAC start initialization\n");
   
   for(i=0;i<64;++i)
   {
@@ -114,7 +114,7 @@ void init_mac_NB_IoT(eNB_MAC_INST_NB_IoT *mac_inst)
   //3 CE level USS list
   mac_inst->UE_list_spec = (UE_list_NB_IoT_t*)malloc(NUM_USS_PP*sizeof(UE_list_NB_IoT_t));
   //initial UE list
-  printf("[init_mac_NB_IoT] Initial UE list\n");
+  LOG_I(MAC,"[NB-IoT] Initial UE list\n");
 
   mac_inst->num_uss_list = NUM_USS_PP;
   for(i=0;i<NUM_USS_PP;++i)
@@ -138,7 +138,8 @@ void init_mac_NB_IoT(eNB_MAC_INST_NB_IoT *mac_inst)
       (mac_inst->UE_list_spec+i)->UE_template_NB_IoT[j].direction = -1;
     }
     //SCHEDULE_LOG("[%04d][init_mac_NB_IoT] List_number %d R_max %d G %.1f a_offset %.1f T %d SS_start %d\n", mac_inst->current_subframe, i, (mac_inst->UE_list_spec+i)->NPDCCH_config_dedicated.R_max, (mac_inst->UE_list_spec+i)->NPDCCH_config_dedicated.G, (mac_inst->UE_list_spec+i)->NPDCCH_config_dedicated.a_offset, (mac_inst->UE_list_spec+i)->NPDCCH_config_dedicated.T, (mac_inst->UE_list_spec+i)->NPDCCH_config_dedicated.ss_start_uss);
-    printf("[init_mac_NB_IoT] List_number %d R_max %d G %.1f a_offset %.1f T %d SS_start %d\n", i, (mac_inst->UE_list_spec+i)->NPDCCH_config_dedicated.R_max, (mac_inst->UE_list_spec+i)->NPDCCH_config_dedicated.G, (mac_inst->UE_list_spec+i)->NPDCCH_config_dedicated.a_offset, (mac_inst->UE_list_spec+i)->NPDCCH_config_dedicated.T, (mac_inst->UE_list_spec+i)->NPDCCH_config_dedicated.ss_start_uss);
+    
+    LOG_I(MAC,"[NB-IoT] List_number %d R_max %d G %.1f a_offset %.1f T %d SS_start %d\n", i, (mac_inst->UE_list_spec+i)->NPDCCH_config_dedicated.R_max, (mac_inst->UE_list_spec+i)->NPDCCH_config_dedicated.G, (mac_inst->UE_list_spec+i)->NPDCCH_config_dedicated.a_offset, (mac_inst->UE_list_spec+i)->NPDCCH_config_dedicated.T, (mac_inst->UE_list_spec+i)->NPDCCH_config_dedicated.ss_start_uss);
   }
 
 /*

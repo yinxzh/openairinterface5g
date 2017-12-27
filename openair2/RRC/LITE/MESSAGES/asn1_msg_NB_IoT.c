@@ -371,7 +371,7 @@ uint8_t do_SIB1_NB_IoT(uint8_t Mod_id, int CC_id,
   ASN_SEQUENCE_ADD(&schedulingInfo_NB_IoT[0].sib_MappingInfo_r13.list,&sib_type_NB_IoT[0]);
   ASN_SEQUENCE_ADD(&(*sib1_NB_IoT)->schedulingInfoList_r13.list,&schedulingInfo_NB_IoT[0]);
 
-  printf("[ASN Debug] SI P: %ld\n",(*sib1_NB_IoT)->schedulingInfoList_r13.list.array[0]->si_Periodicity_r13);
+  //printf("[ASN Debug] SI P: %ld\n",(*sib1_NB_IoT)->schedulingInfoList_r13.list.array[0]->si_Periodicity_r13);
 
 #if defined(ENABLE_ITTI)
 
@@ -440,7 +440,7 @@ uint8_t do_SIB23_NB_IoT(uint8_t Mod_id,
 
   asn_enc_rval_t enc_rval;
   RACH_Info_NB_r13_t rach_Info_NB_IoT;
-  NPRACH_Parameters_NB_r13_t nprach_parameters;
+  NPRACH_Parameters_NB_r13_t *nprach_parameters;
 
   //optional
   long *connEstFailOffset = NULL;
@@ -448,6 +448,7 @@ uint8_t do_SIB23_NB_IoT(uint8_t Mod_id,
 
 //  RSRP_ThresholdsNPRACH_InfoList_NB_r13_t *rsrp_ThresholdsPrachInfoList;
 //  RSRP_Range_t rsrp_range;
+
   ACK_NACK_NumRepetitions_NB_r13_t ack_nack_repetition;
   struct NPUSCH_ConfigCommon_NB_r13__dmrs_Config_r13 *dmrs_config;
   struct DL_GapConfig_NB_r13	*dl_Gap;
@@ -491,6 +492,11 @@ uint8_t do_SIB23_NB_IoT(uint8_t Mod_id,
   sib2_NB_IoT = carrier->sib2_NB_IoT;
   sib3_NB_IoT = carrier->sib3_NB_IoT;
 
+  nprach_parameters = (NPRACH_Parameters_NB_r13_t *) malloc (3*sizeof(NPRACH_Parameters_NB_r13_t));
+
+  memset(&nprach_parameters[0],0,sizeof(NPRACH_Parameters_NB_r13_t));
+  memset(&nprach_parameters[1],0,sizeof(NPRACH_Parameters_NB_r13_t));
+  memset(&nprach_parameters[2],0,sizeof(NPRACH_Parameters_NB_r13_t));
 
 /// SIB2-NB-----------------------------------------
 
@@ -511,7 +517,8 @@ uint8_t do_SIB23_NB_IoT(uint8_t Mod_id,
 
   //TS 36.331 pag 614 --> if not present the value to infinity sould be used
   *connEstFailOffset = 0;
-   sib2_NB_IoT->radioResourceConfigCommon_r13.rach_ConfigCommon_r13.connEstFailOffset_r13 = connEstFailOffset; /*OPTIONAL*/
+  
+  sib2_NB_IoT->radioResourceConfigCommon_r13.rach_ConfigCommon_r13.connEstFailOffset_r13 = connEstFailOffset; /*OPTIONAL*/
 
 
   // BCCH-Config-NB-IoT----------------------------------------------------------------
@@ -525,29 +532,56 @@ uint8_t do_SIB23_NB_IoT(uint8_t Mod_id,
   sib2_NB_IoT->radioResourceConfigCommon_r13.pcch_Config_r13.npdcch_NumRepetitionPaging_r13 = configuration-> pcch_npdcch_NumRepetitionPaging_NB;
 
   //NPRACH-Config-NB-IoT-----------------------------------------------------------------
+
+  sib2_NB_IoT->radioResourceConfigCommon_r13.nprach_Config_r13.rsrp_ThresholdsPrachInfoList_r13 = NULL; 
   sib2_NB_IoT->radioResourceConfigCommon_r13.nprach_Config_r13.nprach_CP_Length_r13 = configuration->nprach_CP_Length;
-  sib2_NB_IoT->radioResourceConfigCommon_r13.nprach_Config_r13.rsrp_ThresholdsPrachInfoList_r13 = NULL; /*OPTIONAL*/
+  /*OPTIONAL*/
 //   =CALLOC(1, sizeof(struct RSRP_ThresholdsNPRACH_InfoList_NB_r13)); //fatto uguale dopo
 //   rsrp_ThresholdsPrachInfoList = sib2_NB_IoT->radioResourceConfigCommon_r13.nprach_Config_r13.rsrp_ThresholdsPrachInfoList_r13;
 //   rsrp_range = configuration->nprach_rsrp_range_NB;
 //   ASN_SEQUENCE_ADD(&rsrp_ThresholdsPrachInfoList->list,rsrp_range);
 
-  nprach_parameters.nprach_Periodicity_r13 = configuration->nprach_Periodicity[CC_id];
-  nprach_parameters.nprach_StartTime_r13 = configuration->nprach_StartTime[CC_id];
-  nprach_parameters.nprach_SubcarrierOffset_r13 = configuration->nprach_SubcarrierOffset[CC_id];
-  nprach_parameters.nprach_NumSubcarriers_r13= configuration->nprach_NumSubcarriers[CC_id];
-  nprach_parameters.numRepetitionsPerPreambleAttempt_r13 = configuration->numRepetitionsPerPreambleAttempt_NB[CC_id];
-  nprach_parameters.numRepetitionsPerPreambleAttempt_r13 = configuration->numRepetitionsPerPreambleAttempt_NB[CC_id];
+  // According configuration to set the 3 CE level configuration setting
 
-  nprach_parameters.nprach_SubcarrierMSG3_RangeStart_r13= configuration->nprach_SubcarrierMSG3_RangeStart;
-  nprach_parameters.maxNumPreambleAttemptCE_r13= configuration->maxNumPreambleAttemptCE_NB;
-  nprach_parameters.npdcch_NumRepetitions_RA_r13 = configuration->npdcch_NumRepetitions_RA[CC_id];
-  nprach_parameters.npdcch_StartSF_CSS_RA_r13= configuration->npdcch_StartSF_CSS_RA[CC_id];
-  nprach_parameters.npdcch_Offset_RA_r13= configuration->npdcch_Offset_RA[CC_id];
+  nprach_parameters[0].nprach_Periodicity_r13               = configuration->nprach_Periodicity[0];
+  nprach_parameters[0].nprach_StartTime_r13                 = configuration->nprach_StartTime[0];
+  nprach_parameters[0].nprach_SubcarrierOffset_r13          = configuration->nprach_SubcarrierOffset[0];
+  nprach_parameters[0].nprach_NumSubcarriers_r13            = configuration->nprach_NumSubcarriers[0];
+  nprach_parameters[0].numRepetitionsPerPreambleAttempt_r13 = configuration->numRepetitionsPerPreambleAttempt_NB[0];
+  nprach_parameters[0].nprach_SubcarrierMSG3_RangeStart_r13 = configuration->nprach_SubcarrierMSG3_RangeStart;
+  nprach_parameters[0].maxNumPreambleAttemptCE_r13          = configuration->maxNumPreambleAttemptCE_NB;
+  nprach_parameters[0].npdcch_NumRepetitions_RA_r13         = configuration->npdcch_NumRepetitions_RA[0];
+  nprach_parameters[0].npdcch_StartSF_CSS_RA_r13            = configuration->npdcch_StartSF_CSS_RA[0];
+  nprach_parameters[0].npdcch_Offset_RA_r13                 = configuration->npdcch_Offset_RA[0];
+
+  nprach_parameters[1].nprach_Periodicity_r13               = configuration->nprach_Periodicity[1];
+  nprach_parameters[1].nprach_StartTime_r13                 = configuration->nprach_StartTime[1];
+  nprach_parameters[1].nprach_SubcarrierOffset_r13          = configuration->nprach_SubcarrierOffset[1];
+  nprach_parameters[1].nprach_NumSubcarriers_r13            = configuration->nprach_NumSubcarriers[1];
+  nprach_parameters[1].numRepetitionsPerPreambleAttempt_r13 = configuration->numRepetitionsPerPreambleAttempt_NB[1];
+  nprach_parameters[1].nprach_SubcarrierMSG3_RangeStart_r13 = configuration->nprach_SubcarrierMSG3_RangeStart;
+  nprach_parameters[1].maxNumPreambleAttemptCE_r13          = configuration->maxNumPreambleAttemptCE_NB;
+  nprach_parameters[1].npdcch_NumRepetitions_RA_r13         = configuration->npdcch_NumRepetitions_RA[1];
+  nprach_parameters[1].npdcch_StartSF_CSS_RA_r13            = configuration->npdcch_StartSF_CSS_RA[1];
+  nprach_parameters[1].npdcch_Offset_RA_r13                 = configuration->npdcch_Offset_RA[1];
+
+  nprach_parameters[2].nprach_Periodicity_r13               = configuration->nprach_Periodicity[2];
+  nprach_parameters[2].nprach_StartTime_r13                 = configuration->nprach_StartTime[2];
+  nprach_parameters[2].nprach_SubcarrierOffset_r13          = configuration->nprach_SubcarrierOffset[2];
+  nprach_parameters[2].nprach_NumSubcarriers_r13            = configuration->nprach_NumSubcarriers[2];
+  nprach_parameters[2].numRepetitionsPerPreambleAttempt_r13 = configuration->numRepetitionsPerPreambleAttempt_NB[2];
+  nprach_parameters[2].nprach_SubcarrierMSG3_RangeStart_r13 = configuration->nprach_SubcarrierMSG3_RangeStart;
+  nprach_parameters[2].maxNumPreambleAttemptCE_r13          = configuration->maxNumPreambleAttemptCE_NB;
+  nprach_parameters[2].npdcch_NumRepetitions_RA_r13         = configuration->npdcch_NumRepetitions_RA[2];
+  nprach_parameters[2].npdcch_StartSF_CSS_RA_r13            = configuration->npdcch_StartSF_CSS_RA[2];
+  nprach_parameters[2].npdcch_Offset_RA_r13                 = configuration->npdcch_Offset_RA[2];
+
 
   //nprach_parameterList have a max size of 3 possible nprach configuration (see maxNPRACH_Resources_NB_r13)
-  ASN_SEQUENCE_ADD(&sib2_NB_IoT->radioResourceConfigCommon_r13.nprach_Config_r13.nprach_ParametersList_r13.list,&nprach_parameters);
-
+  ASN_SEQUENCE_ADD(&sib2_NB_IoT->radioResourceConfigCommon_r13.nprach_Config_r13.nprach_ParametersList_r13.list,&nprach_parameters[0]);
+  ASN_SEQUENCE_ADD(&sib2_NB_IoT->radioResourceConfigCommon_r13.nprach_Config_r13.nprach_ParametersList_r13.list,&nprach_parameters[1]);
+  ASN_SEQUENCE_ADD(&sib2_NB_IoT->radioResourceConfigCommon_r13.nprach_Config_r13.nprach_ParametersList_r13.list,&nprach_parameters[2]);
+  
   // NPDSCH-Config NB-IOT
   sib2_NB_IoT->radioResourceConfigCommon_r13.npdsch_ConfigCommon_r13.nrs_Power_r13= configuration->npdsch_nrs_Power;
 
@@ -668,6 +702,9 @@ uint8_t do_SIB23_NB_IoT(uint8_t Mod_id,
     msg("[RRC] ASN1 : SI-NB encoding failed for SIB23_NB_IoT\n");
     return(-1);
   }
+
+  carrier->sib2_NB_IoT = sib2_NB_IoT;
+  carrier->sib3_NB_IoT = sib3_NB_IoT;
 
   return((enc_rval.encoded+7)/8);
 }
