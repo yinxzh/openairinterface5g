@@ -129,6 +129,7 @@ static inline void* malloc16_clear( size_t size )
 #include "PHY/TOOLS/time_meas_NB_IoT.h"
 //#include "PHY/CODING/defs.h"
 #include "PHY/CODING/defs_NB_IoT.h"
+#include "openair2/PHY_INTERFACE/IF_Module_NB_IoT.h"
 //#include "PHY/TOOLS/defs.h"
 //#include "platform_types.h"
 ///#include "openair1/PHY/LTE_TRANSPORT/defs_nb_iot.h"
@@ -531,6 +532,8 @@ typedef struct PHY_VARS_eNB_NB_IoT_s {
   int                           is_slave;
   // indicator for precoding function (eNB,3GPP_eNB_BBU)
   int                           do_precoding;
+  IF_Module_NB_IoT_t            *if_inst_NB_IoT;
+  UL_IND_NB_IoT_t               UL_INFO_NB_IoT;
   void                          (*do_prach)(struct PHY_VARS_eNB_NB_IoT_s *eNB,int frame,int subframe);
   void                          (*fep)(struct PHY_VARS_eNB_NB_IoT_s *eNB,eNB_rxtx_proc_NB_IoT_t *proc);
   int                           (*td)(struct PHY_VARS_eNB_NB_IoT_s *eNB,int UE_id,int harq_pid,int llr8_flag);

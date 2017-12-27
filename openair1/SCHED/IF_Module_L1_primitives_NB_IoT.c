@@ -1,6 +1,6 @@
 
 
-
+#include "openair2/PHY_INTERFACE/IF_Module_NB_IoT.h"
 #include "../SCHED/IF_Module_L1_primitives_NB_IoT.h"
 //#include "../SCHED/defs.h"
 #include "../SCHED/defs_NB_IoT.h"
@@ -319,7 +319,7 @@ void schedule_response_NB_IoT(Sched_Rsp_NB_IoT_t *Sched_INFO)
 
 }
 
-void PHY_config_req(PHY_Config_NB_IoT_t* config_INFO){
+void PHY_config_req_NB_IoT(PHY_Config_NB_IoT_t* config_INFO){
 
 
 	if(config_INFO->get_MIB != 0){

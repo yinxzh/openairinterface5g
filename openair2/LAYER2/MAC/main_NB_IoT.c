@@ -25,6 +25,8 @@
 void init_mac_NB_IoT(eNB_MAC_INST_NB_IoT *mac_inst)
 {
   int32_t i, j, k;  
+
+  printf("[MAC] Init_MAC_IN\n");
   
   for(i=0;i<64;++i)
   {
@@ -45,7 +47,6 @@ void init_mac_NB_IoT(eNB_MAC_INST_NB_IoT *mac_inst)
   mac_inst->RA_msg4_list.tail = (RA_TEMPLATE_NB_IoT *)0;
 
   sib1_NB_IoT_sched_t *config = &mac_inst->rrc_config.sib1_NB_IoT_sched_config;
-  
   
   // DLSF Table
   init_dlsf_info(mac_inst, &DLSF_information);
@@ -199,12 +200,18 @@ void mac_top_init_eNB_NB_IoT(void)
     sizeof(eNB_MAC_INST_NB_IoT));
     for (i=0;i<RC.nb_nb_iot_macrlc_inst;i++) {
       RC.nb_iot_mac[i] = (eNB_MAC_INST_NB_IoT*)malloc16(sizeof(eNB_MAC_INST_NB_IoT));
+
       AssertFatal(RC.nb_iot_mac != NULL,
       "can't ALLOCATE %zu Bytes for %d eNB_MAC_INST with size %zu \n",
       RC.nb_macrlc_inst*sizeof(eNB_MAC_INST_NB_IoT*),RC.nb_nb_iot_macrlc_inst,sizeof(eNB_MAC_INST_NB_IoT));
       LOG_D(MAC,"[NB-IoT MAIN] ALLOCATE %zu Bytes for %d eNB_MAC_INST @ %p\n",sizeof(eNB_MAC_INST_NB_IoT),RC.nb_nb_iot_macrlc_inst,RC.nb_iot_mac);
       bzero(RC.nb_iot_mac[i],sizeof(eNB_MAC_INST_NB_IoT));
       RC.nb_iot_mac[i]->Mod_id = i;
+
+            // IF Module Initialization linking
+      RC.nb_iot_mac[i]->if_inst_NB_IoT = IF_Module_init_NB_IoT(i);
+      RC.nb_iot_mac[i]->if_inst_NB_IoT->PHY_config_req = PHY_config_req_NB_IoT;
+      RC.nb_iot_mac[i]->if_inst_NB_IoT->schedule_response = schedule_response_NB_IoT;
 
       //reserve for fapi structure initialization
     }

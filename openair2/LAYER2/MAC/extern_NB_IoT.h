@@ -28,8 +28,8 @@
 //#include "LAYER2/MAC/vars_NB_IoT.h"
 
 //NB-IoT
-extern IF_Module_NB_IoT_t *if_inst_NB_IoT;
-extern eNB_MAC_INST_NB_IoT *mac_inst_NB_IoT;
+//extern IF_Module_NB_IoT_t *if_inst_NB_IoT;
+//extern eNB_MAC_INST_NB_IoT *mac_inst_NB_IoT;
 
 
 

@@ -484,25 +484,27 @@ void rrc_mac_config_req_NB_IoT(
         SchedulingInfo_NB_r13_t *scheduling_info_list;
 
 
-        ///CE level 0
-        if ( sib1_NB_IoT->schedulingInfoList_r13.list.array != NULL){ 
+        ///OAI only supports SIB2/3-NB for the sibs
+        if ( sib1_NB_IoT->schedulingInfoList_r13.list.array[0] != NULL){ 
             scheduling_info_list = sib1_NB_IoT->schedulingInfoList_r13.list.array[0];
 
-            printf("Pass first SIBs Asn\n");
-
             mac_config->sibs_NB_IoT_sched[0].si_periodicity =		scheduling_info_list->si_Periodicity_r13 ;
+            printf("Pass first SIBs Asn, SI P:%d\n",mac_config->sibs_NB_IoT_sched[0].si_periodicity);
             mac_config->sibs_NB_IoT_sched[0].si_repetition_pattern =	scheduling_info_list->si_RepetitionPattern_r13 ;
-            mac_config->sibs_NB_IoT_sched[0].sib_mapping_info = 	scheduling_info_list->sib_MappingInfo_r13.list.array[0][0] | scheduling_info_list->sib_MappingInfo_r13.list.array[1][0];
+            mac_config->sibs_NB_IoT_sched[0].sib_mapping_info = 	scheduling_info_list->sib_MappingInfo_r13.list.array[0][0];
             mac_config->sibs_NB_IoT_sched[0].si_tb =			scheduling_info_list->si_TB_r13  ;
+          
         } else { //set this value for now to be test further
+
             mac_config->sibs_NB_IoT_sched[0].si_periodicity =		si_Periodicity_rf4096 ;
             mac_config->sibs_NB_IoT_sched[0].si_repetition_pattern =	si_RepetitionPattern_every2ndRF;
      
             mac_config->sibs_NB_IoT_sched[0].sib_mapping_info = 	sib3_v;
             mac_config->sibs_NB_IoT_sched[0].si_tb =			si_TB_680;
         }
+
         ///CE level 1
-       if ( sib1_NB_IoT->schedulingInfoList_r13.list.array != NULL) {
+       if ( sib1_NB_IoT->schedulingInfoList_r13.list.array[1] != NULL) {
             scheduling_info_list = sib1_NB_IoT->schedulingInfoList_r13.list.array[1];
             mac_config->sibs_NB_IoT_sched[1].si_periodicity =		scheduling_info_list->si_Periodicity_r13 ;
             mac_config->sibs_NB_IoT_sched[1].si_repetition_pattern =	scheduling_info_list->si_RepetitionPattern_r13 ;
@@ -515,7 +517,7 @@ void rrc_mac_config_req_NB_IoT(
             mac_config->sibs_NB_IoT_sched[1].si_tb =			si_TB_680;
         }
  
-      if ( sib1_NB_IoT->schedulingInfoList_r13.list.array != NULL) {
+      if ( sib1_NB_IoT->schedulingInfoList_r13.list.array[2] != NULL) {
             scheduling_info_list = sib1_NB_IoT->schedulingInfoList_r13.list.array[2];
             mac_config->sibs_NB_IoT_sched[2].si_periodicity =	      scheduling_info_list->si_Periodicity_r13 ;
             mac_config->sibs_NB_IoT_sched[2].si_repetition_pattern =    scheduling_info_list->si_RepetitionPattern_r13 ;
@@ -619,18 +621,25 @@ void rrc_mac_config_req_NB_IoT(
 
         }
     }
-   if (radioResourceConfigCommon!=NULL) {
-       AssertFatal( RC.L1_NB_IoT[Mod_idP]->if_inst->PHY_config_req != NULL, "rrc_mac_config_req_eNB_NB_IoT: PHY_config_req pointer function is NULL\n");
-       PHY_Config_NB_IoT_t phycfg;
-       phycfg.mod_id = Mod_idP;
-       phycfg.cfg    = &RC.nb_iot_mac[Mod_idP]->config;
+    if(RC.nb_iot_mac[Mod_idP]->if_inst_NB_IoT!=NULL)
+    {
+      if (radioResourceConfigCommon!=NULL) {
+        AssertFatal( RC.L1_NB_IoT[Mod_idP]->if_inst_NB_IoT->PHY_config_req != NULL, "rrc_mac_config_req_eNB_NB_IoT: PHY_config_req pointer function is NULL\n");
+        PHY_Config_NB_IoT_t phycfg;
+        phycfg.mod_id = Mod_idP;
+        phycfg.cfg    = &RC.nb_iot_mac[Mod_idP]->config;
     
-      if (RC.nb_iot_mac[Mod_idP]->if_inst->PHY_config_req) RC.nb_iot_mac[Mod_idP]->if_inst->PHY_config_req(&phycfg); 
+      if (RC.nb_iot_mac[Mod_idP]->if_inst_NB_IoT->PHY_config_req) RC.nb_iot_mac[Mod_idP]->if_inst_NB_IoT->PHY_config_req(&phycfg); 
+    }
+   }else{
+    LOG_E(MAC,"NB-IoT IF INST is NULL, need to fix\n");
    }
 
     //return 0;
 
       init_mac_NB_IoT(RC.nb_iot_mac[Mod_idP]);
+
+      printf("Init_MAC done\n");
 
 //      RC.L1_NB_IoT[Mod_idP]->configured=1;
 
