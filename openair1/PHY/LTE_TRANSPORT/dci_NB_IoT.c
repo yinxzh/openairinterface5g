@@ -483,7 +483,7 @@ uint8_t generate_dci_top_NB_IoT(NB_IoT_eNB_NPDCCH_t		*npdcch,
   //temporary variable
   uint16_t rnti[2];
   uint8_t  L = 0;
- 
+  uint8_t  *a[2]={dci_alloc[0].dci_pdu,dci_alloc[1].dci_pdu};
 
   /* PARAMETERS may not needed
   **e_ptr : store the encoding result, and as a input to modulation
@@ -558,10 +558,10 @@ uint8_t generate_dci_top_NB_IoT(NB_IoT_eNB_NPDCCH_t		*npdcch,
 	  		  break;
   }
   
-  for (i=0; i<Num_dci; i++) {
+     
    //NB-IoT encoding
       dci_encoding_NB_IoT(
-					&(dci_alloc[i].dci_pdu),
+					a,
 					4, // total length (in byte) of a [assume max 2 pdus of  ??]
 					G,
 					npdcch->e,
@@ -595,7 +595,7 @@ uint8_t generate_dci_top_NB_IoT(NB_IoT_eNB_NPDCCH_t		*npdcch,
 					L
 					);
 
-  }
+ 
 
   return 0;
 }

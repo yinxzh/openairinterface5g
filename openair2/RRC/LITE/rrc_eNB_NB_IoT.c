@@ -65,7 +65,7 @@
 
 //#include "LAYER2/MAC/defs.h"
 #include "LAYER2/MAC/defs_NB_IoT.h"
-
+#include "rrc_eNB_S1AP_NB_IoT.h"
 
 #ifdef USER_MODE
 #   include "RRC/NAS/nas_config.h"
@@ -2614,7 +2614,7 @@ int rrc_eNB_decode_dcch_NB_IoT(
 #if defined(ENABLE_USE_MME)
 
       if (EPC_MODE_ENABLED == 1) {
-        rrc_eNB_send_S1AP_UE_CAPABILITIES_IND(ctxt_pP,
+        rrc_eNB_send_S1AP_UE_CAPABILITIES_IND_NB_IoT(ctxt_pP,
                                               ue_context_p,
                                               ul_dcch_msg_NB_IoT);
       }
@@ -2663,7 +2663,7 @@ int rrc_eNB_decode_dcch_NB_IoT(
 #if defined(ENABLE_USE_MME)
 
       if (EPC_MODE_ENABLED == 1) {
-        rrc_eNB_send_S1AP_UPLINK_NAS(ctxt_pP,
+        rrc_eNB_send_S1AP_UPLINK_NAS_NB_IoT(ctxt_pP,
                                      ue_context_p,
                                      ul_dcch_msg_NB_IoT);
       }

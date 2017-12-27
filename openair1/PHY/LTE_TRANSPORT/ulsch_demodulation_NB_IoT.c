@@ -1418,14 +1418,14 @@ void rx_ulsch_NB_IoT(PHY_VARS_eNB_NB_IoT     *eNB,
 
   uint8_t    harq_pid;
   uint8_t    Qm;
-  uint16_t   rx_power_correction;
+//  uint16_t   rx_power_correction;
   int16_t    *llrp;
   int        subframe = proc->subframe_rx;
 
   harq_pid = subframe2harq_pid_NB_IoT(frame_parms,proc->frame_rx,subframe);
   Qm       = get_Qm_ul_NB_IoT(ulsch[UE_id]->harq_process->mcs,ulsch[UE_id]->harq_process->N_sc_RU);
 
-  rx_power_correction = 1;
+//  rx_power_correction = 1;
 
   if (ulsch[UE_id]->harq_process->nb_rb == 0) {
     LOG_E(PHY,"PUSCH (%d/%x) nb_rb=0!\n", harq_pid,ulsch[UE_id]->rnti);

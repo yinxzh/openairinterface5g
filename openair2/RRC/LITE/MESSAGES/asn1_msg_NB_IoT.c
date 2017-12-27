@@ -172,7 +172,7 @@ uint8_t do_SIB1_NB_IoT(uint8_t Mod_id, int CC_id,
 {
   BCCH_DL_SCH_Message_NB_t *bcch_message= &(carrier->siblock1_NB_IoT);
   SystemInformationBlockType1_NB_t **sib1_NB_IoT= &(carrier->sib1_NB_IoT);
-  uint8_t *buffer                      = carrier->SIB1_NB_IoT;
+  
 
   asn_enc_rval_t enc_rval;
 
