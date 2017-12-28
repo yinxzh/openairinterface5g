@@ -22,7 +22,7 @@ void schedule_sibs_NB_IoT(eNB_MAC_INST_NB_IoT *mac_inst, uint32_t sibs_order, in
 	//uint32_t end_subframe[8] = { -1 };
 	schedule_result_t *new_node;	
 	DCIFormatN1_t *sibs_dci;
-	uint32_t a,j, i, k, num_subframe, last_subframe, residual_subframe;
+	uint32_t j, i, k, num_subframe, last_subframe, residual_subframe;
 
 	
 	num_subframe = mac_inst->rrc_config.sibs_NB_IoT_sched[sibs_order].si_tb;

@@ -55,8 +55,12 @@ static const uint16_t S1AP_INTEGRITY_EIA2_MASK = 0x4000;
 #endif
 #endif
 
-
-
+/* prototypes, f() from rrc_eNB_NB_IoT.c: */
+extern void rrc_eNB_generate_RRCConnectionRelease_NB_IoT(
+  const protocol_ctxt_t* const ctxt_pP,
+  rrc_eNB_ue_context_NB_IoT_t*          const ue_context_pP
+);
+/* -- */
 
 # if defined(ENABLE_ITTI)
 //------------------------------------------------------------------------------

@@ -351,7 +351,7 @@ void rrc_mac_config_req_NB_IoT(
 {
 
     int UE_id = -1;
-    eNB_MAC_INST_NB_IoT *eNB; 
+
 
     rrc_config_NB_IoT_t                     *mac_config;
 
@@ -385,7 +385,7 @@ void rrc_mac_config_req_NB_IoT(
 
       //l2_init_eNB_NB_IoT();
       
-      eNB = RC.nb_iot_mac[Mod_idP];
+ 
       mac_config = &RC.nb_iot_mac[Mod_idP]->rrc_config;
 
     //Mapping OAI params into FAPI params
