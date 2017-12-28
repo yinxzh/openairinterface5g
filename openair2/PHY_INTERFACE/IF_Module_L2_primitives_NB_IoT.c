@@ -6,8 +6,11 @@
 void UL_indication_NB_IoT(UL_IND_NB_IoT_t *UL_INFO)
 {
     int i=0;
+    uint32_t abs_subframe;
     //UE_TEMPLATE_NB_IoT *UE_info;
-    //mac_NB_IoT_t *mac_inst;
+    eNB_MAC_INST_NB_IoT *mac_inst = RC.nb_iot_mac[UL_INFO->module_id];
+
+    LOG_D(MAC,"[NB-IoT] Enter uplink indication for NB-IoT\n");
 
       //If there is a preamble, do the initiate RA procedure
       if(UL_INFO->NRACH.number_of_initial_scs_detected>0)
@@ -63,8 +66,8 @@ void UL_indication_NB_IoT(UL_IND_NB_IoT_t *UL_INFO)
               }
 
           }
-
+        abs_subframe = UL_INFO->frame*10+UL_INFO->subframe;
     //scheduler here
     //Schedule subframe should be next four subframe, means that UL_INFO->frame*10+UL_INFO->subframe + 4
-    //eNB_dlsch_ulsch_scheduler_NB_IoT(mac_inst,abs_subframe);
+    eNB_dlsch_ulsch_scheduler_NB_IoT(mac_inst,abs_subframe);
 }

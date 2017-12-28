@@ -394,7 +394,7 @@ void phy_config_dedicated_eNB_NB_IoT(uint8_t 			Mod_id,
 		LOG_I(PHY,"phy_config_dedicated_eNB_NB_IoT: npdcch_NumRepetitions = %d\n",npdcch->npdcch_NumRepetitions);
 	
 	} else {
-		LOG_E(PHY,"[eNB %d] Received NULL radioResourceConfigDedicated from eNB %d\n",Mod_id, UE_id);
+		LOG_I(PHY,"[eNB %d] Received NULL radioResourceConfigDedicated from eNB %d\n",Mod_id, UE_id);
 		return;
 	}
 	

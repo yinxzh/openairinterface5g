@@ -534,6 +534,7 @@ typedef struct PHY_VARS_eNB_NB_IoT_s {
   int                           do_precoding;
   IF_Module_NB_IoT_t            *if_inst_NB_IoT;
   UL_IND_NB_IoT_t               UL_INFO_NB_IoT;
+  pthread_mutex_t               UL_INFO_mutex;
   void                          (*do_prach)(struct PHY_VARS_eNB_NB_IoT_s *eNB,int frame,int subframe);
   void                          (*fep)(struct PHY_VARS_eNB_NB_IoT_s *eNB,eNB_rxtx_proc_NB_IoT_t *proc);
   int                           (*td)(struct PHY_VARS_eNB_NB_IoT_s *eNB,int UE_id,int harq_pid,int llr8_flag);

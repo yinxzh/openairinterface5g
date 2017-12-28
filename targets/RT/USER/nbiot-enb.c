@@ -191,11 +191,11 @@ static inline int rxtx_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_t *proc, ch
    */
 
   pthread_mutex_lock(&eNB->UL_INFO_mutex);
-  eNB->UL_INFO.frame     = proc->frame_rx;
-  eNB->UL_INFO.subframe  = proc->subframe_rx;
-  eNB->UL_INFO.module_id = eNB->Mod_id;
-  eNB->UL_INFO.CC_id     = eNB->CC_id;
-  eNB->if_inst->UL_indication(&eNB->UL_INFO);
+  UL_INFO->frame     = proc->frame_rx;
+  UL_INFO->subframe  = proc->subframe_rx;
+  UL_INFO->module_id = eNB->Mod_id;
+  UL_INFO->CC_id     = eNB->CC_id;
+  eNB->if_inst_NB_IoT->UL_indication(UL_INFO);
   pthread_mutex_unlock(&eNB->UL_INFO_mutex);
 
   
