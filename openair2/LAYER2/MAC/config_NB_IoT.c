@@ -113,6 +113,14 @@ void config_mib_fapi_NB_IoT(module_id_t             Mod_idP,
 {
 
   nfapi_config_request_t *cfg = &RC.nb_iot_mac[Mod_idP]->config;
+
+  cfg->sch_config.physical_cell_id.value = physCellId;
+  cfg->nfapi_config.rf_bands.rf_band[0] = eutra_band;
+  cfg->subframe_config.dl_cyclic_prefix_type.value = Ncp;
+  cfg->subframe_config.ul_cyclic_prefix_type.value = Ncp_UL;
+  cfg->rf_config.tx_antenna_ports.value = p_eNB;
+  cfg->nfapi_config.earfcn.value = 9370; // value from taiwan commercial base station
+  //cfg->nb_iot_config.prb_index.value = // need to set in thread part
   
   switch (mib_NB_IoT->message.operationModeInfo_r13.present)
     {

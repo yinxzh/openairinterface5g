@@ -321,7 +321,7 @@ void schedule_response_NB_IoT(Sched_Rsp_NB_IoT_t *Sched_INFO)
 
 void PHY_config_req_NB_IoT(PHY_Config_NB_IoT_t* config_INFO){
 
-	LOG_I(PHY,"PHY_config_req start\n");
+	LOG_I(PHY,"[NB-IoT] PHY CONFIG REQ NB-IoT In\n");
 
 
 	if(config_INFO->get_MIB != 0){

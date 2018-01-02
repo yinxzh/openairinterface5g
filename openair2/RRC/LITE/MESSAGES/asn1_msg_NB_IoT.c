@@ -97,7 +97,8 @@ int errno;
 uint8_t do_MIB_NB_IoT(
 		rrc_eNB_carrier_data_NB_IoT_t *carrier,
 		uint16_t N_RB_DL,//may not needed--> for NB_IoT only 1 PRB is used
-		uint32_t frame)
+		uint32_t frame,
+    uint32_t hyper_frame)
 {
   asn_enc_rval_t enc_rval;
   BCCH_BCH_Message_NB_t *mib_NB_IoT = &(carrier->mib_NB_IoT);
@@ -117,7 +118,7 @@ uint8_t do_MIB_NB_IoT(
 
   //XXX check if correct the bit assignment
   uint8_t sfn_MSB = (uint8_t)((frame>>6) & 0x0f); // all the 4 bits are set to 1
-  uint8_t hsfn_LSB = (uint8_t)(frame & 0x3); //2 bits set to 1 (0x3 = 0011)
+  uint8_t hsfn_LSB = (uint8_t)(hyper_frame & 0x03); //2 bits set to 1 (0x3 = 0011)
   uint16_t spare=0; //11 bits --> use uint16
 
   mib_NB_IoT->message.systemFrameNumber_MSB_r13.buf = &sfn_MSB;
@@ -142,7 +143,7 @@ uint8_t do_MIB_NB_IoT(
   mib_NB_IoT->message.operationModeInfo_r13.present = MasterInformationBlock_NB__operationModeInfo_r13_PR_inband_SamePCI_r13;
   mib_NB_IoT->message.operationModeInfo_r13.choice.inband_SamePCI_r13.eutra_CRS_SequenceInfo_r13 = 0;
 
-  printf("[MIB] something to write HERE ,sfn_MSB %x, hsfn_LSB %x\n",
+  printf("[MIB] Initialization of frame information,sfn_MSB %x, hsfn_LSB %x\n",
          (uint32_t)sfn_MSB,
 		 (uint32_t)hsfn_LSB);
 
@@ -336,7 +337,7 @@ uint8_t do_SIB1_NB_IoT(uint8_t Mod_id, int CC_id,
    (*sib1_NB_IoT)->downlinkBitmap_r13 = CALLOC(1, sizeof(struct DL_Bitmap_NB_r13));
    ((*sib1_NB_IoT)->downlinkBitmap_r13)->present= DL_Bitmap_NB_r13_PR_NOTHING;
 
-   *eutraControlRegionSize = 0;
+   *eutraControlRegionSize = 1;
    (*sib1_NB_IoT)->eutraControlRegionSize_r13 = eutraControlRegionSize;
 
 

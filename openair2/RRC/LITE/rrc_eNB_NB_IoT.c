@@ -1638,7 +1638,8 @@ static void init_SI_NB_IoT(
 	  RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id].sizeof_MIB_NB_IoT =
 	  			  do_MIB_NB_IoT(&RC.nb_iot_rrc[ctxt_pP->module_id]->carrier[CC_id],
 	  					  	configuration->N_RB_DL,
-					        0 //FIXME is correct to pass frame = 0??
+					        0, //frame
+                  0// hyper sfn
 					        );
   }
   else {
