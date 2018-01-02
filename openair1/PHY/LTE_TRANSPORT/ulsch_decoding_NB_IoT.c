@@ -958,7 +958,7 @@ unsigned int  ulsch_decoding_NB_IoT(PHY_VARS_eNB_NB_IoT     *eNB,
  // uint8_t         *columnset;
   unsigned int    sumKr=0;
   //unsigned int    Qprime,L,O_RCC;
-  unsigned int    G,Q_CQI,Q_RI,H,Hprime,Hpp,Cmux,Rmux_prime;
+  unsigned int    G,H,Hprime,Hpp,Cmux,Rmux_prime;//Q_CQI,Q_RI
   
   //unsigned int    Qprime_ACK,Qprime_RI,len_ACK=0,len_RI=0;
 
@@ -1322,8 +1322,8 @@ unsigned int  ulsch_decoding_NB_IoT(PHY_VARS_eNB_NB_IoT     *eNB,
 
 
   // if (i!=(H+Q_RI))
-  if (i!=(H))
-    LOG_D(PHY,"ulsch_decoding.c: Error in input buffer length (j %d, H+Q_RI %d)\n",i,H+Q_RI);
+  //if (i!=(H))
+ //   LOG_D(PHY,"ulsch_decoding.c: Error in input buffer length (j %d, H+Q_RI %d)\n",i,H+Q_RI);
 
   // HARQ-ACK Bits (LLRs are nulled in overwritten bits after copying HARQ-ACK LLR)
 

@@ -34,9 +34,10 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 #include <sys/ioctl.h>
 #include <dlfcn.h>
-#include "openair1/PHY/defs_L1.h"
+//#include "openair1/PHY/defs.h"
 #define LOAD_MODULE_SHLIB_MAIN
 
 #include "common/config/config_userapi.h"
@@ -47,12 +48,17 @@ void loader_init(void) {
 
   int ret = config_get( LoaderParams,sizeof(LoaderParams)/sizeof(paramdef_t),LOADER_CONFIG_PREFIX);
   if (ret <0) {
-       fprintf(stderr,"[LOADER] configuration couldn't be performed");
+       fprintf(stderr,"[LOADER]  %s %d configuration couldn't be performed",__FILE__, __LINE__);
        if (loader_data.shlibpath == NULL) {
          loader_data.shlibpath=DEFAULT_PATH;
         }
        return;
-  }   
+  }
+  loader_data.shlibs = malloc(loader_data.maxshlibs * sizeof(loader_shlibdesc_t));
+  if(loader_data.shlibs == NULL) {
+     fprintf(stderr,"[LOADER]  %s %d memory allocation error %s\n",__FILE__, __LINE__,strerror(errno));
+     exit_fun("[LOADER] unrecoverable error");
+  }
 }
 
 int load_module_shlib(char *modname,loader_shlibfunc_t *farray, int numf)
@@ -85,7 +91,7 @@ int load_module_shlib(char *modname,loader_shlibfunc_t *farray, int numf)
       fprintf(stderr,"[LOADER] library %s is not loaded: %s\n", tmpstr,dlerror());
       ret = -1;
    } else {
-      printf("[LOADER] library %s uccessfully loaded loaded\n", tmpstr);
+      printf("[LOADER] library %s successfully loaded\n", tmpstr);
       sprintf(tmpstr,"%s_autoinit",modname);
       fpi = dlsym(lib_handle,tmpstr);
 
@@ -100,10 +106,21 @@ int load_module_shlib(char *modname,loader_shlibfunc_t *farray, int numf)
 	      if (farray[i].fptr == NULL ) {
 	          fprintf(stderr,"[LOADER] %s %d %s function not found %s\n",__FILE__, __LINE__, dlerror(),farray[i].fname);
                ret= -1;
-	      }
+	      } 
 	  } /* for int i... */
       }	 /* farray ! NULL */
-    } 
+    loader_data.shlibs[loader_data.numshlibs].name=strdup(modname);
+    loader_data.shlibs[loader_data.numshlibs].funcarray=malloc(numf*sizeof(loader_shlibfunc_t));
+    loader_data.shlibs[loader_data.numshlibs].numfunc=0;
+    for (int i=0; i<numf;i++) {
+       if (farray[i].fptr != NULL) {
+          loader_data.shlibs[loader_data.numshlibs].funcarray[i].fname=strdup(farray[i].fname); 
+          loader_data.shlibs[loader_data.numshlibs].funcarray[i].fptr = farray[i].fptr;
+          loader_data.shlibs[loader_data.numshlibs].numfunc++;
+       }
+    }
+    (loader_data.numshlibs)++;
+    } /* lib_handle != NULL */ 
 	  	 
    if (tmpstr != NULL) free(tmpstr);
    if (lib_handle != NULL) dlclose(lib_handle); 

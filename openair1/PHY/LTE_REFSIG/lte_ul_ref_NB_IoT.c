@@ -181,7 +181,7 @@ void generate_ul_ref_sigs_rx_NB_IoT(void)
             for (n=0; n<sequence_length[index_Nsc_RU]; n++) {
               // ul_ref_sigs_rx[u][index_Nsc_RU][n<<1]    = ref_sigs_sc1[n<<1];
               // ul_ref_sigs_rx[u][index_Nsc_RU][1+(n<<1)]= ref_sigs_sc1[1+(n<<1)];
-              ul_ref_sigs_rx[u][index_Nsc_RU][12*n<<1+24]    = ref_sigs_sc1[n<<1]; // ul_ref_sigs_rx is filled every 12 RE, real part
+              ul_ref_sigs_rx[u][index_Nsc_RU][12*(n<<1)+24]    = ref_sigs_sc1[n<<1]; // ul_ref_sigs_rx is filled every 12 RE, real part
               ul_ref_sigs_rx[u][index_Nsc_RU][1+12*(n<<1)+24]= ref_sigs_sc1[1+(n<<1)]; // ul_ref_sigs_rx is filled every 12 RE, imaginary part    
             }
           }
@@ -194,7 +194,7 @@ void generate_ul_ref_sigs_rx_NB_IoT(void)
           for (n=0; n<sequence_length[index_Nsc_RU]; n++) {
             // ul_ref_sigs_rx[u][index_Nsc_RU][n<<1]    = (int16_t)(floor(32767*cos(M_PI*ref3[(u*3) + n]/4 + alpha3[threetnecyclicshift])));
             // ul_ref_sigs_rx[u][index_Nsc_RU][1+(n<<1)]= (int16_t)(floor(32767*sin(M_PI*ref3[(u*3) + n]/4 + alpha3[threetnecyclicshift]))); 
-            ul_ref_sigs_rx[u][index_Nsc_RU][n<<1+24]    = (int16_t)(floor(32767*cos(M_PI*ref3[(u*3) + n]/4 )));
+            ul_ref_sigs_rx[u][index_Nsc_RU][(n<<1)+24]    = (int16_t)(floor(32767*cos(M_PI*ref3[(u*3) + n]/4 )));
             ul_ref_sigs_rx[u][index_Nsc_RU][1+(n<<1)+24]= (int16_t)(floor(32767*sin(M_PI*ref3[(u*3) + n]/4 )));
           }
           break; 
@@ -203,7 +203,7 @@ void generate_ul_ref_sigs_rx_NB_IoT(void)
           for (n=0; n<sequence_length[index_Nsc_RU]; n++) {
             // ul_ref_sigs_rx[u][index_Nsc_RU][n<<1]    = (int16_t)(floor(32767*cos(M_PI*ref6[(u*6) + n]/4 + alpha6[sixtonecyclichift])));
             // ul_ref_sigs_rx[u][index_Nsc_RU][1+(n<<1)]= (int16_t)(floor(32767*sin(M_PI*ref6[(u*6) + n]/4 + alpha6[sixtonecyclichift])));
-            ul_ref_sigs_rx[u][index_Nsc_RU][n<<1+24]    = (int16_t)(floor(32767*cos(M_PI*ref6[(u*6) + n]/4 )));
+            ul_ref_sigs_rx[u][index_Nsc_RU][(n<<1)+24]    = (int16_t)(floor(32767*cos(M_PI*ref6[(u*6) + n]/4 )));
             ul_ref_sigs_rx[u][index_Nsc_RU][1+(n<<1)+24]= (int16_t)(floor(32767*sin(M_PI*ref6[(u*6) + n]/4 )));
           }
           break; 
