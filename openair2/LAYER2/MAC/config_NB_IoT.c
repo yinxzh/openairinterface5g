@@ -421,7 +421,7 @@ void rrc_mac_config_req_NB_IoT(
 
 
 
-        mac_config->sib1_NB_IoT_sched_config.starting_rf = &(sib1_NB_IoT->si_RadioFrameOffset_r13);
+        mac_config->sib1_NB_IoT_sched_config.starting_rf = sib1_NB_IoT->si_RadioFrameOffset_r13;
         mac_config->si_window_length = sib1_NB_IoT->si_WindowLength_r13;
 
         SchedulingInfo_NB_r13_t *scheduling_info_list;
