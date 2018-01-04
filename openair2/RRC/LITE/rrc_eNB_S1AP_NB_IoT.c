@@ -835,6 +835,7 @@ rrc_eNB_process_S1AP_DOWNLINK_NAS_NB_IoT(
 		  length,
 		  buffer,
 		  PDCP_TRANSMISSION_MODE_CONTROL);*/
+   LOG_I(RRC,"rrc NB-IoT data req, srb id %i, length %i\n",srb_id,length);
 
     return (0);
   }

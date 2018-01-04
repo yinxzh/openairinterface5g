@@ -163,7 +163,7 @@ uint32_t TA_estimation_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,
 
 	uint16_t length_seq_NPRACH,length_CP,length_symbol; // in number of samples, per NPRACH preamble: 4 sequences ; length of CP in number of samples 
 	uint16_t length_CP_0 = eNB->frame_parms.nprach_config_common.nprach_CP_Length; //NB-IoT: 0: short, 1: long 
-	uint32_t fs; //NB-IoT: sampling frequency of Rx_buffer, must be defined somewhere
+	uint32_t fs=180000; //NB-IoT: sampling frequency of Rx_buffer, must be defined somewhere
 	uint32_t fs_sub_sampled; 
 	uint16_t length_correl_window,base_length; 
 	int64_t *vec_correlation; 
@@ -403,6 +403,7 @@ void RX_NPRACH_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB, int16_t *Rx_buffer){
 											estimated_TA_coarse, 
 											coarse); 
 		// Needs to be stored in a variable in PHY_VARS_eNB_NB_IoT structure
+		LOG_I(PHY,"estimated TA: %i\n",estimated_TA);
 	}
 
 

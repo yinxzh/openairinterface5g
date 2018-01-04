@@ -77,18 +77,18 @@ int32_t lte_ul_channel_estimation_NB_IoT(PHY_VARS_eNB_NB_IoT      *eNB,
   uint16_t aa,Msc_RS,Msc_RS_idx;
   uint16_t * Msc_idx_ptr;
   int k,pilot_pos1 = 3 - frame_parms->Ncp, pilot_pos2 = 10 - 2*frame_parms->Ncp;
-  int16_t alpha, beta;
+  //int16_t alpha, beta;
   int32_t *ul_ch1=NULL, *ul_ch2=NULL;
   //int32_t *ul_ch1_0=NULL,*ul_ch2_0=NULL,*ul_ch1_1=NULL,*ul_ch2_1=NULL;
   int16_t ul_ch_estimates_re,ul_ch_estimates_im;
-  int32_t rx_power_correction;
+  //int32_t rx_power_correction;
 
   //uint8_t nb_antennas_rx = frame_parms->nb_antenna_ports_eNB;
   uint8_t nb_antennas_rx = frame_parms->nb_antennas_rx;
   uint8_t cyclic_shift;
 
   uint32_t alpha_ind;
-  uint32_t u;//=frame_parms->npusch_config_common.ul_ReferenceSignalsNPUSCH.grouphop[Ns+(subframe<<1)];
+  uint32_t u=frame_parms->npusch_config_common.ul_ReferenceSignalsNPUSCH.grouphop[Ns+(subframe<<1)];
   //uint32_t v=frame_parms->npusch_config_common.ul_ReferenceSignalsNPUSCH.seqhop[Ns+(subframe<<1)];
   int32_t tmp_estimates[N_rb_alloc*12] __attribute__((aligned(16)));
 
@@ -107,11 +107,11 @@ int32_t lte_ul_channel_estimation_NB_IoT(PHY_VARS_eNB_NB_IoT      *eNB,
   uint16_t ul_sc_start; // subcarrier start index into UL RB 
 
   // 36.211, Section 10.1.4.1.2, Table 10.1.4.1.2-3 
-  double alpha3[3] = {0 , M_PI*2/3, M_PI*4/3}; 
-  double alpha6[4] = {0 , M_PI*2/6, M_PI*4/6, M_PI*8/6}; 
-  uint8_t threetnecyclicshift=0, sixtonecyclichift=0; // NB-IoT: to be defined from higher layer, see 36.211 Section 10.1.4.1.2
-  uint16_t Nsc_RU; // Vincent: number of sc 1,3,6,12 
-  unsigned int index_Nsc_RU; // Vincent: index_Nsc_RU 0,1,2,3 ---> number of sc 1,3,6,12 
+ // double alpha3[3] = {0 , M_PI*2/3, M_PI*4/3}; 
+  //double alpha6[4] = {0 , M_PI*2/6, M_PI*4/6, M_PI*8/6}; 
+  /* uint8_t threetnecyclicshift=0, sixtonecyclichift=0; */// NB-IoT: to be defined from higher layer, see 36.211 Section 10.1.4.1.2
+  //uint16_t Nsc_RU; // Vincent: number of sc 1,3,6,12 
+  unsigned int index_Nsc_RU=0; // Vincent: index_Nsc_RU 0,1,2,3 ---> number of sc 1,3,6,12 
 
 
  /* 
@@ -153,7 +153,7 @@ int32_t lte_ul_channel_estimation_NB_IoT(PHY_VARS_eNB_NB_IoT      *eNB,
 
 #endif
 
-  //  LOG_I(PHY,"subframe %d, Ns %d, l %d, Msc_RS = %d, Msc_RS_idx = %d, u %d, v %d, cyclic_shift %d\n",subframe,Ns,l,Msc_RS, Msc_RS_idx,u,v,cyclic_shift);
+  LOG_I(PHY,"subframe %d, Ns %d, l %d, Msc_RS = %d, Msc_RS_idx = %d, u %d,  cyclic_shift %d\n",subframe,Ns,l,Msc_RS, Msc_RS_idx,u,cyclic_shift);
 #ifdef DEBUG_CH
 
 #ifdef USER_MODE
@@ -166,7 +166,7 @@ int32_t lte_ul_channel_estimation_NB_IoT(PHY_VARS_eNB_NB_IoT      *eNB,
 #endif
 #endif
 
-  rx_power_correction = 1;
+//  rx_power_correction = 1;
   ul_sc_start = get_UL_sc_start_NB_IoT(I_sc); // NB-IoT: get the used subcarrier in RB
   u=frame_parms->npusch_config_common.ul_ReferenceSignalsNPUSCH.grouphop[Ns+(subframe<<1)][index_Nsc_RU]; // Vincent: may be adapted for Nsc_RU, see 36.211, Section 10.1.4.1.3
 
@@ -182,9 +182,9 @@ int32_t lte_ul_channel_estimation_NB_IoT(PHY_VARS_eNB_NB_IoT      *eNB,
       rxdataF128 = (__m128i *)&rxdataF_ext[aa][symbol_offset];
       ul_ch128   = (__m128i *)&ul_ch_estimates[aa][symbol_offset];
       if (index_Nsc_RU){
-        ul_ref128  = (__m128i *)(ul_ref_sigs_rx[u][index_Nsc_RU][24-(ul_sc_start<<1)]); // pilot values are the same every slots
+        ul_ref128  = (__m128i *)&(ul_ref_sigs_rx[u][index_Nsc_RU][24-(ul_sc_start<<1)]); // pilot values are the same every slots
         }else{
-        ul_ref128  = (__m128i *)(ul_ref_sigs_rx[u][index_Nsc_RU][24 + 12*(subframe<<1)-(ul_sc_start<<1)]); // pilot values depends on the slots
+        ul_ref128  = (__m128i *)&(ul_ref_sigs_rx[u][index_Nsc_RU][24 + 12*(subframe<<1)-(ul_sc_start<<1)]); // pilot values depends on the slots
       }
 #elif defined(__arm__)
       rxdataF128 = (int16x8_t *)&rxdataF_ext[aa][symbol_offset];
@@ -595,12 +595,12 @@ int32_t lte_ul_channel_estimation_NB_IoT(PHY_VARS_eNB_NB_IoT      *eNB,
         for (k=0; k<frame_parms->symbols_per_tti; k++) {
 
           // we scale alpha and beta by SCALE (instead of 0x7FFF) to avoid overflows
-          alpha = (int16_t) (((int32_t) SCALE * (int32_t) (pilot_pos2-k))/(pilot_pos2-pilot_pos1));
-          beta  = (int16_t) (((int32_t) SCALE * (int32_t) (k-pilot_pos1))/(pilot_pos2-pilot_pos1));
+//          alpha = (int16_t) (((int32_t) SCALE * (int32_t) (pilot_pos2-k))/(pilot_pos2-pilot_pos1));
+ //         beta  = (int16_t) (((int32_t) SCALE * (int32_t) (k-pilot_pos1))/(pilot_pos2-pilot_pos1));
 
 
 #ifdef DEBUG_CH
-          msg("lte_ul_channel_estimation: k=%d, alpha = %d, beta = %d\n",k,alpha,beta);
+//          msg("lte_ul_channel_estimation: k=%d, alpha = %d, beta = %d\n",k,alpha,beta);
 #endif
           //symbol_offset_subframe = frame_parms->N_RB_UL*12*k;
 
