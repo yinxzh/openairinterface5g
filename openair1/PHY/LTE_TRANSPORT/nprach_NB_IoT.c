@@ -28,7 +28,7 @@
  * \note
  * \warning
  */
-
+#include <limits.h>
 //#include "PHY/sse_intrin.h"
 #include "PHY/defs_L1_NB_IoT.h"
 #include "PHY/TOOLS/defs.h" // to take into account the dft functions
@@ -52,7 +52,7 @@ uint8_t NPRACH_detection_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,
 	int16_t **mat_from_buffer,**mat_to_detector; 
 	uint32_t **mat_energy;  
 	uint64_t energy_per_subcarrier;  
-	uint32_t threshold_gamma; // threshold for signal detection
+	uint32_t threshold_gamma=INT_MAX; // threshold for signal detection
 	int k,n,m; 
 	uint8_t is_NPRACH_present = 0; 
 

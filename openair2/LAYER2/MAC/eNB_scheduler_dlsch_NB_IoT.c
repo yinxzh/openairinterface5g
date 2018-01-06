@@ -39,13 +39,13 @@ void schedule_DL_NB_IoT(module_id_t module_id, eNB_MAC_INST_NB_IoT *mac_inst, UE
 
 	int HARQ_delay=0;
 	uint32_t data_size;
-	//uint32_t mac_sdu_size;
+	uint32_t mac_sdu_size;
 
-	//uint8_t sdu_temp[SCH_PAYLOAD_SIZE_MAX_NB_IoT];
+	uint8_t sdu_temp[SCH_PAYLOAD_SIZE_MAX_NB_IoT];
 	logical_chan_id_t logical_channel;
 
 	uint32_t subheader_length=2;
-	//uint32_t payload_offset;
+	uint32_t payload_offset;
 
 	uint32_t search_space_end_sf, h_temp, f_temp, sf_temp;
 
@@ -172,9 +172,9 @@ void schedule_DL_NB_IoT(module_id_t module_id, eNB_MAC_INST_NB_IoT *mac_inst, UE
 		                  //mac_sdu_size = mac_rlc_data_req_eNB_NB_IoT(module_id, UE_info->rnti, 0, frame_start, 0, DCCH0_NB_IoT, sdu_temp);
 		                  logical_channel=DCCH0_NB_IoT;
 		                  //Generate header
-		                  //payload_offset = generate_dlsch_header_NB_IoT(UE_info->DLSCH_pdu.payload, 1, &logical_channel, &mac_sdu_size, 0, 0, TBS);
+		                  payload_offset = generate_dlsch_header_NB_IoT(UE_info->DLSCH_pdu.payload, 1, &logical_channel, &mac_sdu_size, 0, 0, TBS);
 		                  //Complete MAC PDU
-		                  //memcpy(UE_info->DLSCH_pdu.payload+payload_offset, sdu_temp, mac_sdu_size);
+		                  memcpy(UE_info->DLSCH_pdu.payload+payload_offset, sdu_temp, mac_sdu_size);
 		                  UE_info->DLSCH_pdu.pdu_size=TBS;
 		                }
 		                //SCHEDULE_LOG("[%04d][DLSchedulerUSS][Success] RNTI %d complete scheduling\n", mac_inst->current_subframe, UE_info->rnti);

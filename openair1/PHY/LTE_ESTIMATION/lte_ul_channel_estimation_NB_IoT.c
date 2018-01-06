@@ -88,7 +88,7 @@ int32_t lte_ul_channel_estimation_NB_IoT(PHY_VARS_eNB_NB_IoT      *eNB,
   uint8_t cyclic_shift;
 
   uint32_t alpha_ind;
-  uint32_t u=frame_parms->npusch_config_common.ul_ReferenceSignalsNPUSCH.grouphop[Ns+(subframe<<1)];
+  uint32_t u=(intptr_t)(frame_parms->npusch_config_common.ul_ReferenceSignalsNPUSCH.grouphop[Ns+(subframe<<1)]);
   //uint32_t v=frame_parms->npusch_config_common.ul_ReferenceSignalsNPUSCH.seqhop[Ns+(subframe<<1)];
   int32_t tmp_estimates[N_rb_alloc*12] __attribute__((aligned(16)));
 

@@ -32,7 +32,7 @@
 
 extern PHY_VARS_eNB *eNB;
 extern PHY_VARS_UE *UE;
-
+extern void init_lte_ue(PHY_VARS_UE *, int , int);
 void lte_param_init(unsigned char N_tx_port_eNB, 
                     unsigned char N_tx_phy,
 		    unsigned char N_rx,

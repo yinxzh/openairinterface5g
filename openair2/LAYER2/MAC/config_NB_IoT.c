@@ -361,7 +361,7 @@ void rrc_mac_config_req_NB_IoT(
     int UE_id = -1;
 
 
-    rrc_config_NB_IoT_t                     *mac_config;
+    rrc_config_NB_IoT_t                     *mac_config=NULL;
 
     //printf("rrc_mac_config_req_NB_IoT IN\n");
 
@@ -411,6 +411,9 @@ void rrc_mac_config_req_NB_IoT(
 			      );
       
 
+    }else{
+         LOG_E(MAC,"carrier->mib_NB_IoT is NULL\n"); 
+	 return;
     }
 
     if(sib1_NB_IoT != NULL)
@@ -421,7 +424,7 @@ void rrc_mac_config_req_NB_IoT(
 
 
 
-        mac_config->sib1_NB_IoT_sched_config.starting_rf = sib1_NB_IoT->si_RadioFrameOffset_r13;
+        mac_config->sib1_NB_IoT_sched_config.starting_rf = (intptr_t)(sib1_NB_IoT->si_RadioFrameOffset_r13);
         mac_config->si_window_length = sib1_NB_IoT->si_WindowLength_r13;
 
         SchedulingInfo_NB_r13_t *scheduling_info_list;
@@ -476,7 +479,10 @@ void rrc_mac_config_req_NB_IoT(
         mac_config->sibs_NB_IoT_sched[4].sib_mapping_info = 0x0;
         mac_config->sibs_NB_IoT_sched[5].sib_mapping_info = 0x0;
 
+    }else{
+         LOG_E(MAC,"sib1_NB_IoT is NULL\n"); 
     }
+
 
 
     if (radioResourceConfigCommon!=NULL) {
@@ -527,7 +533,10 @@ void rrc_mac_config_req_NB_IoT(
 
 	  config_sib2_fapi_NB_IoT(Mod_idP,carrier->physCellId,radioResourceConfigCommon);
 
+    }else{
+         LOG_E(MAC,"radioResourceConfigCommon is NULL\n"); 
     }
+
 
     if (logicalChannelConfig!= NULL) {
 
