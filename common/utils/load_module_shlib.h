@@ -42,6 +42,7 @@ typedef struct {
 
 typedef struct {
    char               *name;
+   char               *thisshlib_path;
    uint32_t           numfunc;
    loader_shlibfunc_t *funcarray;
 }loader_shlibdesc_t;

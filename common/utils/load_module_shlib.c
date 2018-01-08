@@ -37,7 +37,7 @@
 #include <errno.h>
 #include <sys/ioctl.h>
 #include <dlfcn.h>
-//#include "openair1/PHY/defs.h"
+#include "openair1/PHY/defs_L1.h" //exit_fun proto 
 #define LOAD_MODULE_SHLIB_MAIN
 
 #include "common/config/config_userapi.h"
@@ -61,39 +61,88 @@ void loader_init(void) {
   }
 }
 
+char *loader_format_shlibpath(char *modname)
+{
+char *tmpmodname=NULL;
+char *tmpstr;
+char *shlibpath=NULL;
+char *cfgprefix;
+paramdef_t LoaderParams[1] ={{"shlibpath", NULL, 0, strptr:&shlibpath, defstrval:NULL, TYPE_STRING, 0}};
+int ret;
+
+   tmpmodname=strdup(modname);
+   if (tmpmodname == NULL) {
+      fprintf(stderr,"[LOADER] %s %d malloc error loading module %s, %s\n",__FILE__, __LINE__, modname, strerror(errno));
+      exit_fun("[LOADER] unrecoverable error");
+   }
+   for (int i=0; tmpmodname != NULL  ; i++) {
+       if ( tmpmodname[i] == '.' ) {
+            tmpmodname[i] = 0;
+            break;
+       }
+   }
+
+/* looks for specific path for this module in the config file */
+  cfgprefix = malloc(sizeof(LOADER_CONFIG_PREFIX)+strlen(tmpmodname)+16);
+  if (cfgprefix == NULL) {
+      fprintf(stderr,"[LOADER] %s %d malloc error loading module %s, %s\n",__FILE__, __LINE__, modname, strerror(errno));
+      exit_fun("[LOADER] unrecoverable error");
+  } else {
+      sprintf(cfgprefix,LOADER_CONFIG_PREFIX ".%s",tmpmodname);
+      int ret = config_get( LoaderParams,sizeof(LoaderParams)/sizeof(paramdef_t),cfgprefix);
+      if (ret <0) {
+          fprintf(stderr,"[LOADER]  %s %d couldn't retrieve config from section %s\n",__FILE__, __LINE__,cfgprefix);
+      }
+   }
+/* no specific path, use loader default shared lib path */
+   if (shlibpath == NULL) {
+       shlibpath =  loader_data.shlibpath ;
+   } 
+
+/* alloc memory for full module shared lib file name */
+   tmpstr = malloc(strlen(shlibpath)+strlen(modname)+16);
+   if (tmpstr == NULL) {
+      fprintf(stderr,"[LOADER] %s %d malloc error loading module %s, %s\n",__FILE__, __LINE__, modname, strerror(errno));
+      exit_fun("[LOADER] unrecoverable error");
+   }
+   if(shlibpath[0] != 0) {
+       ret=sprintf(tmpstr,"%s/",shlibpath);
+   } else {
+       ret = 0;
+   }
+   if (strncmp(tmpmodname,"lib",3) == 0) {
+       sprintf(tmpstr+ret,"%s.so",tmpmodname);
+   } else {
+       sprintf(tmpstr+ret,"lib%s.so",tmpmodname);
+   }
+   free(tmpmodname);
+   return tmpstr; 
+}
+
 int load_module_shlib(char *modname,loader_shlibfunc_t *farray, int numf)
 {
    void *lib_handle;
    initfunc_t fpi;
-   char *tmpstr;
+   char *shlib_path;
+   char *afname=NULL;
    int ret=0;
 
    if (loader_data.shlibpath  == NULL) {
       loader_init();
    }
-   tmpstr = malloc(strlen(loader_data.shlibpath)+strlen(modname)+16);
-   if (tmpstr == NULL) {
-      fprintf(stderr,"[LOADER] %s %d malloc error loading module %s, %s\n",__FILE__, __LINE__, modname, strerror(errno));
-      return -1; 
-   }
 
-   if(loader_data.shlibpath[0] != 0) {
-       ret=sprintf(tmpstr,"%s/",loader_data.shlibpath);
-   }
-   if(strstr(modname,".so") == NULL) {
-      sprintf(tmpstr+ret,"lib%s.so",modname);
-   } else {
-      sprintf(tmpstr+ret,"%s",modname);   
-   } 
+   shlib_path = loader_format_shlibpath(modname);
+
    ret = 0;
-   lib_handle = dlopen(tmpstr, RTLD_LAZY|RTLD_NODELETE|RTLD_GLOBAL);
+   lib_handle = dlopen(shlib_path, RTLD_LAZY|RTLD_NODELETE|RTLD_GLOBAL);
    if (!lib_handle) {
-      fprintf(stderr,"[LOADER] library %s is not loaded: %s\n", tmpstr,dlerror());
+      fprintf(stderr,"[LOADER] library %s is not loaded: %s\n", shlib_path,dlerror());
       ret = -1;
    } else {
-      printf("[LOADER] library %s successfully loaded\n", tmpstr);
-      sprintf(tmpstr,"%s_autoinit",modname);
-      fpi = dlsym(lib_handle,tmpstr);
+      printf("[LOADER] library %s successfully loaded\n", shlib_path);
+      afname=malloc(strlen(modname)+15);
+      sprintf(afname,"%s_autoinit",modname);
+      fpi = dlsym(lib_handle,afname);
 
       if (fpi != NULL )
          {
@@ -110,6 +159,7 @@ int load_module_shlib(char *modname,loader_shlibfunc_t *farray, int numf)
 	  } /* for int i... */
       }	 /* farray ! NULL */
     loader_data.shlibs[loader_data.numshlibs].name=strdup(modname);
+    loader_data.shlibs[loader_data.numshlibs].thisshlib_path=strdup(shlib_path); 
     loader_data.shlibs[loader_data.numshlibs].funcarray=malloc(numf*sizeof(loader_shlibfunc_t));
     loader_data.shlibs[loader_data.numshlibs].numfunc=0;
     for (int i=0; i<numf;i++) {
@@ -122,7 +172,8 @@ int load_module_shlib(char *modname,loader_shlibfunc_t *farray, int numf)
     (loader_data.numshlibs)++;
     } /* lib_handle != NULL */ 
 	  	 
-   if (tmpstr != NULL) free(tmpstr);
+   if ( shlib_path!= NULL) free(shlib_path);
+   if ( afname!= NULL) free(afname);
    if (lib_handle != NULL) dlclose(lib_handle); 
    return ret;	       
 }

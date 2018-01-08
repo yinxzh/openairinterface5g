@@ -42,7 +42,7 @@ extern "C"
 #define CONFIG_GETNUMP      ( (config_get_if()==NULL) ? 0    : config_get_if()->num_cfgP      )
 #define CONFIG_GETP(P)      ( (config_get_if()==NULL) ? NULL : config_get_if()->cfgP[P]       )
 #define CONFIG_ISFLAGSET(P) ( (config_get_if()==NULL) ? 0    : !!(config_get_if()->rtflags & P))
-
+#define CONFIG_ISPARAMFLAGSET(P,F) ( !!(P.paramflags & F))
 /* utility functions, to be used by configuration module and/or configuration libraries */
 extern configmodule_interface_t *config_get_if(void);
 extern char * config_check_valptr(paramdef_t *cfgoptions, char **ptr, int length) ;
