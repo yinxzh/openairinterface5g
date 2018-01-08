@@ -26,7 +26,7 @@ int output_handler(eNB_MAC_INST_NB_IoT *mac_inst, module_id_t module_id, int CC_
 	Sched_Rsp_NB_IoT_t *SCHED_info = (Sched_Rsp_NB_IoT_t*) malloc(sizeof(Sched_Rsp_NB_IoT_t));
 	nfapi_dl_config_request_pdu_t *dl_config_pdu;
 	nfapi_hi_dci0_request_pdu_t* hi_dci0_pdu;
-	nfapi_ul_config_request_pdu_t* ul_config_pdu;
+	nfapi_ul_config_request_pdu_t* ul_config_pdu = NULL;
 	schedule_result_t *tmp;
 	int DL_empty = 0, UL_empty = 0; 
 	//uint32_t current_time = 0;
@@ -221,7 +221,7 @@ int output_handler(eNB_MAC_INST_NB_IoT *mac_inst, module_id_t module_id, int CC_
 		{
 			if(schedule_result_list_UL->channel == NPUSCH)
 			{
-				printf("first UL \n");
+				//printf("first UL \n");
 				SCHED_info->UL_req->ul_config_request_body.number_of_pdus ++;
 				//SCHED_info->UL_req.sfn_sf = ;
 				(ul_config_pdu + i) ->pdu_type                                            = NFAPI_UL_CONFIG_NULSCH_PDU_TYPE;
