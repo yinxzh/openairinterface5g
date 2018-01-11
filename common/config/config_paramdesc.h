@@ -117,6 +117,7 @@ typedef struct paramdef
      uint64_t  *u64ptr;
      int64_t   *i64ptr;
      double    *dblptr;
+     void      *voidptr;
      } ;
    union {                                /* default parameter value, to be used when PARAMFLAG_MANDATORY is not specified */
      char      *defstrval;

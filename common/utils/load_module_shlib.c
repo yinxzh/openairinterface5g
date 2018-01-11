@@ -45,7 +45,7 @@
 void loader_init(void) {
   paramdef_t LoaderParams[] = LOADER_PARAMS_DESC;
 
-
+  loader_data.mainexec_version =  PACKAGE_VERSION;
   int ret = config_get( LoaderParams,sizeof(LoaderParams)/sizeof(paramdef_t),LOADER_CONFIG_PREFIX);
   if (ret <0) {
        fprintf(stderr,"[LOADER]  %s %d configuration couldn't be performed",__FILE__, __LINE__);
@@ -67,7 +67,7 @@ char *tmpmodname=NULL;
 char *tmpstr;
 char *shlibpath=NULL;
 char *cfgprefix;
-paramdef_t LoaderParams[1] ={{"shlibpath", NULL, 0, strptr:&shlibpath, defstrval:NULL, TYPE_STRING, 0}};
+paramdef_t LoaderParams[] ={{"shlibpath", NULL, 0, strptr:&shlibpath, defstrval:NULL, TYPE_STRING, 0}};
 int ret;
 
    tmpmodname=strdup(modname);
@@ -123,6 +123,7 @@ int load_module_shlib(char *modname,loader_shlibfunc_t *farray, int numf)
 {
    void *lib_handle;
    initfunc_t fpi;
+   checkverfunc_t fpc;
    char *shlib_path;
    char *afname=NULL;
    int ret=0;
@@ -141,6 +142,12 @@ int load_module_shlib(char *modname,loader_shlibfunc_t *farray, int numf)
    } else {
       printf("[LOADER] library %s successfully loaded\n", shlib_path);
       afname=malloc(strlen(modname)+15);
+      sprintf(afname,"%s_checkver",afname);
+      fpc = dlsym(lib_handle,afname);
+      if (fpc != NULL )
+         {
+	 fpc(loader_data.mainexec_version);
+	 }
       sprintf(afname,"%s_autoinit",modname);
       fpi = dlsym(lib_handle,afname);
 

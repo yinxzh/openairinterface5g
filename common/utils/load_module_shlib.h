@@ -34,6 +34,7 @@
 
 
 typedef int(*initfunc_t)(void);
+typedef int(*checkverfunc_t)(char *);
 
 typedef struct {
    char *fname;
@@ -48,6 +49,7 @@ typedef struct {
 }loader_shlibdesc_t;
 
 typedef struct {
+   char               *mainexec_version;
    char               *shlibpath;
    uint32_t           maxshlibs;
    uint32_t           numshlibs;

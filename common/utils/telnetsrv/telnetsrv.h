@@ -96,6 +96,8 @@ typedef struct {
      pthread_t telnet_pthread;       // thread id of the telnet server
      int telnetdbg;                  // debug level of the server
      int priority;                   // server running priority
+     char *histfile;                 // command history
+     int histsize;                   // command history length
      int new_socket;                 // socket of the client connection
      int logfilefd;                  // file id of the log file when log output is redirected to a file
      int  saved_stdout;              // file id of the previous stdout, used to be able to restore original stdout 

@@ -21,21 +21,23 @@ int read_strlist(paramdef_t *cfgoptions,config_setting_t *setting, char *cfgpath
 {
 const char *str;
 int st;
+int numelt;
 
-   cfgoptions->numelt=config_setting_length(setting);
-   cfgoptions->strlistptr=malloc(sizeof(char *) * (cfgoptions->numelt));
+   numelt=config_setting_length(setting);
+   config_check_valptr(cfgoptions,(char **)&(cfgoptions->strlistptr), sizeof(char *) * numelt);
    st=0;
-   for (int i=0; i< cfgoptions->numelt && cfgoptions->strlistptr != NULL; i++) {
+   for (int i=0; i< numelt ; i++) {
        str=config_setting_get_string_elem(setting,i);
        if (str==NULL) {
           printf("[LIBCONFIG] %s%i  not found in config file\n", cfgoptions->optname,i);
        } else {
-            cfgoptions->strlistptr[i]=malloc(strlen(str)+1);
+            config_check_valptr(cfgoptions,&(cfgoptions->strlistptr[i]),strlen(str)+1);
             sprintf(cfgoptions->strlistptr[i],"%s",str);
 	    st++;
             printf_params("[LIBCONFIG] %s%i: %s\n", cfgpath,i,cfgoptions->strlistptr[i]);
        }
    }
+   cfgoptions->numelt=numelt;
    return st;
 }
 
@@ -123,8 +125,8 @@ int config_libconfig_get(paramdef_t *cfgoptions,int numoptions, char *prefix )
                      sprintf(*(cfgoptions[i].strptr), "%s",cfgoptions[i].defstrval);
                      printf_params("[LIBCONFIG] %s set to default value %s\n", cfgpath, *(cfgoptions[i].strptr));
                  } else {
-                    sprintf((char *)(cfgoptions[i].strptr), "%s",cfgoptions[i].defstrval);
-                    printf_params("[LIBCONFIG] %s set to default value %s\n", cfgpath, (char *)cfgoptions[i].strptr);
+                    sprintf((char *)*(cfgoptions[i].strptr), "%s",cfgoptions[i].defstrval);
+                    printf_params("[LIBCONFIG] %s set to default value %s\n", cfgpath, (char *)*(cfgoptions[i].strptr));
                  }
               } else {
 	         notfound=1;

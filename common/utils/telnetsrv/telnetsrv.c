@@ -53,6 +53,7 @@
 #include <sys/resource.h>
 
 #include "common/config/config_userapi.h"
+#include <readline/history.h>
 
 
 #include "telnetsrv_phycmd.h"
@@ -63,8 +64,13 @@ static telnetsrv_params_t telnetparams;
 #define TELNETSRV_LISTENPORT 1
 #define TELNETSRV_PRIORITY   2
 #define TELNETSRV_DEBUG      3
-#define TELNETSRV_STATICMOD  7
-#define TELNETSRV_SHRMOD     8
+#define TELNETSRV_LOOPC      4
+#define TELNETSRV_LOOPD      5
+#define TELNETSRV_HISFILE    6  
+#define TELNETSRV_HISSIZE    7 
+#define TELNETSRV_PHYBSIZE   8  
+#define TELNETSRV_STATICMOD  9
+#define TELNETSRV_SHRMOD     10
 paramdef_t telnetoptions[] = {
 /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /*                                            configuration parameters for telnet utility                                                                             */
@@ -76,6 +82,8 @@ paramdef_t telnetoptions[] = {
 	{"debug",         "<debug level>",               0,                 uptr:NULL,                            defuintval:0,                   TYPE_UINT,      0 },
 	{"loopcount",     "<loop command iterations>",   0,                 uptr:&(telnetparams.loopcount),       defuintval:10,                  TYPE_UINT,      0 },
 	{"loopdelay",     "<loop command delay (ms)>",   0,                 uptr:&(telnetparams.loopdelay),       defuintval:5000,                TYPE_UINT,      0 },
+	{"histfile",      "<history file name>",         PARAMFLAG_NOFREE,  strptr:&(telnetparams.histfile),      defstrval:"oaitelnet.history",  TYPE_STRING,    0 },
+	{"histsize",      "<history sizes>",             0,                 uptr:&(telnetparams.histsize),        defuintval:50,                  TYPE_UINT,      0 },
 	{"phypbsize",     "<phy dump buff size (bytes)>",0,                 uptr:&(telnetparams.phyprntbuff_size),defuintval:65000,               TYPE_UINT,      0 },
         {"staticmod",     "<static modules selection>",  0,                 NULL,                                 defstrlistval:telnet_defstatmod,TYPE_STRINGLIST,1},
         {"shrmod",        "<static modules selection>",  0,                 NULL,                                 NULL,TYPE_STRINGLIST,0 },
@@ -85,6 +93,7 @@ int get_phybsize() {return telnetparams.phyprntbuff_size; };
 int add_telnetcmd(char *modulename,telnetshell_vardef_t *var, telnetshell_cmddef_t *cmd );
 int setoutput(char *buff, int debug, telnet_printfunc_t prnt);
 int setparam(char *buff, int debug, telnet_printfunc_t prnt);
+int history_cmd(char *buff, int debug, telnet_printfunc_t prnt);
 
 telnetshell_vardef_t telnet_vardef[] = {
 {"debug",TELNET_VARTYPE_INT32,&telnetparams.telnetdbg},
@@ -92,12 +101,15 @@ telnetshell_vardef_t telnet_vardef[] = {
 {"loopc",TELNET_VARTYPE_INT32,&telnetparams.loopcount},
 {"loopd",TELNET_VARTYPE_INT32,&telnetparams.loopdelay},
 {"phypb",TELNET_VARTYPE_INT32,&telnetparams.phyprntbuff_size},
+{"hsize",TELNET_VARTYPE_INT32,&telnetparams.histsize},
+{"hfile",TELNET_VARTYPE_STRING,&telnetparams.histfile},
 {"",0,NULL}
 };
 
 telnetshell_cmddef_t  telnet_cmdarray[] = {
    {"redirlog","[here,file,off]",setoutput},
    {"param","[prio]",setparam},
+   {"history","[list,reset]",history_cmd},
    {"","",NULL},
 };
 
@@ -305,6 +317,35 @@ if (strncasecmp(cmds[0],"aff",3) == 0)
 
 return CMDSTATUS_NOTFOUND;   
 } /* setparam */
+
+int history_cmd(char *buff, int debug, telnet_printfunc_t prnt)
+{
+char cmds[TELNET_MAX_MSGLENGTH/TELNET_CMD_MAXSIZE][TELNET_CMD_MAXSIZE];
+
+
+memset(cmds,0,sizeof(cmds));
+sscanf(buff,"%9s %9s %9s %9s %9s", cmds[0],cmds[1],cmds[2],cmds[3],cmds[4]  );
+if (cmds[0] == NULL)
+    return CMDSTATUS_VARNOTFOUND;
+if (strncasecmp(cmds[0],"list",4) == 0)
+   {
+   HIST_ENTRY **hist = history_list();
+   if (hist) {
+      for (int i = 0; hist[i]; i++) {
+          prnt ("%d: %s\n", i + history_base, hist[i]->line);
+      }
+   }
+   return CMDSTATUS_FOUND; 
+   }
+if (strncasecmp(cmds[0],"reset",5) == 0)
+   {
+   clear_history();
+   write_history(telnetparams.histfile);
+   return CMDSTATUS_FOUND; 
+   }
+
+return CMDSTATUS_NOTFOUND; 
+} /* history_cmd */
 /*-------------------------------------------------------------------------------------------------------*/
 /*
 generic commands available for all modules loaded by the server
@@ -314,11 +355,11 @@ int setgetvar(int moduleindex,char getorset,char *params)
 {
 int n,i;
 char varname[TELNET_CMD_MAXSIZE];
-char varval[TELNET_CMD_MAXSIZE];
+char *varval=NULL;
 
    memset(varname,0,sizeof(varname));
-   memset(varval,0,sizeof(varval));
-   n = sscanf(params,"%s %s",varname,varval);
+
+   n = sscanf(params,"%s %ms",varname,&varval);
    for ( i=0 ; telnetparams.CmdParsers[moduleindex].var[i].varvalptr != NULL ; i++)
       {
       if ( strncasecmp(telnetparams.CmdParsers[moduleindex].var[i].varname,varname,strlen(telnetparams.CmdParsers[moduleindex].var[i].varname)) == 0)
@@ -330,7 +371,10 @@ char varval[TELNET_CMD_MAXSIZE];
 	    switch(telnetparams.CmdParsers[moduleindex].var[i].vartype)
 	        {
 		case TELNET_VARTYPE_INT32:
-	             client_printf("%i\n",*(int *)(telnetparams.CmdParsers[moduleindex].var[i].varvalptr));
+	             client_printf("%i\n",*(int32_t *)(telnetparams.CmdParsers[moduleindex].var[i].varvalptr));
+		break;
+		case TELNET_VARTYPE_INT64:
+	             client_printf("%lli\n",*(int64_t *)(telnetparams.CmdParsers[moduleindex].var[i].varvalptr));
 		break;
 		case TELNET_VARTYPE_INT16:
 	             client_printf("%hi\n",*(short *)(telnetparams.CmdParsers[moduleindex].var[i].varvalptr));
@@ -340,6 +384,9 @@ char varval[TELNET_CMD_MAXSIZE];
 		break;
 		case TELNET_VARTYPE_PTR:
 	             client_printf("0x%08x\n",*((unsigned int *)(telnetparams.CmdParsers[moduleindex].var[i].varvalptr)));						
+                break;
+		case TELNET_VARTYPE_STRING:
+	             client_printf("%s\n",*(char **)(telnetparams.CmdParsers[moduleindex].var[i].varvalptr));						
                 break;
 		default:
 		     client_printf("unknown type\n");
@@ -364,6 +411,10 @@ char varval[TELNET_CMD_MAXSIZE];
 		case TELNET_VARTYPE_DOUBLE:
 		     *(double *)(telnetparams.CmdParsers[moduleindex].var[i].varvalptr) = strtod(varval,NULL);
 	             client_printf("%g\n",*(double *)(telnetparams.CmdParsers[moduleindex].var[i].varvalptr));
+		break;	
+		case TELNET_VARTYPE_STRING:
+		     sprintf(*(char **)(telnetparams.CmdParsers[moduleindex].var[i].varvalptr),"%s", varval);
+	             client_printf("%s\n",*(char **)(telnetparams.CmdParsers[moduleindex].var[i].varvalptr));
 		break;				
 		default:
 		     client_printf("unknown type\n");
@@ -372,6 +423,9 @@ char varval[TELNET_CMD_MAXSIZE];
 	    }		   
 	 }
       } 
+if (n>1 && varval != NULL) {
+   free(varval);
+}
 return CMDSTATUS_VARNOTFOUND;
 }
 /*----------------------------------------------------------------------------------------------------*/
@@ -515,13 +569,14 @@ if(listen(sock, 1) == -1)
      fprintf(stderr,"[TELNETSRV] Error %s on listen call\n",strerror(errno));
 
 
+using_history();
 
 printf("\nInitializing telnet server...\n");
 while( (telnetparams.new_socket = accept(sock, &cli_addr, &cli_len)) )
      {
      printf("[TELNETSRV] Telnet client connected....\n");
-
-
+    read_history(telnetparams.histfile);
+    stifle_history(telnetparams.histsize);
     if(telnetparams.new_socket < 0)
        fprintf(stderr,"[TELNETSRV] Error %s on accept call\n",strerror(errno));
 
@@ -548,31 +603,39 @@ while( (telnetparams.new_socket = accept(sock, &cli_addr, &cli_len)) )
            break;
            }
          if (telnetparams.telnetdbg > 0)
-	    printf("[TELNETSRV] Command received: readc %i filled %i %s\n", readc, filled ,buf);
-	 if (strlen(buf) >= 2 )
+	    printf("[TELNETSRV] Command received: readc %i filled %i \"%s\"\n", readc, filled ,buf);
+            if (buf[0] == '!') {
+                if (buf[1] == '!') {
+                    sprintf(buf,"%s","telnet history list");
+                } else {
+                    HIST_ENTRY *hisentry = history_get(strtol(buf+1,NULL,0)); 
+                    if (hisentry) {
+                        sprintf(buf,"%s",hisentry->line);
+                    }
+                }           
+            }
+	 if (strlen(buf) > 2 )
 	    {
             status=process_command(buf);
 	    }
 	 else
 	    status=CMDSTATUS_NOCMD;
 	    
-         if (status != CMDSTATUS_EXIT)
-	    {
-	    if (status == CMDSTATUS_NOTFOUND)
-	       {
+         if (status != CMDSTATUS_EXIT) {
+	    if (status == CMDSTATUS_NOTFOUND) {
 	       char msg[TELNET_MAX_MSGLENGTH + 50];
 	       sprintf(msg,"Error: \n      %s\n is not a softmodem command\n",buf);
 	       send(telnetparams.new_socket, msg, strlen(msg), MSG_NOSIGNAL);
-	       }
+	    } else if (status == CMDSTATUS_FOUND) {
+               add_history(buf);
+            }
             send(telnetparams.new_socket, TELNET_PROMPT, sizeof(TELNET_PROMPT), MSG_NOSIGNAL);
-	    }
-	 else
-	    {
+	} else {
 	    printf ("[TELNETSRV] Closing telnet connection...\n");
 	    break;
-	    }
+	}
     }
-
+    write_history(telnetparams.histfile);
     close(telnetparams.new_socket);
     printf ("[TELNETSRV] Telnet server waitting for connection...\n");
     }
@@ -619,6 +682,7 @@ int add_embeddedmodules()
        {
        exec_moduleinit(telnetoptions[TELNETSRV_STATICMOD].strlistptr[i]);
        }
+
 }
 
 int add_sharedmodules()
@@ -642,14 +706,14 @@ void (*fptr)();
        }
 }
 
-int init_telnetsrv(char *cfgfile)
+int telnetsrv_autoinit()
  {
   void *lib_handle;
   char** moduleslist; 
 
    memset(&telnetparams,0,sizeof(telnetparams));
 
-   config_get( telnetoptions,sizeof(telnetoptions)/sizeof(paramdef_t),NULL); 
+   config_get( telnetoptions,sizeof(telnetoptions)/sizeof(paramdef_t),"telnetsrv"); 
 
  
    if(pthread_create(&telnetparams.telnet_pthread,NULL, (void *(*)(void *))run_telnetsrv, NULL) != 0)

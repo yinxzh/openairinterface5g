@@ -62,7 +62,7 @@ char * config_check_valptr(paramdef_t *cfgoptions, char **ptr, int length)
         *ptr = malloc(length);
         if ( *ptr != NULL) {
              memset(*ptr,0,length);
-             if ( (cfgoptions->paramflags & PARAMFLAG_NOFREE) != 0) {
+             if ( (cfgoptions->paramflags & PARAMFLAG_NOFREE) == 0) {
                  config_get_if()->ptrs[config_get_if()->numptrs] = *ptr;
                  config_get_if()->numptrs++;
              }
