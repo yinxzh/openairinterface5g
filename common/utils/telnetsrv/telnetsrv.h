@@ -3,7 +3,7 @@
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The OpenAirInterface Software Alliance licenses this file to You under
- * the OAI Public License, Version 1.0  (the "License"); you may not use this file
+ * the OAI Public License, Version 1.1  (the "License"); you may not use this file
  * except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -18,7 +18,6 @@
  * For more information about the OpenAirInterface (OAI) Software Alliance:
  *      contact@openairinterface.org
  */
-
 /*! \file common/utils/telnetsrv/telnetsrv.h
  * \brief: include file for telnet server implementation
  * \author Francois TABURET
@@ -38,7 +37,7 @@
 #define TELNET_MAX_MSGLENGTH      2048
 #define TELNET_PROMPT             "softmodem> "
 #define TELNET_MAXCMD             20
-#define TELNET_CMD_MAXSIZE        10
+#define TELNET_CMD_MAXSIZE        20
 #define TELNET_HELPSTR_SIZE       80
 
 /* status return by the command parser after it analysed user input */

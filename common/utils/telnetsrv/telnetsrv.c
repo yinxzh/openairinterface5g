@@ -3,7 +3,7 @@
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The OpenAirInterface Software Alliance licenses this file to You under
- * the OAI Public License, Version 1.0  (the "License"); you may not use this file
+ * the OAI Public License, Version 1.1  (the "License"); you may not use this file
  * except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -58,7 +58,7 @@
 
 #include "telnetsrv_phycmd.h"
 #include "telnetsrv_proccmd.h"	
-static char* telnet_defstatmod[] = {"softmodem","phy"}; 
+static char* telnet_defstatmod[] = {"softmodem","phy","loader"}; 
 static telnetsrv_params_t telnetparams;
 #define TELNETSRV_LISTENADDR 0
 #define TELNETSRV_LISTENPORT 1
@@ -85,7 +85,7 @@ paramdef_t telnetoptions[] = {
 	{"histfile",      "<history file name>",         PARAMFLAG_NOFREE,  strptr:&(telnetparams.histfile),      defstrval:"oaitelnet.history",  TYPE_STRING,    0 },
 	{"histsize",      "<history sizes>",             0,                 uptr:&(telnetparams.histsize),        defuintval:50,                  TYPE_UINT,      0 },
 	{"phypbsize",     "<phy dump buff size (bytes)>",0,                 uptr:&(telnetparams.phyprntbuff_size),defuintval:65000,               TYPE_UINT,      0 },
-        {"staticmod",     "<static modules selection>",  0,                 NULL,                                 defstrlistval:telnet_defstatmod,TYPE_STRINGLIST,1},
+        {"staticmod",     "<static modules selection>",  0,                 NULL,                                 defstrlistval:telnet_defstatmod,TYPE_STRINGLIST,sizeof(telnet_defstatmod)/sizeof(char *)},
         {"shrmod",        "<static modules selection>",  0,                 NULL,                                 NULL,TYPE_STRINGLIST,0 },
 };
 

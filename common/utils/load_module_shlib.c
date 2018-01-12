@@ -61,34 +61,31 @@ void loader_init(void) {
   }
 }
 
+/* build the full shared lib name from the module name */
 char *loader_format_shlibpath(char *modname)
 {
-char *tmpmodname=NULL;
+
 char *tmpstr;
-char *shlibpath=NULL;
+char *shlibpath   =NULL;
+char *shlibversion=NULL;
 char *cfgprefix;
-paramdef_t LoaderParams[] ={{"shlibpath", NULL, 0, strptr:&shlibpath, defstrval:NULL, TYPE_STRING, 0}};
+paramdef_t LoaderParams[] ={{"shlibpath", NULL, 0, strptr:&shlibpath, defstrval:NULL, TYPE_STRING, 0},
+                            {"shlibversion", NULL, 0, strptr:&shlibversion, defstrval:"", TYPE_STRING, 0}};
+
 int ret;
 
-   tmpmodname=strdup(modname);
-   if (tmpmodname == NULL) {
-      fprintf(stderr,"[LOADER] %s %d malloc error loading module %s, %s\n",__FILE__, __LINE__, modname, strerror(errno));
-      exit_fun("[LOADER] unrecoverable error");
-   }
-   for (int i=0; tmpmodname != NULL  ; i++) {
-       if ( tmpmodname[i] == '.' ) {
-            tmpmodname[i] = 0;
-            break;
-       }
-   }
+
+
 
 /* looks for specific path for this module in the config file */
-  cfgprefix = malloc(sizeof(LOADER_CONFIG_PREFIX)+strlen(tmpmodname)+16);
+/* specific value for a module path and version is located in a modname subsection of the loader section */
+/* shared lib name is formatted as lib<module name><module version>.so */
+  cfgprefix = malloc(sizeof(LOADER_CONFIG_PREFIX)+strlen(modname)+16);
   if (cfgprefix == NULL) {
       fprintf(stderr,"[LOADER] %s %d malloc error loading module %s, %s\n",__FILE__, __LINE__, modname, strerror(errno));
       exit_fun("[LOADER] unrecoverable error");
   } else {
-      sprintf(cfgprefix,LOADER_CONFIG_PREFIX ".%s",tmpmodname);
+      sprintf(cfgprefix,LOADER_CONFIG_PREFIX ".%s",modname);
       int ret = config_get( LoaderParams,sizeof(LoaderParams)/sizeof(paramdef_t),cfgprefix);
       if (ret <0) {
           fprintf(stderr,"[LOADER]  %s %d couldn't retrieve config from section %s\n",__FILE__, __LINE__,cfgprefix);
@@ -100,7 +97,7 @@ int ret;
    } 
 
 /* alloc memory for full module shared lib file name */
-   tmpstr = malloc(strlen(shlibpath)+strlen(modname)+16);
+   tmpstr = malloc(strlen(shlibpath)+strlen(modname)+strlen(shlibversion)+16);
    if (tmpstr == NULL) {
       fprintf(stderr,"[LOADER] %s %d malloc error loading module %s, %s\n",__FILE__, __LINE__, modname, strerror(errno));
       exit_fun("[LOADER] unrecoverable error");
@@ -110,12 +107,10 @@ int ret;
    } else {
        ret = 0;
    }
-   if (strncmp(tmpmodname,"lib",3) == 0) {
-       sprintf(tmpstr+ret,"%s.so",tmpmodname);
-   } else {
-       sprintf(tmpstr+ret,"lib%s.so",tmpmodname);
-   }
-   free(tmpmodname);
+
+   sprintf(tmpstr+ret,"lib%s%s.so",modname,shlibversion);
+   
+  
    return tmpstr; 
 }
 

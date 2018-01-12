@@ -40,6 +40,7 @@ set(TELNETSRV_SOURCE
     ${APPROOT}/telnetsrv.c
     ${APPROOT}/telnetsrv_phycmd.c
     ${APPROOT}/telnetsrv_proccmd.c
+    ${APPROOT}/telnetsrv_loader.c
     )
 
 #set(TELNETSRV_ETHDEVCMD_SOURCE
