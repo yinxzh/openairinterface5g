@@ -140,10 +140,10 @@ int config_libconfig_get(paramdef_t *cfgoptions,int numoptions, char *prefix )
                   config_check_valptr(&(cfgoptions[i]), (char **)(&(cfgoptions[i].strptr)), sizeof(char *));
                   config_check_valptr(&(cfgoptions[i]), cfgoptions[i].strptr, strlen(str)+1);
                   sprintf( *(cfgoptions[i].strptr) , "%s", str);
-                  printf_params("[LIBCONFIG] %s: %s\n", cfgpath,*(cfgoptions[i].strptr) );
+                  printf_params("[LIBCONFIG] %s: \"%s\"\n", cfgpath,*(cfgoptions[i].strptr) );
               } else {
                  sprintf( (char *)(cfgoptions[i].strptr) , "%s", str);
-                 printf_params("[LIBCONFIG] %s: %s\n", cfgpath,(char *)cfgoptions[i].strptr );
+                 printf_params("[LIBCONFIG] %s: \"%s\"\n", cfgpath,(char *)cfgoptions[i].strptr );
               }
            } else {
 	      if( cfgoptions[i].defstrval != NULL) {
@@ -153,10 +153,10 @@ int config_libconfig_get(paramdef_t *cfgoptions,int numoptions, char *prefix )
                      config_check_valptr(&(cfgoptions[i]), (char **)(&(cfgoptions[i].strptr)), sizeof(char *));
                      config_check_valptr(&(cfgoptions[i]), cfgoptions[i].strptr, strlen(cfgoptions[i].defstrval)+1);
                      sprintf(*(cfgoptions[i].strptr), "%s",cfgoptions[i].defstrval);
-                     printf_params("[LIBCONFIG] %s set to default value %s\n", cfgpath, *(cfgoptions[i].strptr));
+                     printf_params("[LIBCONFIG] %s set to default value \"%s\"\n", cfgpath, *(cfgoptions[i].strptr));
                  } else {
                     sprintf((char *)*(cfgoptions[i].strptr), "%s",cfgoptions[i].defstrval);
-                    printf_params("[LIBCONFIG] %s set to default value %s\n", cfgpath, (char *)*(cfgoptions[i].strptr));
+                    printf_params("[LIBCONFIG] %s set to default value \"%s\"\n", cfgpath, (char *)*(cfgoptions[i].strptr));
                  }
               } else {
 	         notfound=1;
@@ -406,6 +406,7 @@ void config_libconfig_end(void )
   config_destroy(&(libconfig_privdata.cfg));
   if ( libconfig_privdata.configfile != NULL ) {
      free(libconfig_privdata.configfile);
+     libconfig_privdata.configfile=NULL;
   } 
   
 }

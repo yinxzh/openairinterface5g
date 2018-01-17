@@ -54,6 +54,8 @@
 #define TELNETSRV_PROCCMD_MAIN
 #include "log.h"
 #include "log_extern.h"
+#include "common/config/config_userapi.h"
+#include "common/extern.h"
 #include "telnetsrv_proccmd.h"
 
 void decode_procstat(char *record, int debug, telnet_printfunc_t prnt)
@@ -172,15 +174,31 @@ extern log_t *g_log;
    
    if (debug > 0)
        prnt(" proccmd_show received %s\n",buf);
-   if (strcasestr(buf,"thread") != NULL)
-       {
+   if (strcasestr(buf,"thread") != NULL) {
        print_threads(buf,debug,prnt);
-       }
+   }
    if (strcasestr(buf,"loglvl") != NULL) {
-       for (int i=MIN_LOG_COMPONENTS; i < MAX_LOG_COMPONENTS; i++){
-            prnt("\t%s:\t%s\t%s\n",g_log->log_component[i].name, map_int_to_str(log_verbosity_names,g_log->log_component[i].flag),
-	        map_int_to_str(log_level_names,g_log->log_component[i].level));
+       prnt("component                 verbosity  level  enabled\n");
+       for (int i=MIN_LOG_COMPONENTS; i < MAX_LOG_COMPONENTS; i++) {
+            prnt("%02i %17.17s:%10.10s%10.10s  %s\n",i ,g_log->log_component[i].name, 
+                  map_int_to_str(log_verbosity_names,g_log->log_component[i].flag),
+	          map_int_to_str(log_level_names,g_log->log_component[i].level),
+                  ((g_log->log_component[i].interval>0)?"Y":"N") );
        }
+   }
+   if (strcasestr(buf,"config") != NULL) {
+       prnt("Command line arguments:\n");
+       for (int i=0; i < config_get_if()->argc; i++) {
+            prnt("    %02i %s\n",i ,config_get_if()->argv[i]);
+       }
+       prnt("Config flags: 0x%08x\n", config_get_if()->rtflags); 
+       prnt("    Don't exit if param check fails (flag %u): %s\n",CONFIG_NOABORTONCHKF,
+            ((config_get_if()->rtflags & CONFIG_NOABORTONCHKF) ? "Y" : "N") );      
+       prnt("Config has been built from %s with parameters:\n",CONFIG_GETSOURCE );
+       for (int i=0; i < config_get_if()->num_cfgP; i++) {
+            prnt("    %02i %s\n",i ,config_get_if()->cfgP[i]);
+       }
+       prnt("%i Remote Units\n", RC.nb_RU );
    }
    return 0;
 } 
@@ -231,27 +249,90 @@ extern void exit_fun(const char* s);
    return 0;
 }
  
+
 int proccmd_log(char *buf, int debug, telnet_printfunc_t prnt)
 {
 int idx1=0;
 int idx2=NUM_LOG_LEVEL-1;
-int s = sscanf(buf,"%*s %i-%i",&idx1,&idx2);   
+char *logsubcmd=NULL;
+
+int s = sscanf(buf,"%ms %i-%i\n",&logsubcmd, &idx1,&idx2);   
    
    if (debug > 0)
-       prnt("process module received %s\n",buf);
+       prnt( "proccmd_log received %s\n   s=%i sub command %s\n",buf,s,((logsubcmd==NULL)?"":logsubcmd));
 
-   if (strcasestr(buf,"enable") != NULL)
-       {
-       set_glog_onlinelog(1);
-       }
-   if (strcasestr(buf,"disable") != NULL)
-       {
-       set_glog_onlinelog(0);
-       }
-    if (strcasestr(buf,"show") != NULL)
-       {
-       proccmd_show("loglvl",debug,prnt);
-       }      
+   if (s == 1 && logsubcmd != NULL) {
+      if (strcasestr(logsubcmd,"online") != NULL) {
+          if (strcasestr(buf,"noonline") != NULL) {
+   	      set_glog_onlinelog(0);
+              prnt("online logging disabled\n",buf);
+          } else {
+   	      set_glog_onlinelog(1);
+              prnt("online logging enabled\n",buf);
+          }
+      }
+      else if (strcasestr(logsubcmd,"show") != NULL) {
+          prnt("Available log levels: \n   ");
+          for (int i=0; log_level_names[i].name != NULL; i++)
+             prnt("%s ",log_level_names[i].name);
+          prnt("\nAvailable verbosity: \n   ");
+          for (int i=0; log_verbosity_names[i].name != NULL; i++)
+             prnt("%s ",log_verbosity_names[i].name);
+          prnt("\n");
+   	  proccmd_show("loglvl",debug,prnt);
+      }
+      else if (strcasestr(logsubcmd,"help") != NULL) {
+          prnt(PROCCMD_LOG_HELP_STRING);
+      } else {
+          prnt("%s: wrong log command...\n",logsubcmd);
+      }
+   } else if ( s == 3 && logsubcmd != NULL) {
+      int level, verbosity, interval;
+      char *tmpstr=NULL;
+      char *logparam=NULL;
+      int l,v;
+
+      level = verbosity = interval = -1;
+      l=sscanf(logsubcmd,"%m[^'_']_%m[^'_']",&logparam,&tmpstr);
+      if (debug > 0)
+          prnt("l=%i, %s %s\n",l,((logparam==NULL)?"\"\"":logparam), ((tmpstr==NULL)?"\"\"":tmpstr));
+      if (l ==2 ) {
+         if (strcmp(logparam,"level") == 0) {
+             level=map_str_to_int(log_level_names,tmpstr);
+             if (level < 0)  prnt("level %s unknown\n",tmpstr);
+         } else if (strcmp(logparam,"verbos") == 0) {
+             verbosity=map_str_to_int(log_verbosity_names,tmpstr);
+             if (verbosity < 0)  prnt("verbosity %s unknown\n",tmpstr);
+         } else {
+             prnt("%s%s unknown log sub command \n",logparam, tmpstr);
+         }
+      } else if (l ==1 ) {
+         if (strcmp(logparam,"enable") == 0) {
+              interval = 1;
+         } else if (strcmp(logparam,"disable") == 0) {
+              interval = 0;
+         } else {
+             prnt("%s%s unknown log sub command \n",logparam, tmpstr);
+         }
+      } else {
+          prnt("%s unknown log sub command \n",logsubcmd); 
+      }
+      if (logparam != NULL) free(logparam);
+      if (tmpstr != NULL)   free(tmpstr);
+      for (int i=idx1; i<=idx2 ; i++) {
+          set_comp_log(i, level, verbosity, interval);
+          prnt("log level/verbosity  comp %i %s set to %s / %s (%s)\n",
+                i,((g_log->log_component[i].name==NULL)?"":g_log->log_component[i].name),
+                map_int_to_str(log_level_names,g_log->log_component[i].level),
+                map_int_to_str(log_verbosity_names,g_log->log_component[i].flag),
+                ((g_log->log_component[i].interval>0)?"enabled":"disabled"));
+
+        
+      }     
+   } else {
+       prnt("%s: wrong log command...\n",buf);
+   }
+
    return 0;
 } 
 /*-------------------------------------------------------------------------------------*/

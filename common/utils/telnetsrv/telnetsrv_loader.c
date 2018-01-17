@@ -40,15 +40,44 @@
 #include "telnetsrv_loader.h"
 
 
-
+int loader_show_cmd(char *buff, int debug, telnet_printfunc_t prnt);
 telnetshell_cmddef_t loader_cmdarray[] = {
+   {"show","[params,modules]",loader_show_cmd},
    {"","",NULL},
 };
 
 
 /*-------------------------------------------------------------------------------------*/
+int loader_show_cmd(char *buff, int debug, telnet_printfunc_t prnt)
+{
+   if (debug > 0)
+       prnt( "loader_show_cmd received %s\n",buff);
+
+      if (strcasestr(buff,"params") != NULL) {
+          prnt( "loader parameters:\n");
+          prnt( "   Main executable version: \"%s\"\n", loader_data.mainexec_version);
+          prnt( "   Default shared lib path: \"%s\"\n", loader_data.shlibpath);
+          prnt( "   Max number of shared lib : %i\n", loader_data.maxshlibs);
+      }
+      else if (strcasestr(buff,"modules") != NULL) {
+          prnt( "%i shared lib have been dynamicaly loaded by the oai loader\n", loader_data.numshlibs);
+          for (int i=0 ; i<loader_data.numshlibs ; i++) {
+              prnt( "   Module %i: %s\n", i,loader_data.shlibs[i].name);
+              prnt( "       Shared library path: \"%s\"\n", loader_data.shlibs[i].thisshlib_path);
+              prnt( "       %i function pointers registered:\n", loader_data.shlibs[i].numfunc);
+              for(int j=0 ; j<loader_data.shlibs[i].numfunc;j++) {
+                     prnt( "          function %i %s at %p\n",j,
+                           loader_data.shlibs[i].funcarray[j].fname, loader_data.shlibs[i].funcarray[j].fptr);
+              }
+          }
+      } else {
+          prnt("%s: wrong loader command...\n",buff);
+      }
+   return 0;
+}
+
 void add_loader_cmds()
 {
 
-   add_telnetcmd("loader", loader_globalvardef, NULL);
+   add_telnetcmd("loader", loader_globalvardef, loader_cmdarray);
 }

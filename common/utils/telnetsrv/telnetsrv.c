@@ -86,7 +86,7 @@ paramdef_t telnetoptions[] = {
 	{"histsize",      "<history sizes>",             0,                 uptr:&(telnetparams.histsize),        defuintval:50,                  TYPE_UINT,      0 },
 	{"phypbsize",     "<phy dump buff size (bytes)>",0,                 uptr:&(telnetparams.phyprntbuff_size),defuintval:65000,               TYPE_UINT,      0 },
         {"staticmod",     "<static modules selection>",  0,                 NULL,                                 defstrlistval:telnet_defstatmod,TYPE_STRINGLIST,sizeof(telnet_defstatmod)/sizeof(char *)},
-        {"shrmod",        "<static modules selection>",  0,                 NULL,                                 NULL,TYPE_STRINGLIST,0 },
+        {"shrmod",        "<dynamic modules selection>", 0,                 NULL,                                 NULL,TYPE_STRINGLIST,0 },
 };
 
 int get_phybsize() {return telnetparams.phyprntbuff_size; };
@@ -382,11 +382,8 @@ char *varval=NULL;
 		case TELNET_VARTYPE_DOUBLE:
 	             client_printf("%g\n",*(double *)(telnetparams.CmdParsers[moduleindex].var[i].varvalptr));
 		break;
-		case TELNET_VARTYPE_PTR:
-	             client_printf("0x%08x\n",*((unsigned int *)(telnetparams.CmdParsers[moduleindex].var[i].varvalptr)));						
-                break;
 		case TELNET_VARTYPE_STRING:
-	             client_printf("%s\n",*(char **)(telnetparams.CmdParsers[moduleindex].var[i].varvalptr));						
+	             client_printf("\"%s\"\n",*(char **)(telnetparams.CmdParsers[moduleindex].var[i].varvalptr));						
                 break;
 		default:
 		     client_printf("unknown type\n");
@@ -414,7 +411,7 @@ char *varval=NULL;
 		break;	
 		case TELNET_VARTYPE_STRING:
 		     sprintf(*(char **)(telnetparams.CmdParsers[moduleindex].var[i].varvalptr),"%s", varval);
-	             client_printf("%s\n",*(char **)(telnetparams.CmdParsers[moduleindex].var[i].varvalptr));
+	             client_printf("\"%s\"\n",*(char **)(telnetparams.CmdParsers[moduleindex].var[i].varvalptr));
 		break;				
 		default:
 		     client_printf("unknown type\n");
@@ -604,16 +601,19 @@ while( (telnetparams.new_socket = accept(sock, &cli_addr, &cli_len)) )
            }
          if (telnetparams.telnetdbg > 0)
 	    printf("[TELNETSRV] Command received: readc %i filled %i \"%s\"\n", readc, filled ,buf);
-            if (buf[0] == '!') {
-                if (buf[1] == '!') {
-                    sprintf(buf,"%s","telnet history list");
-                } else {
-                    HIST_ENTRY *hisentry = history_get(strtol(buf+1,NULL,0)); 
-                    if (hisentry) {
-                        sprintf(buf,"%s",hisentry->line);
-                    }
-                }           
-            }
+         if (buf[0] == '!') {
+             if (buf[1] == '!') {
+         	 sprintf(buf,"%s","telnet history list");
+             } else {
+         	 HIST_ENTRY *hisentry = history_get(strtol(buf+1,NULL,0)); 
+         	 if (hisentry) {
+                     char msg[TELNET_MAX_MSGLENGTH + sizeof(TELNET_PROMPT) +10];
+         	     sprintf(buf,"%s",hisentry->line);
+        	     sprintf(msg,"%s %s\n",TELNET_PROMPT, hisentry->line);
+                     send(telnetparams.new_socket, msg, strlen(msg), MSG_NOSIGNAL);
+         	 }
+             }  	 
+         }
 	 if (strlen(buf) > 2 )
 	    {
             status=process_command(buf);
@@ -636,6 +636,7 @@ while( (telnetparams.new_socket = accept(sock, &cli_addr, &cli_len)) )
 	}
     }
     write_history(telnetparams.histfile);
+    clear_history();
     close(telnetparams.new_socket);
     printf ("[TELNETSRV] Telnet server waitting for connection...\n");
     }

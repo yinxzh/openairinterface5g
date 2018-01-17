@@ -1181,6 +1181,21 @@ extern int sync_var;
 
 
 
+typedef uint8_t(*decoder_if_t)(int16_t *,
+    		    uint8_t *,
+    		    uint16_t,
+    		    uint16_t,
+    		    uint16_t,
+    		    uint8_t,
+    		    uint8_t,
+    		    uint8_t,
+    		    time_stats_t *,
+    		    time_stats_t *,
+    		    time_stats_t *,
+    		    time_stats_t *,
+    		    time_stats_t *,
+    		    time_stats_t *,
+    		    time_stats_t *);
 
 
 

@@ -34,6 +34,7 @@
 #define COMPONENT_LOG
 #define COMPONENT_LOG_IF
 #include <ctype.h>
+#define LOG_MAIN
 #include "log.h"
 #include "vcd_signal_dumper.h"
 #include "assertions.h"
@@ -55,7 +56,7 @@
 #endif
 #include "common/config/config_userapi.h"
 // main log variables
-log_t *g_log;
+
 
 mapping log_level_names[] = {
   {"emerg", LOG_EMERG},
@@ -1324,7 +1325,7 @@ int set_log(int component, int level, int interval)
            component, MIN_LOG_COMPONENTS, MAX_LOG_COMPONENTS);
   DevCheck((level <= LOG_TRACE) && (level >= LOG_EMERG), level, LOG_TRACE,
            LOG_EMERG);
-  DevCheck((interval > 0) && (interval <= 0xFF), interval, 0, 0xFF);
+  DevCheck((interval >= 0) && (interval <= 0xFF), interval, 0, 0xFF);
 
   g_log->log_component[component].level = level;
 
@@ -1353,22 +1354,20 @@ int set_log(int component, int level, int interval)
 
 int set_comp_log(int component, int level, int verbosity, int interval)
 {
+
+/* first test for parameters to be changed, negative values mean let param unchanged */
+  if (level < 0)         level = g_log->log_component[component].level;
+  if (verbosity < 0) verbosity = g_log->log_component[component].flag;
+  if (interval < 0) interval   = g_log->log_component[component].interval;
   /* Checking parameters */
   DevCheck((component >= MIN_LOG_COMPONENTS) && (component < MAX_LOG_COMPONENTS),
            component, MIN_LOG_COMPONENTS, MAX_LOG_COMPONENTS);
   DevCheck((level <= LOG_TRACE) && (level >= LOG_EMERG), level, LOG_TRACE,
            LOG_EMERG);
-  DevCheck((interval > 0) && (interval <= 0xFF), interval, 0, 0xFF);
+  DevCheck((interval >= 0) && (interval <= 0xFF), interval, 0, 0xFF);
 
-#if 0
-  if ((verbosity == LOG_NONE) || (verbosity == LOG_LOW) ||
-      (verbosity == LOG_MED) || (verbosity == LOG_FULL) ||
-      (verbosity == LOG_HIGH)) {
-    g_log->log_component[component].flag = verbosity;
-  }
-#else
   g_log->log_component[component].flag = verbosity;
-#endif
+
 
   g_log->log_component[component].level = level;
   g_log->log_component[component].interval = interval;

@@ -62,13 +62,13 @@ typedef struct {
 #define DEFAULT_PATH ""
 loader_data_t loader_data;
 
-/*--------------------------------------------------------------------------------------------------------------------------------------*/
-/*                                       LOADER parameters                                                                              */
-/*   optname               helpstr   paramflags    XXXptr	                           defXXXval	            type       numelt   */
-/*--------------------------------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------------------------------------------------*/
+/*                                       LOADER parameters                                                                                      */
+/*   optname               helpstr   paramflags           XXXptr	                           defXXXval	            type       numelt   */
+/*----------------------------------------------------------------------------------------------------------------------------------------------*/
 #define LOADER_PARAMS_DESC { \
-{"shlibpath",                NULL,    0,          strptr:(char **)&(loader_data.shlibpath), defstrval:DEFAULT_PATH, TYPE_STRING, 0}, \
-{"maxshlibs",                NULL,    0,          uptr:&(loader_data.maxshlibs),            defintval:10,           TYPE_UINT32, 0}, \
+{"shlibpath",                NULL,    PARAMFLAG_NOFREE, strptr:(char **)&(loader_data.shlibpath), defstrval:DEFAULT_PATH, TYPE_STRING, 0}, \
+{"maxshlibs",                NULL,    0,                uptr:&(loader_data.maxshlibs),            defintval:10,           TYPE_UINT32, 0}, \
 }
 
 /*-------------------------------------------------------------------------------------------------------------*/

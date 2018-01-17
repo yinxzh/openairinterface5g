@@ -510,6 +510,7 @@ function main() {
 
 # configuration module libraries, one currently available, using libconfig 
   config_libconfig_shlib=params_libconfig
+
   
   # first generate the CMakefile in the right directory
   if [ "$eNB" = "1" -o "$UE" = "1" -o "$HW" = "EXMIMO" ] ; then
@@ -560,6 +561,9 @@ function main() {
     compilations \
 	  $lte_build_dir $config_libconfig_shlib \
 	  lib$config_libconfig_shlib.so $dbin/lib$config_libconfig_shlib.so
+    compilations \
+          $lte_build_dir coding \
+          libcoding.so $dbin/libcoding.so
 	  
     if [ "$NOS1" = "1" ] ; then
 	compilations \
