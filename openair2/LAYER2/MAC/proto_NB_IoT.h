@@ -54,6 +54,8 @@ void schedule_sibs_NB_IoT(eNB_MAC_INST_NB_IoT *mac_inst, uint32_t sibs_order, in
 
 void schedule_uss_NB_IoT(module_id_t module_id, eNB_MAC_INST_NB_IoT *mac_inst, uint32_t subframe, uint32_t frame, uint32_t hypersfn, int index_ss);
 
+void init_RA_NB_IoT(eNB_MAC_INST_NB_IoT *mac_inst, uint8_t preamble_index, ce_level_t ce_level, uint32_t sfn_id, uint16_t ta);
+
 void schedule_RA_NB_IoT(eNB_MAC_INST_NB_IoT *mac_inst);
 
 void schedule_msg3_retransimission_NB_IoT(eNB_MAC_INST_NB_IoT *mac_inst);

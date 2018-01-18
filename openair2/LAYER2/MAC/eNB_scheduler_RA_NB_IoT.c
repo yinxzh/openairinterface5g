@@ -25,11 +25,14 @@ unsigned char str10[] = "ack_msg4(retransmit)";
 unsigned char str11[] = "msg3";
 unsigned char str12[] = "msg3(retransmit)";
 
-/*void init_RA_NB_IoT(eNB_MAC_INST_NB_IoT *mac_inst, uint8_t preamble_index, ce_level_t ce_level, uint32_t sfn_id, uint16_t ta){
+void init_RA_NB_IoT(eNB_MAC_INST_NB_IoT *mac_inst, uint8_t preamble_index, ce_level_t ce_level, uint32_t sfn_id, uint16_t ta){
 
 	int i;
 	RA_TEMPLATE_NB_IoT *msg2_list_tail = mac_inst->RA_msg2_list.tail;
 	RA_TEMPLATE_NB_IoT *migrate_node;
+
+	// Reserve for the feature which will be implemented in future
+	msg2_list_tail = msg2_list_tail;
 
 	static int static_count=0;
 	printf("[%04d][RA scheduler][MSG1] RX %d\n", mac_inst->current_subframe, static_count++);
@@ -51,11 +54,11 @@ unsigned char str12[] = "msg3(retransmit)";
 	migrate_node->ce_level = ce_level;
 	migrate_node->ra_rnti = (sfn_id>>2) + 1;
 	migrate_node->ta = ta;
-	migrate_node->next = (RA_template_NB_IoT *)0;
-	migrate_node->prev = (RA_template_NB_IoT *)0;
+	migrate_node->next = (RA_TEMPLATE_NB_IoT *)0;
+	migrate_node->prev = (RA_TEMPLATE_NB_IoT *)0;
 
 	//	insert to end of list
-	if((RA_template_NB_IoT *)0 == mac_inst->RA_msg2_list.head){
+	if((RA_TEMPLATE_NB_IoT *)0 == mac_inst->RA_msg2_list.head){
 		mac_inst->RA_msg2_list.head = migrate_node;
 	}else{
 		//	not empty
@@ -64,7 +67,7 @@ unsigned char str12[] = "msg3(retransmit)";
 	}
 	mac_inst->RA_msg2_list.tail = migrate_node;
 
-}*/
+}
 
 //  7bytes
 void fill_rar_NB_IoT(
