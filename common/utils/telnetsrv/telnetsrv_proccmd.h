@@ -53,10 +53,20 @@ telnetshell_vardef_t proc_vardef[] = {
 use the show command to get the values for <level>, <verbosity> and the list of component indexes \
 that can be used for id1 and id2 \n"    
 
+#define PROCCMD_THREAD_HELP_STRING " thread sub commands: \n\
+ <thread id> aff <core>  :    set affinity of thread <thread id> to core <core> \n\
+ <thread id> prio <prio> :    set scheduling parameters for thread <thread id>  \n\
+                   if prio < -20: linux scheduling policy set to FIFO, \n\
+                                  with priority = -20 - prio \n\
+                   if prio > 19: linux scheduling policy set to OTHER, \n\
+                                  with priority (nice value) =  prio \n\
+  use \"softmodem show thread\" to get <thread id> \n"
+ 
+
 telnetshell_cmddef_t proc_cmdarray[] = {
    {"show","loglvl|thread|config", proccmd_show},
-   {"log","(help for details)", proccmd_log},
-   {"thread","<id> aff|prio <aff|prio>", proccmd_thread},
+   {"log","(enter help for details)", proccmd_log},
+   {"thread","(enter help for details)", proccmd_thread},
    {"exit","", proccmd_exit},
    {"","",NULL},
 };

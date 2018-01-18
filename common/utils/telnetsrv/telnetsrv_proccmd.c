@@ -72,14 +72,13 @@ char toksep[2];
   lptr= prntline;
 /*http://man7.org/linux/man-pages/man5/proc.5.html gives the structure of the stat file */
  
-  while( 	procfile_fiels != NULL && fieldcnt < 42)
-    {
+  while( 	procfile_fiels != NULL && fieldcnt < 42) {
+    long int policy;
     if (strlen(procfile_fiels) == 0)
        continue;
     fieldcnt++;
     sprintf(toksep," ");
-    switch(fieldcnt)
-       {
+    switch(fieldcnt) {
        case 1: /* id */
            lptr+=sprintf(lptr,"%9.9s ",procfile_fiels);
            sprintf(toksep,")");
@@ -106,12 +105,36 @@ char toksep[2];
        break;
        case 41:   //policy	       
            lptr+=sprintf(lptr,"%3.3s ",procfile_fiels);
+           policy=strtol(procfile_fiels,NULL,0);
+           switch(policy) {
+              case SCHED_FIFO:
+                   lptr+=sprintf(lptr,"%s ","rt: fifo");
+              break;
+              case SCHED_OTHER:
+                   lptr+=sprintf(lptr,"%s ","other");
+              break;
+              case SCHED_IDLE:
+                   lptr+=sprintf(lptr,"%s ","idle");
+              break;
+              case SCHED_BATCH:
+                   lptr+=sprintf(lptr,"%s ","batch");
+              break;
+              case SCHED_RR:
+                   lptr+=sprintf(lptr,"%s ","rt: rr");
+              break;
+              case SCHED_DEADLINE:
+                   lptr+=sprintf(lptr,"%s ","rt: deadline");
+              break;
+              default:
+                   lptr+=sprintf(lptr,"%s ","????");
+              break;
+           }
        break;
        default:
        break;	       	       	       	       	       
-       }/* switch on fieldcnr */  
+    }/* switch on fieldcnr */  
     procfile_fiels =strtok_r(NULL,toksep,&strtokptr); 
-    } /* while on proc_fields != NULL */
+  } /* while on proc_fields != NULL */
   prnt("%s\n",prntline); 
 } /*decode_procstat */
 
@@ -214,6 +237,10 @@ char tname[32];
    sv1[0]=0;
    if (debug > 0)
        prnt("proccmd_thread received %s\n",buf);
+   if (strcasestr(buf,"help") != NULL) {
+          prnt(PROCCMD_THREAD_HELP_STRING);
+          return 0;
+   } 
    res=sscanf(buf,"%i %9s %i",&bv1,sv1,&bv2);
    if (debug > 0)
        prnt(" proccmd_thread: %i params = %i,%s,%i\n",res,bv1,sv1,bv2);   

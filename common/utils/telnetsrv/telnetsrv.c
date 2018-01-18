@@ -143,41 +143,51 @@ char strpolicy[10];
 
 
 //sched_get_priority_max(SCHED_FIFO)
-if (priority < NICE_MIN)
-   {
+if (priority < NICE_MIN) {
    policy=SCHED_FIFO;
    sprintf(strpolicy,"%s","fifo");
-   schedp.sched_priority= NICE_MIN - priority ;   
+   schedp.sched_priority= NICE_MIN - priority ;
+   if (   (schedp.sched_priority < sched_get_priority_min(SCHED_FIFO)) ||
+          (schedp.sched_priority > sched_get_priority_max(SCHED_FIFO)) ) {
+        client_printf("Error: %i invalid prio, should be %i to %i, \n",
+                       priority, NICE_MIN -sched_get_priority_min(SCHED_FIFO),
+                       NICE_MIN - sched_get_priority_max(SCHED_FIFO) );        
    }
-else if (priority > NICE_MAX)
-   {
+} else if (priority > NICE_MAX) {
    policy=SCHED_IDLE;
    sprintf(strpolicy,"%s","idle");
    schedp.sched_priority=0;   
-   } 
-else 
-   {
+} else {
    policy=SCHED_OTHER;
    sprintf(strpolicy,"%s","other");
    schedp.sched_priority=0;   
-   } 
-if( tid != 0)
-  {  
+}
+ 
+if( tid != 0) {  
   rt = pthread_setschedparam(tid, policy, &schedp);
-  }
-else if(pid > 0)
-  {
+} else if(pid > 0)  {
   rt = sched_setscheduler( pid, policy,&schedp);
-  }
-if (rt != 0)
-    {
+}
+
+if (rt != 0) {
     client_printf("Error %i: %s modifying sched param to %s:%i, \n",
                   errno,strerror(errno),strpolicy,schedp.sched_priority); 
-    }
-else
-    {
+} else  {
     client_printf("policy set to %s, priority %i\n",strpolicy,schedp.sched_priority);
+    if ( policy==SCHED_OTHER) {
+        rt = getpriority(PRIO_PROCESS,tid);
+        if (rt != -1) {
+           rt = setpriority(PRIO_PROCESS,tid,priority);  
+           if (rt < 0) {
+               client_printf("Error %i: %s trying to set nice value of thread %u to %i\n",
+                             errno,strerror(errno),tid,priority); 
+           }
+        } else {
+               client_printf("Error %i: %s trying to get nice value of thread %u \n",
+                              errno,strerror(errno),tid); 
+        }
     }
+}
 
 
 
