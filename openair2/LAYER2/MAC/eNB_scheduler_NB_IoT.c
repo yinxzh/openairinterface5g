@@ -84,7 +84,7 @@ void eNB_dlsch_ulsch_scheduler_NB_IoT(eNB_MAC_INST_NB_IoT *mac_inst, uint32_t ab
 	SIB1_flag = 0;
 	uint32_t h,f,sf;
 	//int a;
-	//DEBUG("--------------[%04d][eNB scheduler NB-IoT] Start Scheduling------------\n", mac_inst->current_subframe);
+	printf("--------------[%04d][eNB scheduler NB-IoT] Start Scheduling------------\n", mac_inst->current_subframe);
 	eNB_scheduler_computing_flag_NB_IoT(mac_inst, abs_subframe, &scheduler_flags, &common_flags);
 	/*Update the available resource list to current state*/
 	//NB_IoT_maintain_available_resource(subframe, frame, hypersfn);
@@ -115,6 +115,7 @@ void eNB_dlsch_ulsch_scheduler_NB_IoT(eNB_MAC_INST_NB_IoT *mac_inst, uint32_t ab
 		scheduler_flags &= ~(flag_css_type2);
 	}
 
+
 	//Check if type1 searching space scheduling
 	if((scheduler_flags&flag_css_type1)>0){
 		scheduler_flags &= ~(flag_css_type1);
@@ -132,6 +133,7 @@ void eNB_dlsch_ulsch_scheduler_NB_IoT(eNB_MAC_INST_NB_IoT *mac_inst, uint32_t ab
 			schedule_uss_NB_IoT(0, mac_inst,sf, f, h, i);
 		}
 	}
+
 	/*
 	//Check if UE-specific searching space scheduling
 	if((scheduler_flags&flag_uss_v)>0){
@@ -149,7 +151,7 @@ void eNB_dlsch_ulsch_scheduler_NB_IoT(eNB_MAC_INST_NB_IoT *mac_inst, uint32_t ab
 	convert_system_number(abs_subframe, &h, &f, &sf);
 	a = output_handler(mac_inst, 0,0,h,f,sf,MIB_flag,SIB1_flag, abs_subframe);
 
-	printf("Output_handler_return value : %d", a);
+	printf("Output_handler_return value : %d\n", a);
 	//DEBUG("--------------[%04d][eNB scheduler NB-IoT] End Scheduling------------\n", mac_inst->current_subframe);
 }
 
