@@ -360,9 +360,25 @@ void rrc_mac_config_req_NB_IoT(
 
     int UE_id = -1;
 
-
     rrc_config_NB_IoT_t                     *mac_config=NULL;
 
+    if(ded_flag==0)
+    {
+    }else
+    {
+      mac_config = &RC.nb_iot_mac[Mod_idP]->rrc_config;
+
+      // now we only have 3 UE list USS for three CE levels
+    // we fix value for RMAX to 8 / 16 / 32
+    mac_config->npdcch_ConfigDedicated[ue_list_ded_num].R_max         = 8 + 8*ue_list_ded_num;
+    // fix value for G to 8 / 4 / 2
+    mac_config->npdcch_ConfigDedicated[ue_list_ded_num].G             = 2 + (2-ue_list_ded_num)*(3-ue_list_ded_num);
+    // fix a_offest to 0 / 0 / 0 
+    mac_config->npdcch_ConfigDedicated[ue_list_ded_num].a_offset      = 0;
+   
+    return;
+
+    }
     //printf("rrc_mac_config_req_NB_IoT IN\n");
 
 
@@ -592,6 +608,17 @@ void rrc_mac_config_req_NB_IoT(
       init_mac_NB_IoT(RC.nb_iot_mac[Mod_idP]);
 
       LOG_I(MAC,"[NB-IoT] Init_MAC done\n");
+
+      /*
+      for sacheduler testing
+      for(int i =0;i<1;i++)
+      {
+        LOG_I(MAC,"[NB-IoT] scheduler testing start %d\n",i);
+
+        eNB_dlsch_ulsch_scheduler_NB_IoT(RC.nb_iot_mac[Mod_idP], i);
+
+        LOG_I(MAC,"[NB-IoT] scheduler testing done %d\n",i);
+      }*/
 
 //      RC.L1_NB_IoT[Mod_idP]->configured=1;
 

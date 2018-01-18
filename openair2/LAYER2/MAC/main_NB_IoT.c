@@ -119,8 +119,8 @@ void init_mac_NB_IoT(eNB_MAC_INST_NB_IoT *mac_inst)
   mac_inst->num_uss_list = NUM_USS_PP;
   for(i=0;i<NUM_USS_PP;++i)
   {
-
-//    rrc_mac_config_req_NB_IoT(&mac_inst->rrc_config, 0, 0, 1, i);
+    rrc_mac_config_req_NB_IoT(0,0,0,NULL,NULL,NULL,NULL,NULL,1,i);
+    
     (mac_inst->UE_list_spec+i)->head = -1;
     (mac_inst->UE_list_spec+i)->tail = -1;
     (mac_inst->UE_list_spec+i)->NPDCCH_config_dedicated.R_max = mac_inst->rrc_config.npdcch_ConfigDedicated[i].R_max;

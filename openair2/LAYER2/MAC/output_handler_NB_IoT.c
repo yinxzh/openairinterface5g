@@ -63,6 +63,7 @@ int output_handler(eNB_MAC_INST_NB_IoT *mac_inst, module_id_t module_id, int CC_
       		// fill MIB PDU
       		//SCHED_info->TX_req->tx_request_body.tx_pdu_list[dl_config_pdu->NB_IoTch_pdu.NB_IoTch_pdu_rel13.pdu_index].segments[0].segment_data = MIB;
       		
+      		LOG_I(MAC,"NB-IoT fill MIB\n");
       		//dl_scheduled(mac_inst->current_subframe, _NPBCH, 0, "MIB");
 		}
 		else if(SIB1_flag == 1)
