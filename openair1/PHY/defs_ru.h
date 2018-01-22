@@ -45,6 +45,7 @@
 #include "PHY/impl_defs_lte.h"
 #include "PHY/TOOLS/time_meas.h"
 
+
 #define MAX_BANDS_PER_RRU 4
 #define MAX_NUM_RU_PER_eNB 64 
 
@@ -71,6 +72,8 @@ typedef enum {
   synch_to_other,          // synch to another source_(timer, other RU)
   synch_to_mobipass_standalone  // special case for mobipass in standalone mode
 } node_timing_t;
+
+
 
 typedef struct RU_proc_t_s {
   /// Pointer to associated RU descriptor
@@ -215,6 +218,15 @@ typedef struct RU_proc_t_s {
   struct RU_proc_t_s           **slave_proc;
 } RU_proc_t;
 
+
+typedef struct RU_NbIoT_t_s{
+  /// list of NB-IoT RRCs using this RU
+  struct PHY_VARS_eNB_NB_IoT_s **NB_IoT_eNB_list;
+  /// function pointer to NbIoT entry routine
+  void (*NbIoT_top)(struct PHY_VARS_eNB_NB_IoT_s  *NB_IoT_eNB, int frame_rx, int subframe_rx, char *string);
+} RU_NbIoT_t;
+
+
 typedef struct RU_t_s{
   /// index of this ru
   uint32_t idx;
@@ -266,8 +278,6 @@ typedef struct RU_t_s{
   int num_eNB;
   /// list of eNBs using this RU
   struct PHY_VARS_eNB_s *eNB_list[NUMBER_OF_eNB_MAX];
-  /// list of NB-IoT eNBs using this RU
-  struct PHY_VARS_eNB_NB_IoT_s *NB_IoT_eNB_list[NUMBER_OF_eNB_MAX];
   /// Mapping of antenna ports to RF chain index
   openair0_rf_map      rf_map;
   /// IF device descriptor
@@ -327,6 +337,8 @@ typedef struct RU_t_s{
   uint8_t seqno;
   /// initial timestamp used as an offset make first real timestamp 0
   openair0_timestamp   ts_offset;
+  /// pointer to NbIoT specific data
+  RU_NbIoT_t           *NbIoT;
   /// process scheduling variables
   RU_proc_t            proc;
   /// stats thread pthread descriptor

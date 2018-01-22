@@ -766,6 +766,20 @@ int add_telnetcmd(char *modulename, telnetshell_vardef_t *var, telnetshell_cmdde
  }
 
 
-
+/* function which will be called by the shared lib loader, to check shared lib version
+   against main exec version. version mismatch no considered as fatal (interfaces not supposed to change)
+*/ 
+int  telnetsrv_checkbuildver(char * mainexec_buildversion, char ** shlib_buildversion)
+{
+#ifndef PACKAGE_VERSION
+#define PACKAGE_VERSION "standalone built: " __DATE__ __TIME__
+#endif
+    *shlib_buildversion = PACKAGE_VERSION;
+    if (strcmp(mainexec_buildversion, *shlib_buildversion) != 0) {
+          fprintf(stderr,"[TELNETSRV] shared lib version %s, doesn't match main version %s, compatibility should be checked\n",
+                mainexec_buildversion,*shlib_buildversion);
+    }
+    return 0;
+}
 
 

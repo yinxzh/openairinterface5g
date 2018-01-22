@@ -189,9 +189,19 @@ void RCconfig_RU(void) {
 
       RC.ru[j]->nb_tx                             = *(RUParamList.paramarray[j][RU_NB_TX_IDX].uptr);
       RC.ru[j]->nb_rx                             = *(RUParamList.paramarray[j][RU_NB_RX_IDX].uptr);
-      if (RC.ru[j]->NB_IoT_eNB_list != NULL) {
-          for (int i=0; (RC.ru[j]->NB_IoT_eNB_list[i] != NULL) && (i<RUParamList.paramarray[j][RU_NBIOTRRC_LIST_IDX].numelt); i++) {
-               RC.ru[j]->NB_IoT_eNB_list[i] = RC.L1_NB_IoT[RUParamList.paramarray[j][RU_NBIOTRRC_LIST_IDX].uptr[i]];
+
+      if (RUParamList.paramarray[j][RU_NBIOTRRC_LIST_IDX].numelt > 0) {
+          RC.ru[j]->NbIoT=malloc(sizeof(RU_NbIoT_t));
+          if(RC.ru[j]->NbIoT == NULL) {
+             LOG_F(PHY,"cannot allocate NbIoT for ru %i\n",j);                
+          }
+          RC.ru[j]->NbIoT->NB_IoT_eNB_list = malloc(sizeof(struct PHY_VARS_eNB_NB_IoT_s *) * RUParamList.paramarray[j][RU_NBIOTRRC_LIST_IDX].numelt);
+          if (RC.ru[j]->NbIoT->NB_IoT_eNB_list != NULL) {
+              for (int i=0; i<RUParamList.paramarray[j][RU_NBIOTRRC_LIST_IDX].numelt ; i++) {
+                   RC.ru[j]->NbIoT->NB_IoT_eNB_list[i] = RC.L1_NB_IoT[RUParamList.paramarray[j][RU_NBIOTRRC_LIST_IDX].uptr[i]];
+              }
+          } else {
+             LOG_F(PHY,"cannot allocate NB_IoT_eNB_list for ru %i\n",j);                 
           }
       }
     }// j=0..num_rus

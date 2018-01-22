@@ -217,11 +217,22 @@ extern log_t *g_log;
        prnt("Config flags: 0x%08x\n", config_get_if()->rtflags); 
        prnt("    Don't exit if param check fails (flag %u): %s\n",CONFIG_NOABORTONCHKF,
             ((config_get_if()->rtflags & CONFIG_NOABORTONCHKF) ? "Y" : "N") );      
-       prnt("Config has been built from %s with parameters:\n",CONFIG_GETSOURCE );
+       prnt("Config has been built from %s with config module parameters:\n",CONFIG_GETSOURCE );
        for (int i=0; i < config_get_if()->num_cfgP; i++) {
             prnt("    %02i %s\n",i ,config_get_if()->cfgP[i]);
        }
-       prnt("%i Remote Units\n", RC.nb_RU );
+       prnt("%02i Ru(s),         %02i lte RRc(s),     %02i NbIoT RRC(s)\n", RC.nb_RU,  RC.nb_inst, RC.nb_nb_iot_rrc_inst);
+       prnt("                  %02i lte MACRLC(s),  %02i NbIoT MACRLC(s)\n", RC.nb_macrlc_inst, RC.nb_nb_iot_macrlc_inst);
+       prnt("                  %02i lte L1,         %02i NbIoT L1\n",        RC.nb_L1_inst, RC.nb_nb_iot_L1_inst);
+       for(int i=0; i<RC.nb_inst; i++) {
+           prnt("    lte RRC %i:     %02i CC(s) \n",i,((RC.nb_CC == NULL)?0:RC.nb_CC[i]));
+       }
+       for(int i=0; i<RC.nb_L1_inst; i++) {
+           prnt("    lte L1 %i:      %02i CC(s)\n",i,((RC.nb_L1_CC == NULL)?0:RC.nb_L1_CC[i]));
+       }
+       for(int i=0; i<RC.nb_macrlc_inst; i++) {
+           prnt("    lte macrlc %i:  %02i CC(s)\n",i,((RC.nb_mac_CC == NULL)?0:RC.nb_mac_CC[i]));
+       }
    }
    return 0;
 } 

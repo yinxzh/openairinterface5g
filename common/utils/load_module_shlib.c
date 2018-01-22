@@ -45,7 +45,7 @@
 void loader_init(void) {
   paramdef_t LoaderParams[] = LOADER_PARAMS_DESC;
 
-  loader_data.mainexec_version =  PACKAGE_VERSION;
+  loader_data.mainexec_buildversion =  PACKAGE_VERSION;
   int ret = config_get( LoaderParams,sizeof(LoaderParams)/sizeof(paramdef_t),LOADER_CONFIG_PREFIX);
   if (ret <0) {
        fprintf(stderr,"[LOADER]  %s %d configuration couldn't be performed",__FILE__, __LINE__);
@@ -59,6 +59,7 @@ void loader_init(void) {
      fprintf(stderr,"[LOADER]  %s %d memory allocation error %s\n",__FILE__, __LINE__,strerror(errno));
      exit_fun("[LOADER] unrecoverable error");
   }
+  memset(loader_data.shlibs,0,loader_data.maxshlibs * sizeof(loader_shlibdesc_t));
 }
 
 /* build the full shared lib name from the module name */
@@ -137,19 +138,21 @@ int load_module_shlib(char *modname,loader_shlibfunc_t *farray, int numf)
    } else {
       printf("[LOADER] library %s successfully loaded\n", shlib_path);
       afname=malloc(strlen(modname)+15);
-      sprintf(afname,"%s_checkver",afname);
+      sprintf(afname,"%s_checkbuildver",modname);
       fpc = dlsym(lib_handle,afname);
-      if (fpc != NULL )
-         {
-	 fpc(loader_data.mainexec_version);
-	 }
+      if (fpc != NULL ){
+	 int chkver_ret = fpc(loader_data.mainexec_buildversion, &(loader_data.shlibs[loader_data.numshlibs].shlib_buildversion));
+         if (chkver_ret < 0) {
+              fprintf(stderr,"[LOADER]  %s %d lib %s, version mismatch",__FILE__, __LINE__, modname);
+              exit_fun("[LOADER] unrecoverable error");
+         }
+      }
       sprintf(afname,"%s_autoinit",modname);
       fpi = dlsym(lib_handle,afname);
 
-      if (fpi != NULL )
-         {
+      if (fpi != NULL ) {
 	 fpi();
-	 }
+      }
 
       if (farray != NULL) {
           for (int i=0; i<numf; i++) {

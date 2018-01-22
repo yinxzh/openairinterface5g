@@ -1655,6 +1655,17 @@ unsigned char phy_threegpplte_turbo_decoder16(short *y,
   return(iteration_cnt);
 }
 
-
+/* function which will be called by the shared lib loader, to check shared lib version
+   against main exec version. version mismatch no considered as fatal (interfaces not supposed to change)
+*/ 
+int coding_checkbuildver(char * mainexec_buildversion, char ** shlib_buildversion)
+{
+    *shlib_buildversion = PACKAGE_VERSION;
+    if (strcmp(mainexec_buildversion, *shlib_buildversion) != 0) {
+          LOG_E(PHY,"Coding shared lib version %s, doesn't match main version %s, compatibility should be checked\n",
+                mainexec_buildversion,*shlib_buildversion);
+    }
+    return 0;
+}
 
 
