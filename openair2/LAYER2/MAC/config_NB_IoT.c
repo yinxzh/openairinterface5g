@@ -609,9 +609,9 @@ void rrc_mac_config_req_NB_IoT(
 
       LOG_I(MAC,"[NB-IoT] Init_MAC done\n");
 
-      /*
-      for sacheduler testing
-      for(int i =0;i<1;i++)
+      
+      //for sacheduler testing
+      /*for(int i =0;i<30;i++)
       {
         LOG_I(MAC,"[NB-IoT] scheduler testing start %d\n",i);
 

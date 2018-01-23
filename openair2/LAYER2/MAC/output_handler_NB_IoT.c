@@ -79,7 +79,7 @@ int output_handler(eNB_MAC_INST_NB_IoT *mac_inst, module_id_t module_id, int CC_
 			dl_config_pdu->ndlsch_pdu.ndlsch_pdu_rel13.modulation                     = 2;
 
 			//SCHED_info->TX_req->tx_request_body.tx_pdu_list[dl_config_pdu->ndlsch_pdu.ndlsch_pdu_rel13.pdu_index].segments[0].segment_data = SIB1;
-
+			LOG_I(MAC,"NB-IoT fill SIB1\n");
 			//start symbol, Resource assignment, Repetition number, Number of subframe Resource assignment lost for now
 			//dl_scheduled(mac_inst->current_subframe, _NPDSCH, SI_RNTI, "SIB1");
 		}
@@ -115,6 +115,7 @@ int output_handler(eNB_MAC_INST_NB_IoT *mac_inst, module_id_t module_id, int CC_
 
 					if(schedule_result_list_DL->direction == DL)
 					{
+						LOG_I(MAC,"NB-IoT fill DL_DCI\n");
 						//printf("Sched Info DL DCI here\n");
 						SCHED_info->DL_req->dl_config_request_body.number_dci = 1;
 						DCI_pdu = schedule_result_list_DL->DCI_pdu;
@@ -138,6 +139,7 @@ int output_handler(eNB_MAC_INST_NB_IoT *mac_inst, module_id_t module_id, int CC_
 						dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.dci_subframe_repetition_number        = ((DCIFormatN1_t *)DCI_pdu)->DCIRep;
 					}else if(schedule_result_list_DL->direction == UL)
 					{
+						LOG_I(MAC,"NB-IoT fill DL_DCI\n");
 						SCHED_info->HI_DCI0_req = (nfapi_hi_dci0_request_t*)malloc(sizeof(nfapi_hi_dci0_request_t));
 						SCHED_info->HI_DCI0_req->hi_dci0_request_body.hi_dci0_pdu_list = (nfapi_hi_dci0_request_pdu_t*)malloc(sizeof(nfapi_hi_dci0_request_pdu_t));
 						hi_dci0_pdu = SCHED_info->HI_DCI0_req->hi_dci0_request_body.hi_dci0_pdu_list;
@@ -159,7 +161,7 @@ int output_handler(eNB_MAC_INST_NB_IoT *mac_inst, module_id_t module_id, int CC_
 					}
 					break;
 				case NPDSCH:
-
+					LOG_I(MAC,"NB-IoT fill DL Data\n");
 				    DCI_pdu = schedule_result_list_DL-> DCI_pdu;
 					SCHED_info->DL_req->dl_config_request_body.number_pdu = 1;
 					dl_config_pdu->pdu_type                                           = NFAPI_DL_CONFIG_NDLSCH_PDU_TYPE;
@@ -223,6 +225,7 @@ int output_handler(eNB_MAC_INST_NB_IoT *mac_inst, module_id_t module_id, int CC_
 			if(schedule_result_list_UL->channel == NPUSCH)
 			{
 				//printf("first UL \n");
+				LOG_I(MAC,"NB-IoT fill ul_config_pdu\n");
 				SCHED_info->UL_req->ul_config_request_body.number_of_pdus ++;
 				//SCHED_info->UL_req.sfn_sf = ;
 				(ul_config_pdu + i) ->pdu_type                                            = NFAPI_UL_CONFIG_NULSCH_PDU_TYPE;
