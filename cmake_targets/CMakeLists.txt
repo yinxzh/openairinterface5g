@@ -1034,56 +1034,73 @@ set(PHY_TURBOIF
 )
 
 add_library(coding MODULE ${PHY_TURBOSRC} )
+
+
+set(PHY_NBIOT_SRC
+  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/npss_NB_IoT.c
+  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/nsss_NB_IoT.c
+  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/pilots_NB_IoT.c
+  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/dlsch_coding_NB_IoT.c
+  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/dlsch_modulation_NB_IoT.c
+  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/dlsch_scrambling_NB_IoT.c
+  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/dci_tools_NB_IoT.c
+  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/uci_tools_NB_IoT.c
+  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/lte_mcs_NB_IoT.c
+  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/lte_Isc_NB_IoT.c
+  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/npbch_NB_IoT.c
+  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/dci_NB_IoT.c
+  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/nprach_NB_IoT.c
+  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/group_hopping_NB_IoT.c
+  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/ulsch_demodulation_NB_IoT.c
+  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/ulsch_decoding_NB_IoT.c
+  ${OPENAIR1_DIR}/PHY/LTE_ESTIMATION/freq_equalization_NB_IoT.c
+  ${OPENAIR1_DIR}/PHY/LTE_ESTIMATION/lte_adjust_sync_NB_IoT.c
+  ${OPENAIR1_DIR}/PHY/LTE_ESTIMATION/lte_ul_channel_estimation_NB_IoT.c
+  ${OPENAIR1_DIR}/PHY/LTE_REFSIG/lte_dl_cell_spec_NB_IoT.c
+  ${OPENAIR1_DIR}/PHY/LTE_REFSIG/lte_gold_NB_IoT.c   
+  ${OPENAIR1_DIR}/PHY/LTE_REFSIG/lte_ul_ref_NB_IoT.c
+  ${OPENAIR1_DIR}/PHY/CODING/lte_segmentation_NB_IoT.c
+  ${OPENAIR1_DIR}/PHY/CODING/ccoding_byte_NB_IoT.c
+  ${OPENAIR1_DIR}/PHY/CODING/crc_byte_NB_IoT.c
+  ${OPENAIR1_DIR}/PHY/CODING/lte_rate_matching_NB_IoT.c
+  ${OPENAIR1_DIR}/PHY/CODING/viterbi_lte_NB_IoT.c
+  ${OPENAIR1_DIR}/PHY/INIT/lte_init_NB_IoT.c
+  )
+
 set(PHY_SRC
   # depend on code generation from asn1c
   ${RRC_FULL_DIR}/asn1_constants.h
   # actual source
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/pss.c
-  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/npss_NB_IoT.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/sss.c
-  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/nsss_NB_IoT.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/pilots.c
-  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/pilots_NB_IoT.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/pilots_mbsfn.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/dlsch_coding.c
-  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/dlsch_coding_NB_IoT.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/dlsch_modulation.c
-  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/dlsch_modulation_NB_IoT.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/dlsch_demodulation.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/dlsch_llr_computation.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/power_control.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/dlsch_decoding.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/dlsch_scrambling.c
-  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/dlsch_scrambling_NB_IoT.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/dci_tools.c
-  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/dci_tools_NB_IoT.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/uci_tools.c
-  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/uci_tools_NB_IoT.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/lte_mcs.c
-  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/lte_mcs_NB_IoT.c
-  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/lte_Isc_NB_IoT.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/pbch.c
-  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/npbch_NB_IoT.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/dci.c
-  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/dci_NB_IoT.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/edci.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/phich.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/pcfich.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/pucch.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/prach.c
-  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/nprach_NB_IoT.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/pmch.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/pch.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/group_hopping.c
-  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/group_hopping_NB_IoT.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/srs_modulation.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/drs_modulation.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/ulsch_modulation.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/ulsch_demodulation.c
-  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/ulsch_demodulation_NB_IoT.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/ulsch_coding.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/ulsch_decoding.c
-  ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/ulsch_decoding_NB_IoT.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/rar_tools.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/print_stats.c
   ${OPENAIR1_DIR}/PHY/LTE_TRANSPORT/initial_sync.c
@@ -1097,45 +1114,33 @@ set(PHY_SRC
   ${OPENAIR1_DIR}/PHY/MODULATION/beamforming.c
   ${OPENAIR1_DIR}/PHY/MODULATION/compute_bf_weights.c
   ${OPENAIR1_DIR}/PHY/LTE_ESTIMATION/freq_equalization.c
-  ${OPENAIR1_DIR}/PHY/LTE_ESTIMATION/freq_equalization_NB_IoT.c
   ${OPENAIR1_DIR}/PHY/LTE_ESTIMATION/lte_sync_time.c
   ${OPENAIR1_DIR}/PHY/LTE_ESTIMATION/lte_sync_timefreq.c
   ${OPENAIR1_DIR}/PHY/LTE_ESTIMATION/lte_adjust_sync.c
-  ${OPENAIR1_DIR}/PHY/LTE_ESTIMATION/lte_adjust_sync_NB_IoT.c
   ${OPENAIR1_DIR}/PHY/LTE_ESTIMATION/lte_dl_channel_estimation.c
   ${OPENAIR1_DIR}/PHY/LTE_ESTIMATION/lte_dl_bf_channel_estimation.c
   ${OPENAIR1_DIR}/PHY/LTE_ESTIMATION/lte_dl_mbsfn_channel_estimation.c
   ${OPENAIR1_DIR}/PHY/LTE_ESTIMATION/lte_ul_channel_estimation.c
-  ${OPENAIR1_DIR}/PHY/LTE_ESTIMATION/lte_ul_channel_estimation_NB_IoT.c
   ${OPENAIR1_DIR}/PHY/LTE_ESTIMATION/lte_est_freq_offset.c
   ${OPENAIR1_DIR}/PHY/LTE_ESTIMATION/lte_ue_measurements.c
   ${OPENAIR1_DIR}/PHY/LTE_ESTIMATION/lte_eNB_measurements.c
   ${OPENAIR1_DIR}/PHY/LTE_ESTIMATION/adjust_gain.c
   ${OPENAIR1_DIR}/PHY/LTE_REFSIG/lte_dl_cell_spec.c
-  ${OPENAIR1_DIR}/PHY/LTE_REFSIG/lte_dl_cell_spec_NB_IoT.c
   ${OPENAIR1_DIR}/PHY/LTE_REFSIG/lte_dl_uespec.c   
-  ${OPENAIR1_DIR}/PHY/LTE_REFSIG/lte_gold.c   
-  ${OPENAIR1_DIR}/PHY/LTE_REFSIG/lte_gold_NB_IoT.c   
+  ${OPENAIR1_DIR}/PHY/LTE_REFSIG/lte_gold.c      
   ${OPENAIR1_DIR}/PHY/LTE_REFSIG/lte_gold_mbsfn.c
   ${OPENAIR1_DIR}/PHY/LTE_REFSIG/lte_dl_mbsfn.c
   ${OPENAIR1_DIR}/PHY/LTE_REFSIG/lte_ul_ref.c
-  ${OPENAIR1_DIR}/PHY/LTE_REFSIG/lte_ul_ref_NB_IoT.c
   ${OPENAIR1_DIR}/PHY/CODING/lte_segmentation.c
-  ${OPENAIR1_DIR}/PHY/CODING/lte_segmentation_NB_IoT.c
   ${OPENAIR1_DIR}/PHY/CODING/ccoding_byte.c
-  ${OPENAIR1_DIR}/PHY/CODING/ccoding_byte_NB_IoT.c
   ${OPENAIR1_DIR}/PHY/CODING/ccoding_byte_lte.c
   ${OPENAIR1_DIR}/PHY/CODING/3gpplte_sse.c
   ${OPENAIR1_DIR}/PHY/CODING/crc_byte.c
-  ${OPENAIR1_DIR}/PHY/CODING/crc_byte_NB_IoT.c
   ${PHY_TURBOIF}
   ${OPENAIR1_DIR}/PHY/CODING/lte_rate_matching.c
-  ${OPENAIR1_DIR}/PHY/CODING/lte_rate_matching_NB_IoT.c
   ${OPENAIR1_DIR}/PHY/CODING/viterbi.c
   ${OPENAIR1_DIR}/PHY/CODING/viterbi_lte.c
-  ${OPENAIR1_DIR}/PHY/CODING/viterbi_lte_NB_IoT.c
   ${OPENAIR1_DIR}/PHY/INIT/lte_init.c
-  ${OPENAIR1_DIR}/PHY/INIT/lte_init_NB_IoT.c
   ${OPENAIR1_DIR}/PHY/INIT/lte_parms.c
   ${OPENAIR1_DIR}/PHY/INIT/lte_param_init.c
   ${OPENAIR1_DIR}/PHY/TOOLS/file_output.c
@@ -1150,6 +1155,7 @@ set(PHY_SRC
   ${OPENAIR1_DIR}/PHY/TOOLS/sqrt.c
   ${OPENAIR1_DIR}/PHY/TOOLS/time_meas.c
   ${OPENAIR1_DIR}/PHY/TOOLS/lut.c
+  ${PHY_NBIOT_SRC}
   )
 if (${SMBV})
   set(PHY_SRC "${PHY_SRC} ${OPENAIR1_DIR}/PHY/TOOLS/smbv.c")
@@ -1172,9 +1178,18 @@ set(RLC_AM_DIR ${OPENAIR2_DIR}/LAYER2/RLC/AM_v9.3.0)
 set(RLC_TM_DIR ${OPENAIR2_DIR}/LAYER2/RLC/TM_v9.3.0)
 set(RRC_DIR ${OPENAIR2_DIR}/RRC/LITE)
 set(PDCP_DIR  ${OPENAIR2_DIR}/LAYER2/PDCP_v10.1.0)
-set(L2_SRC
+
+set(L2_NBIOT_SRC
   ${PHY_INTERFACE_DIR}/IF_Module_NB_IoT.c
   ${PHY_INTERFACE_DIR}/IF_Module_L2_primitives_NB_IoT.c
+  ${RRC_DIR}/rrc_eNB_NB_IoT.c
+  ${RRC_DIR}/rrc_eNB_S1AP_NB_IoT.c
+  ${RRC_DIR}/rrc_eNB_UE_context_NB_IoT.c
+  ${RRC_DIR}/rrc_common_NB_IoT.c
+  ${RRC_DIR}/L2_interface_NB_IoT.c
+  )
+
+set(L2_SRC
   ${OPENAIR2_DIR}/LAYER2/openair2_proc.c
   ${PDCP_DIR}/pdcp.c
   ${PDCP_DIR}/pdcp_fifo.c
@@ -1212,16 +1227,24 @@ set(L2_SRC
   ${RLC_DIR}/rlc_mpls.c
   ${RRC_DIR}/rrc_UE.c
   ${RRC_DIR}/rrc_eNB.c
-  ${RRC_DIR}/rrc_eNB_NB_IoT.c
   ${RRC_DIR}/rrc_eNB_S1AP.c
-  ${RRC_DIR}/rrc_eNB_S1AP_NB_IoT.c
   ${RRC_DIR}/rrc_eNB_UE_context.c
-  ${RRC_DIR}/rrc_eNB_UE_context_NB_IoT.c
   ${RRC_DIR}/rrc_common.c
-  ${RRC_DIR}/rrc_common_NB_IoT.c
   ${RRC_DIR}/L2_interface.c
-  ${RRC_DIR}/L2_interface_NB_IoT.c
+  ${L2_NBIOT_SRC}
   )
+
+set (MAC_NBIOT_SRC
+  ${MAC_DIR}/eNB_scheduler_NB_IoT.c
+  ${MAC_DIR}/eNB_scheduler_dlsch_NB_IoT.c
+  ${MAC_DIR}/eNB_scheduler_ulsch_NB_IoT.c
+  ${MAC_DIR}/eNB_scheduler_bch_NB_IoT.c
+  ${MAC_DIR}/output_handler_NB_IoT.c
+  ${MAC_DIR}/eNB_scheduler_RA_NB_IoT.c
+  ${MAC_DIR}/config_NB_IoT.c
+  ${MAC_DIR}/schedule_tool_NB_IoT.c
+)
+
 set (MAC_SRC
   ${PHY_INTERFACE_DIR}/IF_Module.c
   ${MAC_DIR}/main.c
@@ -1231,22 +1254,15 @@ set (MAC_SRC
   ${MAC_DIR}/l1_helpers.c
   ${MAC_DIR}/rar_tools.c
   ${MAC_DIR}/eNB_scheduler.c
-  ${MAC_DIR}/eNB_scheduler_NB_IoT.c
   ${MAC_DIR}/eNB_scheduler_dlsch.c
-  ${MAC_DIR}/eNB_scheduler_dlsch_NB_IoT.c
   ${MAC_DIR}/eNB_scheduler_ulsch.c
-  ${MAC_DIR}/eNB_scheduler_ulsch_NB_IoT.c
   ${MAC_DIR}/eNB_scheduler_mch.c
   ${MAC_DIR}/eNB_scheduler_bch.c
-  ${MAC_DIR}/eNB_scheduler_bch_NB_IoT.c
   ${MAC_DIR}/eNB_scheduler_primitives.c
-  ${MAC_DIR}/output_handler_NB_IoT.c
   ${MAC_DIR}/eNB_scheduler_RA.c
-  ${MAC_DIR}/eNB_scheduler_RA_NB_IoT.c
   ${MAC_DIR}/pre_processor.c
   ${MAC_DIR}/config.c
-  ${MAC_DIR}/config_NB_IoT.c
-  ${MAC_DIR}/schedule_tool_NB_IoT.c
+  ${MAC_NBIOT_SRC}
  )
 
 if (FLEXRAN_AGENT_SB_IF)

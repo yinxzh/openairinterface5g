@@ -214,16 +214,26 @@ extern log_t *g_log;
        for (int i=0; i < config_get_if()->argc; i++) {
             prnt("    %02i %s\n",i ,config_get_if()->argv[i]);
        }
-       prnt("Config flags: 0x%08x\n", config_get_if()->rtflags); 
+       prnt("Config module flags ( -O <cfg source>:<xxx>:dbgl<flags>): 0x%08x\n", config_get_if()->rtflags); 
+
+       prnt("    Print config debug msg, params values (flag %u): %s\n",CONFIG_PRINTPARAMS,
+            ((config_get_if()->rtflags & CONFIG_PRINTPARAMS) ? "Y" : "N") ); 
+       prnt("    Print config debug msg, memory management(flag %u): %s\n",CONFIG_DEBUGPTR,
+            ((config_get_if()->rtflags & CONFIG_DEBUGPTR) ? "Y" : "N") ); 
+       prnt("    Print config debug msg, command line processing (flag %u): %s\n",CONFIG_DEBUGCMDLINE,
+            ((config_get_if()->rtflags & CONFIG_DEBUGCMDLINE) ? "Y" : "N") );        
        prnt("    Don't exit if param check fails (flag %u): %s\n",CONFIG_NOABORTONCHKF,
             ((config_get_if()->rtflags & CONFIG_NOABORTONCHKF) ? "Y" : "N") );      
-       prnt("Config has been built from %s with config module parameters:\n",CONFIG_GETSOURCE );
+       prnt("Config source: %s,  parameters:\n",CONFIG_GETSOURCE );
        for (int i=0; i < config_get_if()->num_cfgP; i++) {
             prnt("    %02i %s\n",i ,config_get_if()->cfgP[i]);
        }
-       prnt("%02i Ru(s),         %02i lte RRc(s),     %02i NbIoT RRC(s)\n", RC.nb_RU,  RC.nb_inst, RC.nb_nb_iot_rrc_inst);
-       prnt("                  %02i lte MACRLC(s),  %02i NbIoT MACRLC(s)\n", RC.nb_macrlc_inst, RC.nb_nb_iot_macrlc_inst);
-       prnt("                  %02i lte L1,         %02i NbIoT L1\n",        RC.nb_L1_inst, RC.nb_nb_iot_L1_inst);
+       prnt("Softmodem components:\n");
+       prnt("   %02i Ru(s)\n", RC.nb_RU);
+       prnt("   %02i lte RRc(s),     %02i NbIoT RRC(s)\n",    RC.nb_inst, RC.nb_nb_iot_rrc_inst);
+       prnt("   %02i lte MACRLC(s),  %02i NbIoT MACRLC(s)\n", RC.nb_macrlc_inst, RC.nb_nb_iot_macrlc_inst);
+       prnt("   %02i lte L1,	    %02i NbIoT L1\n",	     RC.nb_L1_inst, RC.nb_nb_iot_L1_inst);
+
        for(int i=0; i<RC.nb_inst; i++) {
            prnt("    lte RRC %i:     %02i CC(s) \n",i,((RC.nb_CC == NULL)?0:RC.nb_CC[i]));
        }
