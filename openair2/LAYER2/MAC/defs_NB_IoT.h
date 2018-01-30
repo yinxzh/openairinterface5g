@@ -22,18 +22,18 @@
 #include "PHY/defs_L1_NB_IoT.h"
 #include "openair2/PHY_INTERFACE/IF_Module_NB_IoT.h"
 #include "config_NB_IoT.h"
-
-#define sim_end_time 100000
-
 //  MAC definition
 #define MAX_FRAME 0xfffff
-#define MAX(a, b) ((a>b)?a:b)
+#define NUM_FRAME 0x100000
+#define MAX_SUBFRAME 10485760
+
+#define MAX(a, b) (((a)>(b))?(a):(b))
 
 //  RA-RNTI: 1+SFN_id>>2
 #define RA_RNTI_LOW   0x0001  //  SFN_id = 0
 #define RA_RNTI_HIGH  0x0100  //  SFN_id = 1023
 #define C_RNTI_LOW  0x0101
-#define C_RNTI_HIGH
+#define C_RNTI_HIGH 
 
 // ULSCH LCHAN IDs
 /*!\brief LCID of extended power headroom for ULSCH */
@@ -287,7 +287,6 @@ typedef struct available_resource_UL_s{
 typedef struct available_resource_DL_s{
   uint32_t start_subframe;
   uint32_t end_subframe;
-  uint32_t DLSF_num;
 
   struct available_resource_DL_s *next, *prev;
 }available_resource_DL_t;
@@ -421,8 +420,6 @@ typedef struct schedule_result{
   uint32_t end_subframe;
   
   uint8_t *rar_buffer;
-  
-  uint8_t *debug_str;
 
 }schedule_result_t;
 

@@ -111,7 +111,11 @@ extern const int dl_rep[3];
 extern const uint32_t dci_rep[3];
 extern const uint32_t harq_rep[3];
 
+//SIBs
+extern int extend_space[2];
+extern int extend_alpha_offset[2];
 
+extern const int si_repetition_pattern[4];
 
 #endif //DEF_H
 
