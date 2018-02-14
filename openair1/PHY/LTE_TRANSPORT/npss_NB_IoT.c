@@ -41,15 +41,15 @@ int generate_npss_NB_IoT(int32_t 				**txdataF,
    a = (frame_parms->nb_antennas_tx == 1) ? amp: (amp*ONE_OVER_SQRT2_Q15_NB_IoT)>>15;
 
    // Testing if the total number of RBs is even or odd (i.e. Identification of the bandwidth: 1.4, 3, 5, 10, ... MHz)
-   bandwidth_even_odd = frame_parms->N_RB_DL % 2;  		// 0 for even, 1 for odd
+   bandwidth_even_odd = frame_parms->LTE_N_RB_DL % 2;  		// 0 for even, 1 for odd
 
    for (aa=0; aa<frame_parms->nb_antennas_tx; aa++) {
 	
-		if(RB_IoT_ID < (frame_parms->N_RB_DL/2))
+		if(RB_IoT_ID < (frame_parms->LTE_N_RB_DL/2))
 		{
-			NB_IoT_start = frame_parms->ofdm_symbol_size - 12*(frame_parms->N_RB_DL/2) - (bandwidth_even_odd*6) + 12*(RB_IoT_ID%(int)(ceil(frame_parms->N_RB_DL/(float)2)));
+			NB_IoT_start = frame_parms->ofdm_symbol_size - 12*(frame_parms->LTE_N_RB_DL/2) - (bandwidth_even_odd*6) + 12*(RB_IoT_ID%(int)(ceil(frame_parms->LTE_N_RB_DL/(float)2)));
 		} else {
-			NB_IoT_start = (bandwidth_even_odd*6) + 12*(RB_IoT_ID%(int)(ceil(frame_parms->N_RB_DL/(float)2)));
+			NB_IoT_start = 1+(bandwidth_even_odd*6) + 12*(RB_IoT_ID%(int)(ceil(frame_parms->LTE_N_RB_DL/(float)2)));
 		}
 		// For the In-band or Stand-alone case the REs of NPSS signal have the same positions
 		for (s=0; s<11; s++ )   				// loop on OFDM symbols

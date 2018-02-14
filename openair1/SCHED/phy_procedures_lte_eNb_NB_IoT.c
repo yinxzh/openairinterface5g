@@ -91,6 +91,190 @@
 int npdsch_rep_to_array[3]      = {4,8,16}; //TS 36.213 Table 16.4.1.3-3
 int sib1_startFrame_to_array[4] = {0,16,32,48};//TS 36.213 Table 16.4.1.3-4
 
+
+
+
+
+void generate_eNB_dlsch_params_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_NB_IoT_t * proc,nfapi_dl_config_request_pdu_t *dl_config_pdu) 
+{
+
+  NB_IoT_DL_FRAME_PARMS    *fp           =  &eNB->frame_parms_NB_IoT;
+  int                      frame         =  proc->frame_tx;
+  int                      subframe      =  proc->subframe_tx;
+  DCI_CONTENT              *DCI_Content; 
+  DCI_format_NB_IoT_t      DCI_format;
+  NB_IoT_eNB_NDLSCH_t      *ndlsch;
+  NB_IoT_eNB_NPDCCH_t      *npdcch;
+
+
+
+  DCI_Content = (DCI_CONTENT*) malloc(sizeof(DCI_CONTENT));
+
+  // check DCI format is N1 (format 0)
+  if(dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.dci_format == 0)
+    {
+      //check DCI format N1 is for RAR  rnti_type  in FAPI specs table 4-45
+      if(dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.rnti_type == 1)
+        {
+
+    	  //mapping the fapi parameters to the oai parameters
+
+          DCI_format = DCIFormatN1_RAR;
+
+          //DCI format N1 to RAR
+          DCI_Content->DCIN1_RAR.type           = 1;
+          DCI_Content->DCIN1_RAR.orderIndicator = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.npdcch_order_indication;
+          DCI_Content->DCIN1_RAR.Scheddly       = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.scheduling_delay;
+          DCI_Content->DCIN1_RAR.ResAssign      = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.resource_assignment;
+          DCI_Content->DCIN1_RAR.mcs            = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.mcs;
+          DCI_Content->DCIN1_RAR.RepNum		 = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.repetition_number;
+          DCI_Content->DCIN1_RAR.ndi            = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.new_data_indicator;
+          DCI_Content->DCIN1_RAR.HARQackRes     = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.harq_ack_resource;
+          DCI_Content->DCIN1_RAR.DCIRep         = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.dci_subframe_repetition_number;
+
+          //TODO calculate the number of common repetitions
+          //fp->nprach_config_common.number_repetition_RA = see TS 36.213 Table 16.1-3
+
+          // fill the dlsch_ra_NB structure for RAR, and packed the DCI PDU
+
+          ndlsch               =  eNB->ndlsch_ra;
+          ndlsch->ndlsch_type  =  RAR;
+
+          LOG_D(PHY,"Generating dlsch params for RA_RNTI and packing DCI\n");
+          generate_eNB_dlsch_params_from_dci_NB_IoT(eNB,
+                                                    frame,
+                                                    subframe,
+                                                    DCI_Content,
+                                                    dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.rnti,
+                                                    DCI_format,
+                                                    ndlsch,
+                                                    fp,
+                                                    dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.aggregation_level,
+					            dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.start_symbol);
+
+          //eNB->dlsch_ra_NB->nCCE[subframe] = eNB->DCI_pdu->dci_alloc.firstCCE;
+        }
+      else
+        { //managing data
+        int                      UE_id ;
+    	  //TODO target/SIMU/USER?init_lte/init_lte_eNB we should allocate the ndlsch structures
+    	  UE_id = find_ue_NB_IoT(dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.rnti, eNB);
+    	  AssertFatal(UE_id != -1, "no ndlsch context available or no ndlsch context corresponding to that rnti\n");
+
+
+    	  	  //mapping the fapi parameters to the oai parameters
+
+    	  	  DCI_format = DCIFormatN1;
+
+              //DCI format N1 to DLSCH
+              DCI_Content->DCIN1.type           = 1;
+              DCI_Content->DCIN1.orderIndicator = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.npdcch_order_indication;
+              DCI_Content->DCIN1.Scheddly       = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.scheduling_delay;
+              DCI_Content->DCIN1.ResAssign      = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.resource_assignment;
+              DCI_Content->DCIN1.mcs            = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.mcs;
+              DCI_Content->DCIN1.RepNum         = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.repetition_number;
+              DCI_Content->DCIN1.ndi            = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.new_data_indicator;
+              DCI_Content->DCIN1.HARQackRes     = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.harq_ack_resource;
+              DCI_Content->DCIN1.DCIRep         = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.dci_subframe_repetition_number;
+
+
+              //set the NPDCCH UE-specific structure  (calculate R)
+              npdcch=eNB->npdcch[(uint8_t)UE_id];
+              AssertFatal(npdcch != NULL, "NPDCCH structure for UE specific is not exist\n");
+              npdcch->repetition_idx = 0; //this is used for the encoding mechanism to understand that is the first transmission
+
+              if(dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.aggregation_level) //whenever aggregation level is =1 we have only 1 repetition for USS
+              npdcch->repetition_number = 1;
+              else
+              {
+            	  //see TS 36.213 Table 16.1-1
+              }
+
+
+              //fill the ndlsch structure for UE and packed the DCI PD
+
+        	  ndlsch = eNB->ndlsch[(uint8_t)UE_id][0]; //in the old implementation they also consider UE_id = 1;
+        	  ndlsch->ndlsch_type = UE_Data;
+
+              //parameters we don't consider pdsch config dedicated since not calling the phy config dedicated step2
+
+        	  LOG_D(PHY,"Generating dlsch params for DCIN1 data and packing DCI\n");
+            generate_eNB_dlsch_params_from_dci_NB_IoT(eNB,
+                                                      frame,
+                                                      subframe,
+                                                      DCI_Content,
+                                                      dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.rnti,
+                                                      DCI_format,
+                                                      ndlsch,
+                                                      fp,
+                                                      dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.aggregation_level,
+			                            dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.start_symbol); 
+
+              //eNB->ndlsch[(uint8_t)UE_id]->nCCE[subframe] = eNB->DCI_pdu->dci_alloc[i].firstCCE;
+
+
+        }
+    }
+  else if(dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.dci_format == 1)
+    { 
+      DCI_format = DCIFormatN2;
+      LOG_D(PHY,"Paging procedure not implemented\n");
+    }
+  else
+    LOG_E(PHY,"unknown DCI format for NB-IoT DL\n");
+
+
+}
+
+
+
+void generate_eNB_ulsch_params_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_NB_IoT_t *proc,nfapi_hi_dci0_request_pdu_t *hi_dci0_pdu) {
+
+  int UE_id ;
+  //int harq_pid = 0;
+
+  DCI_CONTENT *DCI_Content;
+  DCI_Content = (DCI_CONTENT*) malloc(sizeof(DCI_CONTENT));
+
+  //mapping the fapi parameters to the OAI parameters
+  DCI_Content->DCIN0.type       = 0;
+  DCI_Content->DCIN0.scind      = hi_dci0_pdu->npdcch_dci_pdu.npdcch_dci_pdu_rel13.subcarrier_indication;
+  DCI_Content->DCIN0.ResAssign  = hi_dci0_pdu->npdcch_dci_pdu.npdcch_dci_pdu_rel13.subcarrier_indication;
+  DCI_Content->DCIN0.mcs        = hi_dci0_pdu->npdcch_dci_pdu.npdcch_dci_pdu_rel13.mcs;
+  DCI_Content->DCIN0.ndi        = hi_dci0_pdu->npdcch_dci_pdu.npdcch_dci_pdu_rel13.new_data_indicator;
+  DCI_Content->DCIN0.Scheddly   = hi_dci0_pdu->npdcch_dci_pdu.npdcch_dci_pdu_rel13.scheduling_delay;
+  DCI_Content->DCIN0.RepNum     = hi_dci0_pdu->npdcch_dci_pdu.npdcch_dci_pdu_rel13.repetition_number;
+  DCI_Content->DCIN0.rv         = hi_dci0_pdu->npdcch_dci_pdu.npdcch_dci_pdu_rel13.redudancy_version;
+  DCI_Content->DCIN0.DCIRep     = hi_dci0_pdu->npdcch_dci_pdu.npdcch_dci_pdu_rel13.dci_subframe_repetition_number;
+
+
+
+  UE_id = find_ue_NB_IoT(hi_dci0_pdu->npdcch_dci_pdu.npdcch_dci_pdu_rel13.rnti, eNB); /* returns -1 if it doesn't find the UE */
+  if (UE_id <0 ) { 
+        LOG_E(PHY,"Couldn't find NB-IoT UE\n");
+        return;
+  }
+
+  /*Log for generate ULSCH DCI*/
+
+  generate_eNB_ulsch_params_from_dci_NB_IoT(eNB,
+                                            proc,
+                                            DCI_Content,
+                                            hi_dci0_pdu->npdcch_dci_pdu.npdcch_dci_pdu_rel13.rnti,
+                                            DCIFormatN0,
+                                            UE_id,
+                                            hi_dci0_pdu->npdcch_dci_pdu.npdcch_dci_pdu_rel13.aggregation_level,
+                                            hi_dci0_pdu->npdcch_dci_pdu.npdcch_dci_pdu_rel13.start_symbol);  
+
+  
+  //LOG for ULSCH DCI Resource allocation
+  //CBA is not used in NB-IoT
+    eNB->nulsch[UE_id]->harq_process->subframe_scheduling_flag = 1;
+  
+}
+
+
+
 //New----------------------------------------------------
 //return -1 whenever no SIB1-NB transmission occur.
 //return sib1_startFrame when transmission occur in the current frame
@@ -216,10 +400,11 @@ uint32_t is_SIB1_NB_IoT(const frame_t          frameP,
 void common_signal_procedures_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_NB_IoT_t *proc) 
 {
   NB_IoT_DL_FRAME_PARMS   *fp       =  &eNB->frame_parms_NB_IoT;
-  int                     **txdataF =  eNB->common_vars.txdataF[0];
+  int32_t                 **txdataF =  eNB->common_vars.txdataF;
+  NB_IoT_eNB_NPBCH_t   *broadcast_str = eNB->npbch;
   int                     subframe  =  proc->subframe_tx;
   int                     frame     =  proc->frame_tx;
-  uint16_t                Ntti      =  10;                      //ntti = 10
+  
 /*   authorized PRB indexes for NB-IoT:
 3 MHz: 2, 12
 5 MHz: 2,7,17,22
@@ -228,18 +413,10 @@ void common_signal_procedures_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_NB_I
 20MHz: 4, 9, 14, 19, 24, 29, 34, 39, 44, 55, 60, 65, 70, 75, 80, 85, 90, 95
 */
     
-  int                     RB_IoT_ID;                            // XXX should be initialized (RB reserved for NB-IoT, PRB index)
+  int                     RB_IoT_ID = fp->NB_IoT_RB_ID; 
   int                     With_NSSS;                            // With_NSSS = 1; if the frame include a sub-Frame with NSSS signal
- 
- switch(fp->N_RB_DL) {
-         case 50:
-         case 100:
-            RB_IoT_ID=4;
-         break;
-         default:
-             RB_IoT_ID=2;
-         break;        
-}
+  uint8_t      *npbch_pdu = broadcast_str->pdu ;
+
   /*NSSS only happened in the even frame*/
   if(frame%2==0)
     {
@@ -257,7 +434,7 @@ void common_signal_procedures_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_NB_I
                            AMP,
                            fp,
                            3,
-                           0,
+                           10,
                            RB_IoT_ID);
     }
     
@@ -268,7 +445,7 @@ void common_signal_procedures_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_NB_I
                           AMP,
                           fp,
                           3,
-                          0,
+                          18,
                           frame,
                           RB_IoT_ID);
     }
@@ -279,10 +456,19 @@ void common_signal_procedures_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_NB_I
     generate_pilots_NB_IoT(eNB,
                            txdataF,
                            AMP,
-                           Ntti,
+                           subframe,
                            RB_IoT_ID,
                            With_NSSS);
-  }
+    if(subframe == 0)
+    {
+      generate_npbch(broadcast_str,
+                     txdataF,
+                     AMP,
+                     fp,
+                     npbch_pdu,
+                     frame%64,
+                     RB_IoT_ID);
+    }
   
 }
 
@@ -305,7 +491,6 @@ void phy_procedures_eNB_uespec_RX_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_
   /*NB-IoT IF module Common setting*/
 
   UL_INFO->module_id    = eNB->Mod_id;
-  UL_INFO->CC_id        = eNB->CC_id;
   UL_INFO->frame        =  frame;
   UL_INFO->subframe     = subframe;
 
@@ -369,11 +554,11 @@ void phy_procedures_eNB_uespec_RX_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_
 
           //eNB->ulsch[i]->cyclicShift = (eNB->ulsch[i]->harq_processes[harq_pid]->n_DMRS2 + fp->pusch_config_common.ul_ReferenceSignalsPUSCH.cyclicShift +nPRS)%12;
 
-          if (fp->frame_type == FDD_NB_IoT ) 
-            {
+//          if (fp->frame_type == FDD_NB_IoT ) /* NO TDD FOR nb-iOt */
+//            {
               int sf = (subframe<4) ? (subframe+6) : (subframe-4);
               /*After Downlink Data transmission, simply have a notice to received ACK from PUCCH, I think it's not use for now */
-              if (eNB->ndlsch[i]->subframe_tx[sf]>0) // we have downlink transmission
+              if (eNB->ndlsch[i][0]->subframe_tx[sf]>0) // we have downlink transmission
                 { 
                   eNB->nulsch[i]->harq_process->O_ACK = 1;
                 } 
@@ -381,7 +566,7 @@ void phy_procedures_eNB_uespec_RX_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_
                 {
                   eNB->nulsch[i]->harq_process->O_ACK = 0;
                 }
-            }
+//            }
 
           eNB->pusch_stats_rb[i][(frame*10)+subframe]    = eNB->nulsch[i]->harq_process->nb_rb;
           eNB->pusch_stats_round[i][(frame*10)+subframe] = eNB->nulsch[i]->harq_process->round;
@@ -399,7 +584,7 @@ void phy_procedures_eNB_uespec_RX_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_
                                       i,
                                       0, // control_only_flag
                                       eNB->nulsch[i]->harq_process->V_UL_DAI,
-			                                eNB->nulsch[i]->harq_process->nb_rb>20 ? 1 : 0);
+			              eNB->nulsch[i]->harq_process->nb_rb>20 ? 1 : 0);
 
           //compute the expected ULSCH RX power (for the stats)
           eNB->nulsch[(uint32_t)i]->harq_process->delta_TF = get_hundred_times_delta_IF_eNB_NB_IoT(eNB,i,harq_pid, 0); // 0 means bw_factor is not considered
@@ -410,7 +595,7 @@ void phy_procedures_eNB_uespec_RX_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_
               extract_CQI_NB_IoT(eNB->nulsch[i]->harq_process->o,
                                  eNB->nulsch[i]->harq_process->uci_format,
                                  &eNB->UE_stats[i],
-                                 fp->N_RB_DL,
+                                 fp->LTE_N_RB_DL,
                                  &rnti, &access_mode);
             
               eNB->UE_stats[i].rank = eNB->nulsch[i]->harq_process->o_RI[0];
@@ -443,7 +628,7 @@ void phy_procedures_eNB_uespec_RX_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_
                 eNB->nulsch[(uint32_t)i]->Msg3_active = 1;
                 /* Need to check the procedure for NB-IoT (MSG3) retransmission
                 get_Msg3_alloc_ret(fp,subframe,frame,&eNB->ulsch[i]->Msg3_frame,&eNB->ulsch[i]->Msg3_subframe);
-                mac_xface->set_msg3_subframe(eNB->Mod_id, eNB->CC_id, frame, subframe, eNB->ulsch[i]->rnti,eNB->ulsch[i]->Msg3_frame, eNB->ulsch[i]->Msg3_subframe);
+                mac_xface->set_msg3_subframe(eNB->Mod_id,  frame, subframe, eNB->ulsch[i]->rnti,eNB->ulsch[i]->Msg3_frame, eNB->ulsch[i]->Msg3_subframe);
                 */
                 T(T_ENB_PHY_MSG3_ALLOCATION, T_INT(eNB->Mod_id), T_INT(frame), T_INT(subframe),
                   T_INT(i), T_INT(eNB->nulsch[i]->rnti), T_INT(0 /* 0 is for retransmission*/),
@@ -518,7 +703,6 @@ void phy_procedures_eNB_uespec_RX_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_
 	                if (eNB->ulsch[i]->Msg3_flag == 0 ) {
 	               eNB->UE_stats[i].mode = PRACH;
 	               mac_xface->cancel_ra_proc(eNB->Mod_id,
-					       eNB->CC_id,
 					       frame,
 					       eNB->UE_stats[i].crnti);
 	               mac_phy_remove_ue(eNB->Mod_id,eNB->UE_stats[i].crnti);
@@ -535,7 +719,7 @@ void phy_procedures_eNB_uespec_RX_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_
             /*Init HARQ parameters, need to check*/
             for (k=0; k<8; k++) 
               { //harq_processes
-                for (j=0; j<eNB->ndlsch[i]->Mlimit; j++) 
+                for (j=0; j<eNB->ndlsch[i][0]->Mlimit; j++) 
                   {
                     eNB->UE_stats[i].dlsch_NAK[k][j]    = 0;
                     eNB->UE_stats[i].dlsch_ACK[k][j]    = 0;
@@ -569,7 +753,7 @@ void phy_procedures_eNB_uespec_RX_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_
                   (UL_INFO->RX_NPUSCH.rx_pdu_list+i)->rx_ue_information.rnti       = eNB->nulsch[i]->rnti;
                   (UL_INFO->RX_NPUSCH.rx_pdu_list+i)->data                         = eNB->nulsch[i]->harq_process->b;
                   (UL_INFO->RX_NPUSCH.rx_pdu_list+i)->rx_indication_rel8.length    = eNB->nulsch[i]->harq_process->TBS>>3;
-                  //(UL_INFO->RX_NPUSCH.rx_pdu_list+i)->rx_ue_information.harq_pid   = harq_pid;
+//                  (UL_INFO->RX_NPUSCH.rx_pdu_list+i)->rx_ue_information.harq_pid   = harq_pid;
                   UL_INFO->RX_NPUSCH.number_of_pdus++;
 	    
 	            } // mac_enabled==1
@@ -599,7 +783,7 @@ void phy_procedures_eNB_uespec_RX_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_
     // update ULSCH statistics for tracing
 
 
-
+   }
 
   } // loop i=0 ... NUMBER_OF_UE_MAX-1
 
@@ -609,183 +793,7 @@ void phy_procedures_eNB_uespec_RX_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_
 
 /*Generate eNB ndlsch params for NB-IoT from the NPDCCH PDU of the DCI, modify the input to the Sched Rsp variable*/
 
-void generate_eNB_dlsch_params_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_NB_IoT_t * proc,nfapi_dl_config_request_pdu_t *dl_config_pdu) 
-{
 
-  NB_IoT_DL_FRAME_PARMS    *fp           =  &eNB->frame_parms_NB_IoT;
-  int                      frame         =  proc->frame_tx;
-  int                      subframe      =  proc->subframe_tx;
-  DCI_CONTENT              *DCI_Content; 
-  DCI_format_NB_IoT_t      DCI_format;
-  NB_IoT_eNB_NDLSCH_t      *ndlsch;
-  NB_IoT_eNB_NPDCCH_t      *npdcch;
-
-
-
-  DCI_Content = (DCI_CONTENT*) malloc(sizeof(DCI_CONTENT));
-
-  // check DCI format is N1 (format 0)
-  if(dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.dci_format == 0)
-    {
-      //check DCI format N1 is for RAR  rnti_type  in FAPI specs table 4-45
-      if(dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.rnti_type == 1)
-        {
-
-    	  //mapping the fapi parameters to the oai parameters
-
-          DCI_format = DCIFormatN1_RAR;
-
-          //DCI format N1 to RAR
-          DCI_Content->DCIN1_RAR.type           = 1;
-          DCI_Content->DCIN1_RAR.orderIndicator = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.npdcch_order_indication;
-          DCI_Content->DCIN1_RAR.Scheddly       = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.scheduling_delay;
-          DCI_Content->DCIN1_RAR.ResAssign      = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.resource_assignment;
-          DCI_Content->DCIN1_RAR.mcs            = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.mcs;
-          DCI_Content->DCIN1_RAR.RepNum			    = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.repetition_number;
-          DCI_Content->DCIN1_RAR.ndi            = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.new_data_indicator;
-          DCI_Content->DCIN1_RAR.HARQackRes     = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.harq_ack_resource;
-          DCI_Content->DCIN1_RAR.DCIRep         = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.dci_subframe_repetition_number;
-
-          //TODO calculate the number of common repetitions
-          //fp->nprach_config_common.number_repetition_RA = see TS 36.213 Table 16.1-3
-
-          // fill the dlsch_ra_NB structure for RAR, and packed the DCI PDU
-
-          ndlsch               =  eNB->ndlsch_ra;
-          ndlsch->ndlsch_type  =  RAR;
-
-          LOG_D(PHY,"Generating dlsch params for RA_RNTI and packing DCI\n");
-          generate_eNB_dlsch_params_from_dci_NB_IoT(eNB,
-                                                    frame,
-                                                    subframe,
-                                                    DCI_Content,
-                                                    dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.rnti,
-                                                    DCI_format,
-                                                    ndlsch,
-                                                    fp,
-                                                    dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.aggregation_level,
-												                            dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.start_symbol);
-
-          //eNB->dlsch_ra_NB->nCCE[subframe] = eNB->DCI_pdu->dci_alloc.firstCCE;
-        }
-      else
-        { //managing data
-        int                      UE_id ;
-    	  //TODO target/SIMU/USER?init_lte/init_lte_eNB we should allocate the ndlsch structures
-    	  UE_id = find_ue_NB_IoT(dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.rnti, eNB);
-    	  AssertFatal(UE_id != -1, "no ndlsch context available or no ndlsch context corresponding to that rnti\n");
-
-
-    	  	  //mapping the fapi parameters to the oai parameters
-
-    	  	  DCI_format = DCIFormatN1;
-
-              //DCI format N1 to DLSCH
-              DCI_Content->DCIN1.type           = 1;
-              DCI_Content->DCIN1.orderIndicator = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.npdcch_order_indication;
-              DCI_Content->DCIN1.Scheddly       = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.scheduling_delay;
-              DCI_Content->DCIN1.ResAssign      = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.resource_assignment;
-              DCI_Content->DCIN1.mcs            = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.mcs;
-              DCI_Content->DCIN1.RepNum			    = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.repetition_number;
-              DCI_Content->DCIN1.ndi            = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.new_data_indicator;
-              DCI_Content->DCIN1.HARQackRes     = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.harq_ack_resource;
-              DCI_Content->DCIN1.DCIRep         = dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.dci_subframe_repetition_number;
-
-
-              //set the NPDCCH UE-specific structure  (calculate R)
-              npdcch=eNB->npdcch[(uint8_t)UE_id];
-              AssertFatal(npdcch != NULL, "NPDCCH structure for UE specific is not exist\n");
-              npdcch->repetition_idx = 0; //this is used for the encoding mechanism to understand that is the first transmission
-
-              if(dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.aggregation_level) //whenever aggregation level is =1 we have only 1 repetition for USS
-              npdcch->repetition_number = 1;
-              else
-              {
-            	  //see TS 36.213 Table 16.1-1
-              }
-
-
-              //fill the ndlsch structure for UE and packed the DCI PD
-
-        	  ndlsch = eNB->ndlsch[(uint8_t)UE_id]; //in the old implementation they also consider UE_id = 1;
-        	  ndlsch->ndlsch_type = UE_Data;
-
-              //parameters we don't consider pdsch config dedicated since not calling the phy config dedicated step2
-
-        	  LOG_D(PHY,"Generating dlsch params for DCIN1 data and packing DCI\n");
-            generate_eNB_dlsch_params_from_dci_NB_IoT(eNB,
-                                                      frame,
-                                                      subframe,
-                                                      DCI_Content,
-                                                      dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.rnti,
-                                                      DCI_format,
-                                                      ndlsch,
-                                                      fp,
-                                                      dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.aggregation_level,
-													                            dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.start_symbol); 
-
-              //eNB->ndlsch[(uint8_t)UE_id]->nCCE[subframe] = eNB->DCI_pdu->dci_alloc[i].firstCCE;
-
-
-        }
-    }
-  else if(dl_config_pdu->npdcch_pdu.npdcch_pdu_rel13.dci_format == 1)
-    { 
-      DCI_format = DCIFormatN2;
-      LOG_D(PHY,"Paging procedure not implemented\n");
-    }
-  else
-    LOG_E(PHY,"unknown DCI format for NB-IoT DL\n");
-
-
-}
-
-
-
-void generate_eNB_ulsch_params_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,eNB_rxtx_proc_NB_IoT_t *proc,nfapi_hi_dci0_request_pdu_t *hi_dci0_pdu) {
-
-  int UE_id ;
-  //int harq_pid = 0;
-
-  DCI_CONTENT *DCI_Content;
-  DCI_Content = (DCI_CONTENT*) malloc(sizeof(DCI_CONTENT));
-
-  //mapping the fapi parameters to the OAI parameters
-  DCI_Content->DCIN0.type       = 0;
-  DCI_Content->DCIN0.scind      = hi_dci0_pdu->npdcch_dci_pdu.npdcch_dci_pdu_rel13.subcarrier_indication;
-  DCI_Content->DCIN0.ResAssign  = hi_dci0_pdu->npdcch_dci_pdu.npdcch_dci_pdu_rel13.subcarrier_indication;
-  DCI_Content->DCIN0.mcs        = hi_dci0_pdu->npdcch_dci_pdu.npdcch_dci_pdu_rel13.mcs;
-  DCI_Content->DCIN0.ndi        = hi_dci0_pdu->npdcch_dci_pdu.npdcch_dci_pdu_rel13.new_data_indicator;
-  DCI_Content->DCIN0.Scheddly   = hi_dci0_pdu->npdcch_dci_pdu.npdcch_dci_pdu_rel13.scheduling_delay;
-  DCI_Content->DCIN0.RepNum     = hi_dci0_pdu->npdcch_dci_pdu.npdcch_dci_pdu_rel13.repetition_number;
-  DCI_Content->DCIN0.rv         = hi_dci0_pdu->npdcch_dci_pdu.npdcch_dci_pdu_rel13.redudancy_version;
-  DCI_Content->DCIN0.DCIRep     = hi_dci0_pdu->npdcch_dci_pdu.npdcch_dci_pdu_rel13.dci_subframe_repetition_number;
-
-
-
-  UE_id = find_ue_NB_IoT(hi_dci0_pdu->npdcch_dci_pdu.npdcch_dci_pdu_rel13.rnti, eNB); /* returns -1 if it doesn't find the UE */
-  if (UE_id <0 ) { 
-        LOG_E(PHY,"Couldn't find NB-IoT UE\n");
-        return;
-  }
-
-  /*Log for generate ULSCH DCI*/
-
-  generate_eNB_ulsch_params_from_dci_NB_IoT(eNB,
-                                            proc,
-                                            DCI_Content,
-                                            hi_dci0_pdu->npdcch_dci_pdu.npdcch_dci_pdu_rel13.rnti,
-                                            DCIFormatN0,
-                                            UE_id,
-                                            hi_dci0_pdu->npdcch_dci_pdu.npdcch_dci_pdu_rel13.aggregation_level,
-										                        hi_dci0_pdu->npdcch_dci_pdu.npdcch_dci_pdu_rel13.start_symbol);  
-
-  
-  //LOG for ULSCH DCI Resource allocation
-  //CBA is not used in NB-IoT
-    eNB->nulsch[UE_id]->harq_process->subframe_scheduling_flag = 1;
-  
-}
 
 
 
@@ -1019,7 +1027,7 @@ void npdsch_procedures(PHY_VARS_eNB_NB_IoT      *eNB,
 }
 
 
-extern int oai_exit;
+
 
 /*
  * ASSUMPTION
@@ -1072,7 +1080,7 @@ void phy_procedures_eNB_TX_NB_IoT(PHY_VARS_eNB_NB_IoT     *eNB,
   DCI_PDU_NB_IoT         *dci_pdu        = eNB->DCI_pdu;
   NB_IoT_DL_FRAME_PARMS  *fp             = &eNB->frame_parms_NB_IoT;
   int8_t                 UE_id           = 0;
-  int                    **txdataF       = eNB->common_vars.txdataF[0];
+  int                    **txdataF       = eNB->common_vars.txdataF;
   uint32_t               sib1_startFrame = -1;
   //NB_IoT_eNB_NPDCCH_t*npdcch;
 
@@ -1085,7 +1093,7 @@ void phy_procedures_eNB_TX_NB_IoT(PHY_VARS_eNB_NB_IoT     *eNB,
   // clear the transmit data array for the current subframe
   for (aa=0; aa<fp->nb_antenna_ports_eNB; aa++) 
     {      
-      memset(&eNB->common_vars.txdataF[0][aa][subframe*fp->ofdm_symbol_size*(fp->symbols_per_tti)],
+      memset(&eNB->common_vars.txdataF[aa][subframe*fp->ofdm_symbol_size*(fp->symbols_per_tti)],
                   0,fp->ofdm_symbol_size*(fp->symbols_per_tti)*sizeof(int32_t));
     } 
 
@@ -1112,7 +1120,7 @@ void phy_procedures_eNB_TX_NB_IoT(PHY_VARS_eNB_NB_IoT     *eNB,
                            txdataF,
                            AMP,
                            fp,
-						               eNB->npbch->pdu,
+                           eNB->npbch->pdu,
                            frame%64,
                            fp->NB_IoT_RB_ID);
                         
@@ -1203,9 +1211,9 @@ void phy_procedures_eNB_TX_NB_IoT(PHY_VARS_eNB_NB_IoT     *eNB,
 	       {
     		  //check if the PDU != NULL will be done inside just for understanding if a new SI message need to be transmitted or not
     		  npdsch_procedures(eNB,
-            					      proc,
-								            eNB->ndlsch_SI, //since we have no DCI for system information, this is filled directly when we receive the DL_CONFIG.request message
-								            eNB->ndlsch_SI->harq_process->pdu);
+                                    proc,
+                                    eNB->ndlsch_SI, //since we have no DCI for system information, this is filled directly when we receive the DL_CONFIG.request message
+			           eNB->ndlsch_SI->harq_process->pdu);
 
     		  eNB->ndlsch_SI->harq_process->status = DISABLED_NB_IoT;
 	    	}
@@ -1215,9 +1223,9 @@ void phy_procedures_eNB_TX_NB_IoT(PHY_VARS_eNB_NB_IoT     *eNB,
 	    	      if(eNB->ndlsch_SI != NULL &&  subframe!= 0 && subframe != 5)
 	    	      {
 	    		         npdsch_procedures(eNB,
-	            					             proc,
-									                   eNB->ndlsch_SI, //since we have no DCI for system information, this is filled directly when we receive the DL_CONFIG.request message
-									                   eNB->ndlsch_SI->harq_process->pdu);
+	                                           proc,
+                                                   eNB->ndlsch_SI, //since we have no DCI for system information, this is filled directly when we receive the DL_CONFIG.request message
+				                   eNB->ndlsch_SI->harq_process->pdu);
 
 	    		         eNB->ndlsch_SI->harq_process->status = DISABLED_NB_IoT;
 
@@ -1235,9 +1243,9 @@ void phy_procedures_eNB_TX_NB_IoT(PHY_VARS_eNB_NB_IoT     *eNB,
   	       {
 
   	    	  npdsch_procedures(eNB,
-            					        proc,
-								              eNB->ndlsch_ra, //should be filled ?? (in the old implementation was filled when from DCI we generate_dlsch_params
-								              eNB->ndlsch_ra->harq_process->pdu);
+			            proc,
+				    eNB->ndlsch_ra, //should be filled ?? (in the old implementation was filled when from DCI we generate_dlsch_params
+			            eNB->ndlsch_ra->harq_process->pdu);
 
   	    	  //it should be activated only when we receive the proper DCIN1_RAR
   	    	  eNB->ndlsch_ra->active= 0;
@@ -1248,9 +1256,9 @@ void phy_procedures_eNB_TX_NB_IoT(PHY_VARS_eNB_NB_IoT     *eNB,
 	    	if(eNB->ndlsch_SI != NULL &&  subframe!= 0 && subframe != 5)
 	    	   {
 	  	    	  npdsch_procedures(eNB,
-	            					        proc,
-									              eNB->ndlsch_ra, //should be filled ?? (in the old implementation was filled when from DCI we generate_dlsch_params
-									              eNB->ndlsch_ra->harq_process->pdu);
+				            proc,
+				            eNB->ndlsch_ra, //should be filled ?? (in the old implementation was filled when from DCI we generate_dlsch_params
+				            eNB->ndlsch_ra->harq_process->pdu);
 
 	  	    	  //it should be activated only when we receive the proper DCIN1_RAR
 	  	    	  eNB->ndlsch_ra->active= 0; // maybe this is already done inside the ndlsch_procedure
@@ -1283,16 +1291,16 @@ void phy_procedures_eNB_TX_NB_IoT(PHY_VARS_eNB_NB_IoT     *eNB,
       //this should give only 1 result (since only 1 ndlsch procedure is activated at once) so we brak after the transmission
       for (UE_id = 0; UE_id < NUMBER_OF_UE_MAX_NB_IoT; UE_id++)
       {
-    	  if(eNB->ndlsch[(uint8_t)UE_id] != NULL && eNB->ndlsch[(uint8_t)UE_id]->active == 1 && (eNB->ndlsch_SIB1->harq_process->status != ACTIVE_NB_IoT || subframe != 4)) //condition on sib1-NB
+    	  if(eNB->ndlsch[(uint8_t)UE_id][0] != NULL && eNB->ndlsch[(uint8_t)UE_id][0]->active == 1 && (eNB->ndlsch_SIB1->harq_process->status != ACTIVE_NB_IoT || subframe != 4)) //condition on sib1-NB
     	  {
     	  	if(frame%2 == 0)//condition on NSSS (subframe 9 not available)
     	  	  {
     	  	    if( subframe!= 0 && subframe != 5 && subframe != 9)
     	  	     {
     	  	    	npdsch_procedures(eNB,
-                						      proc,
-										              eNB->ndlsch[(uint8_t)UE_id],
-										              eNB->ndlsch[(uint8_t)UE_id]->harq_process->pdu);
+		 		          proc,
+			                  eNB->ndlsch[(uint8_t)UE_id][0],
+			                  eNB->ndlsch[(uint8_t)UE_id][0]->harq_process->pdu);
     	  	    	break;
     	  	       }
     	  	     }
@@ -1301,9 +1309,9 @@ void phy_procedures_eNB_TX_NB_IoT(PHY_VARS_eNB_NB_IoT     *eNB,
     	    	if( subframe!= 0 && subframe != 5)
     	    	   {
     	  	    	npdsch_procedures(eNB,
-                						      proc,
-										              eNB->ndlsch[(uint8_t)UE_id],
-										              eNB->ndlsch[(uint8_t)UE_id]->harq_process->pdu);
+				          proc,
+			                  eNB->ndlsch[(uint8_t)UE_id][0],
+			                  eNB->ndlsch[(uint8_t)UE_id][0]->harq_process->pdu);
     	  	    	break;
 
     	    	   }
@@ -1364,7 +1372,7 @@ void phy_procedures_eNB_TX_NB_IoT(PHY_VARS_eNB_NB_IoT     *eNB,
     		  					                      dci_pdu->dci_alloc,
     		  					                      AMP,
     		  					                      fp,
-    		  					                      eNB->common_vars.txdataF[0],
+    		  					                      eNB->common_vars.txdataF,
     		  					                      subframe,
     		  					                      dci_pdu->npdcch_start_symbol); //this parameter depends by eutraControlRegionSize (see TS36.213 16.6.1)
       	  	    	                        eNB->npdcch[(uint8_t)UE_id]->repetition_idx++; //can do also inside also the management
@@ -1381,7 +1389,7 @@ void phy_procedures_eNB_TX_NB_IoT(PHY_VARS_eNB_NB_IoT     *eNB,
  		  					                        dci_pdu->dci_alloc,
  		  					                        AMP,
  		  					                        fp,
- 		  					                        eNB->common_vars.txdataF[0],
+ 		  					                        eNB->common_vars.txdataF,
  		  					                        subframe,
  		  					                        dci_pdu->npdcch_start_symbol); //this parameter depends by eutraControlRegionSize (see TS36.213 16.6.1)
    	  	    	  
@@ -1393,5 +1401,6 @@ void phy_procedures_eNB_TX_NB_IoT(PHY_VARS_eNB_NB_IoT     *eNB,
       	     }
       	   }
     	  }
+    
 
 }

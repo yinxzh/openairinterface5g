@@ -37,7 +37,7 @@ int NB_IoT_est_timing_advance_pusch(PHY_VARS_eNB_NB_IoT* phy_vars_eNB,module_id_
 
 
 
-int lte_ul_channel_estimation_NB_IoT(PHY_VARS_eNB_NB_IoT      *phy_vars_eNB,
+int ul_channel_estimation_NB_IoT(PHY_VARS_eNB_NB_IoT      *phy_vars_eNB,
 			      					 eNB_rxtx_proc_NB_IoT_t   *proc,
                               		 module_id_t              eNB_id,
                               		 module_id_t              UE_id,

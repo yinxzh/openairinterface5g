@@ -120,6 +120,8 @@ extern char eNB_timing[2][20];
 
 */
 extern int16_t unscrambling_lut_NB_IoT[65536*16];
+extern NB_IoT_eNB_NDLSCH_t *new_ndlsch(unsigned char Kmimo,unsigned char Mdlharq,uint32_t Nsoft,uint8_t abstraction_flag, NB_IoT_DL_FRAME_PARMS* frame_parms);
+extern NB_IoT_eNB_NULSCH_t *new_nulsch(uint8_t num_turboiter);
 /*
 extern uint8_t scrambling_lut[65536*16];
 

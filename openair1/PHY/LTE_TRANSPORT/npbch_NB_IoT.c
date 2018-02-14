@@ -153,7 +153,7 @@ int generate_npbch(NB_IoT_eNB_NPBCH_t 		*eNB_npbch,
 		{	
 			if (i != 4)
 			{
-				npbch_a[5-i-1] = npbch_pdu[i];            		// ????????/*****?? in LTE 24 bits with 3 bytes, but in NB_IoT 34 bits will require 4 bytes+2 bits !! to verify
+				npbch_a[5-i-1] = npbch_pdu[i];            		// ????????****?? in LTE 24 bits with 3 bytes, but in NB_IoT 34 bits will require 4 bytes+2 bits !! to verify
 			} else {
 				npbch_a[5-i-1]= npbch_pdu[i] & 0x03;
 			}
@@ -181,7 +181,7 @@ int generate_npbch(NB_IoT_eNB_NPBCH_t 		*eNB_npbch,
 
 	}
 	// testing if the total number of RBs is even or odd 
-	bandwidth_even_odd = frame_parms->N_RB_DL % 2; 	 	// 0 even, 1 odd
+	bandwidth_even_odd = frame_parms->LTE_N_RB_DL % 2; 	 	// 0 even, 1 odd
 	RB_IoT_ID = NB_IoT_RB_ID;
 	// step  5, 6, 7   									 	// modulation and mapping (slot 1, symbols 0..3)
 	for (l=3; l<14; l++) { 								 	// loop on OFDM symbols
@@ -195,11 +195,11 @@ int generate_npbch(NB_IoT_eNB_NPBCH_t 		*eNB_npbch,
 		
 		id_offset = frame_parms->Nid_cell % 3;    		// Cell_ID_NB_IoT % 3
 		
-		if(RB_IoT_ID < (frame_parms->N_RB_DL/2))
+		if(RB_IoT_ID < (frame_parms->LTE_N_RB_DL/2))
 		{
-			NB_IoT_start = frame_parms->ofdm_symbol_size - 12*(frame_parms->N_RB_DL/2) - (bandwidth_even_odd*6) + 12*(RB_IoT_ID%(int)(ceil(frame_parms->N_RB_DL/(float)2)));
+			NB_IoT_start = frame_parms->ofdm_symbol_size - 12*(frame_parms->LTE_N_RB_DL/2) - (bandwidth_even_odd*6) + 12*(RB_IoT_ID%(int)(ceil(frame_parms->LTE_N_RB_DL/(float)2)));
 		} else {
-			NB_IoT_start = (bandwidth_even_odd*6) + 12*(RB_IoT_ID%(int)(ceil(frame_parms->N_RB_DL/(float)2)));
+			NB_IoT_start = 1 + (bandwidth_even_odd*6) + 12*(RB_IoT_ID%(int)(ceil(frame_parms->LTE_N_RB_DL/(float)2)));
 		}
 		
 		symbol_offset = frame_parms->ofdm_symbol_size*l + NB_IoT_start;  						// symbol_offset = 512 * L + NB_IOT_RB start

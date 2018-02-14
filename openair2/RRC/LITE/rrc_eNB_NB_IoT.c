@@ -114,6 +114,11 @@ extern void*                       bigphys_malloc(int);
  */
 mui_t                               rrc_eNB_mui_NB_IoT = 0;
 
+uint8_t *get_NB_IoT_MIB(struct eNB_RRC_INST_NB_IoT_s *nb_iot_rrc)
+{
+  // CC_ID=0
+  return nb_iot_rrc->carrier[0].MIB_NB_IoT;
+}
 
 
 // should be called when UE is lost by eNB

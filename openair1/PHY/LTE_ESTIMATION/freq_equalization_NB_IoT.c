@@ -294,14 +294,14 @@ void freq_equalization_NB_IoT(NB_IoT_DL_FRAME_PARMS *frame_parms,
   int16_t amp;
 #if defined(__x86_64__) || defined(__i386__)
   __m128i *ul_ch_mag128,*rxdataF_comp128;//,*ul_ch_magb128;
-  rxdataF_comp128   = (__m128i *)&rxdataF_comp[0][symbol*frame_parms->N_RB_DL*12];
-  ul_ch_mag128      = (__m128i *)&ul_ch_mag[0][symbol*frame_parms->N_RB_DL*12];
-//  ul_ch_magb128      = (__m128i *)&ul_ch_magb[0][symbol*frame_parms->N_RB_DL*12];
+  rxdataF_comp128   = (__m128i *)&rxdataF_comp[0][symbol*frame_parms->LTE_N_RB_DL*12];
+  ul_ch_mag128      = (__m128i *)&ul_ch_mag[0][symbol*frame_parms->LTE_N_RB_DL*12];
+//  ul_ch_magb128      = (__m128i *)&ul_ch_magb[0][symbol*frame_parms->LTE_N_RB_DL*12];
 #elif defined(__arm__)
   int16x8_t *ul_ch_mag128,*rxdataF_comp128;//,*ul_ch_magb128;
-  rxdataF_comp128   = (int16x8_t*)&rxdataF_comp[0][symbol*frame_parms->N_RB_DL*12];
-  ul_ch_mag128      = (int16x8_t*)&ul_ch_mag[0][symbol*frame_parms->N_RB_DL*12];
-//  ul_ch_magb128     = (int16x8_t*)&ul_ch_magb[0][symbol*frame_parms->N_RB_DL*12];
+  rxdataF_comp128   = (int16x8_t*)&rxdataF_comp[0][symbol*frame_parms->LTE_N_RB_DL*12];
+  ul_ch_mag128      = (int16x8_t*)&ul_ch_mag[0][symbol*frame_parms->LTE_N_RB_DL*12];
+//  ul_ch_magb128     = (int16x8_t*)&ul_ch_magb[0][symbol*frame_parms->LTE_N_RB_DL*12];
 #endif
 
   for (re=0; re<(Msc_RS>>2); re++) {

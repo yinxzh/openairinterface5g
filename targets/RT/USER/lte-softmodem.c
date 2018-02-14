@@ -759,45 +759,41 @@ void set_default_frame_parms(LTE_DL_FRAME_PARMS *frame_parms[MAX_NUM_CCs]) {
 }
 
 //NB_IoT-------------------------------------------------
-void set_default_frame_parms_NB_IoT(NB_IoT_DL_FRAME_PARMS *frame_parms[MAX_NUM_CCs]);
-void set_default_frame_parms_NB_IoT(NB_IoT_DL_FRAME_PARMS *frame_parms[MAX_NUM_CCs]) {
 
-    int CC_id;
+void set_default_frame_parms_NB_IoT(NB_IoT_DL_FRAME_PARMS *frame_parms) {
 
-    for (CC_id=0; CC_id<MAX_NUM_CCs; CC_id++) {
-        frame_parms[CC_id] = (NB_IoT_DL_FRAME_PARMS*) malloc(sizeof(NB_IoT_DL_FRAME_PARMS));
+        frame_parms = (NB_IoT_DL_FRAME_PARMS*) malloc(sizeof(NB_IoT_DL_FRAME_PARMS));
         /* Set some default values that may be overwritten while reading options */
 
         //XXX check if there are other parameters to be set
 
-        frame_parms[CC_id]->Ncp                 = NORMAL;
-        frame_parms[CC_id]->Ncp_UL              = NORMAL;
-        frame_parms[CC_id]->Nid_cell            = 0;
-        frame_parms[CC_id]->nb_antenna_ports_eNB  = 1;
-        frame_parms[CC_id]->nb_antennas_tx      = 1;
-        frame_parms[CC_id]->nb_antennas_rx      = 1;
 
-        frame_parms[CC_id]->nushift             = 0;
+        frame_parms->Nid_cell		 = 0;
+        frame_parms->nb_antenna_ports_eNB  = 1;
+        frame_parms->nb_antennas_tx	 = 1;
+        frame_parms->nb_antennas_rx	 = 1;
+
+        frame_parms->nushift		 = 0;
 
         // UL RS Config
-        frame_parms[CC_id]->npusch_config_common.ul_ReferenceSignalsNPUSCH.groupHoppingEnabled = 0;
-        frame_parms[CC_id]->npusch_config_common.ul_ReferenceSignalsNPUSCH.groupAssignmentNPUSCH = 0;
+        frame_parms->npusch_config_common.ul_ReferenceSignalsNPUSCH.groupHoppingEnabled = 0;
+        frame_parms->npusch_config_common.ul_ReferenceSignalsNPUSCH.groupAssignmentNPUSCH = 0;
 
 
-        //frame_parms[CC_id]->nprach_config_common.nprach_CP_Length
-		//frame_parms[CC_id]->nprach_config_common.nprach_ParametersList.list.array[CC_id]
-		//frame_parms[CC_id]->nprach_config_common.rsrp_ThresholdsPrachInfoList
+        //frame_parms->nprach_config_common.nprach_CP_Length
+		//frame_parms->nprach_config_common.nprach_ParametersList.list.array[CC_id]
+		//frame_parms->nprach_config_common.rsrp_ThresholdsPrachInfoList
 
 
 		//already initialized in the set_default_frame_parms function for LTE
 
-//        downlink_frequency[CC_id][0] = 2680000000; // Use float to avoid issue with frequency over 2^31.
-//        downlink_frequency[CC_id][1] = downlink_frequency[CC_id][0];
-//        downlink_frequency[CC_id][2] = downlink_frequency[CC_id][0];
-//        downlink_frequency[CC_id][3] = downlink_frequency[CC_id][0];
+//        downlink_frequency[0] = 2680000000; // Use float to avoid issue with frequency over 2^31.
+//        downlink_frequency[1] = downlink_frequency[0];
+//        downlink_frequency[2] = downlink_frequency[0];
+//        downlink_frequency[3] = downlink_frequency[0];
 //        //printf("Downlink for CC_id %d frequency set to %u\n", CC_id, downlink_frequency[CC_id][0]);
 
-    }
+
 
 }
 
@@ -1342,7 +1338,7 @@ int main( int argc, char **argv )
     wait_RUs();
     // once all RUs are ready intiailize the rest of the eNBs ((dependence on final RU parameters after configuration)
     init_eNB_afterRU();
-    
+    init_NbIoT_afterRU();
   }
   
   

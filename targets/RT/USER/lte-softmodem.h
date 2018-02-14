@@ -266,5 +266,6 @@ PHY_VARS_UE* init_ue_vars(LTE_DL_FRAME_PARMS *frame_parms,
                           uint8_t UE_id,
                           uint8_t abstraction_flag);
 void init_eNB_afterRU(void);
+void init_NbIoT_afterRU(void);
 
 #endif

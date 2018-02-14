@@ -88,16 +88,15 @@ void phy_config_mib_eNB_NB_IoT(int  			Mod_id,
   fp->Nid_cell                           = Nid_cell;
   fp->nushift                            = Nid_cell%6;
   fp->eutra_band                         = eutra_band;
-  fp->Ncp                             	 = Ncp;
-  fp->Ncp_UL							 = Ncp_UL;
+ 
   fp->nb_antenna_ports_eNB               = p_eNB; //tx antenna port
   fp->dl_CarrierFreq                     = from_earfcn_NB_IoT(eutra_band,EARFCN,0);
   fp->ul_CarrierFreq                     = fp->dl_CarrierFreq - get_uldl_offset_NB_IoT(eutra_band);
-  fp->operating_mode					 = operating_mode; //see how are defined by FAPI structure
-  fp->NB_IoT_RB_ID						 = prb_index; //XXX to be better understand how should be managed
+  fp->operating_mode			 = operating_mode; //see how are defined by FAPI structure
+  fp->NB_IoT_RB_ID			 = prb_index; //XXX to be better understand how should be managed
   //fp->nb_rx_antenna_ports_eNB
-  fp->control_region_size			 	 = control_region_size; //(assume that this value is negative if not used)
-  fp->eutra_NumCRS_ports				 = eutra_NumCRS_ports; //(valid only for in-band operating mode with different PCI)
+  fp->control_region_size	 	 = control_region_size; //(assume that this value is negative if not used)
+  fp->eutra_NumCRS_ports		 = eutra_NumCRS_ports; //(valid only for in-band operating mode with different PCI)
   
 
   //TODO  (new Raymond implementation) in the classic implementation seems to be used only by oaisim
@@ -368,9 +367,9 @@ void phy_config_sib2_eNB_NB_IoT(uint8_t 								  Mod_id,
 
 
 
-void phy_config_dedicated_eNB_NB_IoT(uint8_t 			Mod_id,
-                             		 uint16_t 			rnti,
-							 		 extra_phyConfig_t  *extra_parms)
+void phy_config_dedicated_eNB_NB_IoT(uint8_t 		Mod_id,
+                             	     uint16_t 		rnti,
+				     extra_phyConfig_t  *extra_parms)
 {
 	PHY_VARS_eNB_NB_IoT *eNB = RC.L1_NB_IoT[Mod_id];
 	NB_IoT_eNB_NPDCCH_t *npdcch;
@@ -400,8 +399,8 @@ void phy_config_dedicated_eNB_NB_IoT(uint8_t 			Mod_id,
 	
 }
 
-// void phy_init_lte_top_NB_IoT(NB_IoT_DL_FRAME_PARMS *frame_parms)
-// {
+void phy_init_nb_iot_eNB(PHY_VARS_eNB_NB_IoT *phyvar)
+ {
 
 // //   crcTableInit();
 
@@ -425,7 +424,7 @@ void phy_config_dedicated_eNB_NB_IoT(uint8_t 			Mod_id,
 // //   lte_sync_time_init(frame_parms);
 
 // //   generate_ul_ref_sigs();
-//   generate_ul_ref_sigs_rx_NB_IoT();
+   generate_ul_ref_sigs_rx_NB_IoT();
 
 //   // generate_64qam_table();
 //   // generate_16qam_table();
@@ -435,6 +434,6 @@ void phy_config_dedicated_eNB_NB_IoT(uint8_t 			Mod_id,
 //   // init_scrambling_lut();
 //   // //set_taus_seed(1328);
 
-// }
+ }
 
 

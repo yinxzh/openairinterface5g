@@ -1112,7 +1112,7 @@ void wakeup_eNBs(RU_t *ru) {
     // call eNB function directly
 
     char string[20];
-    sprintf(string,"Incoming RU %d",ru->idx);
+    sprintf(string,"LTE: Incoming RU %d",ru->idx);
     LOG_D(PHY,"RU %d Waking up eNB\n",ru->idx);
     ru->eNB_top(eNB_list[0],ru->proc.frame_rx,ru->proc.subframe_rx,string);
   }
@@ -1121,6 +1121,18 @@ void wakeup_eNBs(RU_t *ru) {
     for (i=0;i<ru->num_eNB;i++)
       if (ru->wakeup_rxtx(eNB_list[i],ru) < 0)
 	LOG_E(PHY,"could not wakeup eNB rxtx process for subframe %d\n", ru->proc.subframe_rx);
+  }
+
+  if (ru->NbIoT  && ru->NbIoT->num_NbIoT == 1) {
+
+    char string[20];
+    sprintf(string,"Nb-IoT: Incoming RU %d",ru->idx);
+    LOG_D(PHY,"RU %d Waking up NbIoT RRC\n",ru->idx);
+    ru->NbIoT->NbIoT_top(ru->NbIoT->NB_IoT_eNB_list[0],ru->proc.frame_rx,ru->proc.subframe_rx,string);
+  }
+  else {
+
+
   }
 }
 
@@ -1853,6 +1865,7 @@ void init_RU(char *rf_config_file) {
   RU_t *ru;
   int ret;
   PHY_VARS_eNB *eNB0;
+  PHY_VARS_eNB_NB_IoT *NbIoT0;
   int i;
   int CC_id;
 
@@ -1893,8 +1906,7 @@ void init_RU(char *rf_config_file) {
       }
     }
     //    LOG_I(PHY,"Initializing RRU descriptor %d : (%s,%s,%d)\n",ru_id,ru_if_types[ru->if_south],eNB_timing[ru->if_timing],ru->function);
-
-    
+ 
     switch (ru->if_south) {
     case LOCAL_RF:   // this is an RU with integrated RF (RRU, eNB)
       if (ru->function ==  NGFI_RRU_IF5) {                 // IF5 RRU
@@ -2033,6 +2045,18 @@ void init_RU(char *rf_config_file) {
       break;
     } // switch on interface type 
 
+    if (ru->NbIoT) {
+        NbIoT0             = ru->NbIoT->NB_IoT_eNB_list[0];
+
+        if (NbIoT0) {
+
+      // attach all RU to all NbIoTs RRC in its list/
+           for (i=0;i<ru->NbIoT->num_NbIoT;i++) {
+	      NbIoT0 = ru->NbIoT->NB_IoT_eNB_list[i];
+	      NbIoT0->RU_list[NbIoT0->num_RU++] = ru;
+           }
+       }   
+    }
     LOG_I(PHY,"Starting ru_thread %d\n",ru_id);
 
     init_RU_proc(ru);

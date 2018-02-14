@@ -23,8 +23,9 @@
 //#include "SCHED/defs_NB_IoT.h"
 //#include "defs_nb_iot.h"
 //#include "UTIL/LOG/vcd_signal_dumper.h"
-#include "PHY/TOOLS/time_meas_NB_IoT.h" 
-
+#include "PHY/TOOLS/time_meas.h" 
+#include "UTIL/LOG/log.h"
+#include "PHY/defs_L1_NB_IoT.h"
 unsigned char  ccodelte_table2_NB_IoT[128];
 
 void ccode_encode_npdsch_NB_IoT (int32_t   numbits,
@@ -65,13 +66,13 @@ void ccode_encode_npdsch_NB_IoT (int32_t   numbits,
 }
 
 
-int dlsch_encoding_NB_IoT(unsigned char      			*a,
-						  NB_IoT_eNB_DLSCH_t 			*dlsch,
-						  uint8_t 			 			Nsf,		// number of subframes required for npdsch pdu transmission calculated from Isf (3GPP spec table)
-						  unsigned int 		 			G, 		    // G (number of available RE) is implicitly multiplied by 2 (since only QPSK modulation)
-						  time_stats_t_NB_IoT 		 	*rm_stats,
-						  time_stats_t_NB_IoT 		 	*te_stats,
-						  time_stats_t_NB_IoT 		 	*i_stats)
+int dlsch_encoding_NB_IoT(unsigned char      	       *a,
+			 NB_IoT_eNB_DLSCH_t	       *dlsch,
+			 uint8_t		       Nsf,	       // number of subframes required for npdsch pdu transmission calculated from Isf (3GPP spec table)
+			 unsigned int		       G,		   // G (number of available RE) is implicitly multiplied by 2 (since only QPSK modulation)
+			 time_stats_t		       *rm_stats,
+			 time_stats_t		       *te_stats,
+			 time_stats_t		       *i_stats)
 {
 	unsigned int  crc = 1;
 	//unsigned char harq_pid = dlsch->current_harq_pid;  			// to check during implementation if harq_pid is required in the NB_IoT_eNB_DLSCH_t structure  in defs_NB_IoT.h
@@ -96,17 +97,52 @@ int dlsch_encoding_NB_IoT(unsigned char      			*a,
 		memcpy(dlsch->harq_process.b,a,numbits/8); 
 		memset(dlsch->harq_process.d,LTE_NULL_NB_IoT,96);
 		
-		start_meas_NB_IoT(te_stats);
+		start_meas(te_stats);
 		ccode_encode_npdsch_NB_IoT(numbits, dlsch->harq_process.b, dlsch->harq_process.d+96, crc);  					//   step 1 Tail-biting convolutional coding
-		stop_meas_NB_IoT(te_stats);
+		stop_meas(te_stats);
 		
-		start_meas_NB_IoT(i_stats);
+		start_meas(i_stats);
 		RCC = sub_block_interleaving_cc_NB_IoT(numbits,dlsch->harq_process.d+96,dlsch->harq_process.w);					//   step 2 interleaving
-		stop_meas_NB_IoT(i_stats);
+		stop_meas(i_stats);
 		
-		start_meas_NB_IoT(rm_stats);
+		start_meas(rm_stats);
 		lte_rate_matching_cc_NB_IoT(RCC,dlsch->harq_process.length_e,dlsch->harq_process.w,dlsch->harq_process.e);    // step 3 Rate Matching
-		stop_meas_NB_IoT(rm_stats);		
+		stop_meas(rm_stats);		
     }
   return(0);
+}
+
+
+
+
+
+NB_IoT_eNB_DLSCH_t *new_ndlsch(unsigned char Kmimo,unsigned char Mdlharq,uint32_t Nsoft,uint8_t abstraction_flag, NB_IoT_DL_FRAME_PARMS* frame_parms)
+{
+
+  NB_IoT_eNB_DLSCH_t *ndlsch;
+
+
+
+
+  ndlsch = (NB_IoT_eNB_DLSCH_t *)malloc16(sizeof(NB_IoT_eNB_DLSCH_t));
+
+  if (ndlsch) {
+    bzero(ndlsch,sizeof(NB_IoT_eNB_DLSCH_t));
+    ndlsch->Kmimo = Kmimo;
+    ndlsch->Mdlharq = Mdlharq;
+    ndlsch->Mlimit = 8;
+    ndlsch->Nsoft = Nsoft;
+    
+
+
+
+
+      return(ndlsch);
+  }
+
+  LOG_F(PHY,"new_ndlsch malloc error %s\n",
+	strerror(errno));
+  return(NULL);
+
+
 }

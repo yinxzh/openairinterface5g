@@ -426,7 +426,7 @@ int dci_modulation_NB_IoT(int32_t 					**txdataF,
     re_allocated=0;
 	id_offset=0;
 	// testing if the total number of RBs is even or odd
-	bandwidth_even_odd = frame_parms->N_RB_DL % 2; 	 		// 0 even, 1 odd
+	bandwidth_even_odd = frame_parms->LTE_N_RB_DL % 2; 	 		// 0 even, 1 odd
 	RB_IoT_ID = frame_parms->NB_IoT_RB_ID;
 	// step  5, 6, 7   									 	// modulation and mapping (slot 1, symbols 0..3)
 	for (l=control_region_size; l<14; l++) { 				// loop on OFDM symbols
@@ -437,11 +437,11 @@ int dci_modulation_NB_IoT(int32_t 					**txdataF,
 			pilots=0;
 		}
 		id_offset = frame_parms->Nid_cell % 3;    			// Cell_ID_NB_IoT % 3
-		if(RB_IoT_ID < (frame_parms->N_RB_DL/2))
+		if(RB_IoT_ID < (frame_parms->LTE_N_RB_DL/2))
 		{
-			NB_IoT_start = frame_parms->ofdm_symbol_size - 12*(frame_parms->N_RB_DL/2) - (bandwidth_even_odd*6) + 12*(RB_IoT_ID% (int)(ceil(frame_parms->N_RB_DL/(float)2)));
+			NB_IoT_start = frame_parms->ofdm_symbol_size - 12*(frame_parms->LTE_N_RB_DL/2) - (bandwidth_even_odd*6) + 12*(RB_IoT_ID% (int)(ceil(frame_parms->LTE_N_RB_DL/(float)2)));
 		} else {
-			NB_IoT_start = (bandwidth_even_odd*6) + 12*(RB_IoT_ID % (int)(ceil(frame_parms->N_RB_DL/(float)2)));
+			NB_IoT_start = (bandwidth_even_odd*6) + 12*(RB_IoT_ID % (int)(ceil(frame_parms->LTE_N_RB_DL/(float)2)));
 		}
 		symbol_offset = frame_parms->ofdm_symbol_size*l + NB_IoT_start;  						// symbol_offset = 512 * L + NB_IOT_RB start
 		dci_allocate_REs_in_RB_NB_IoT(frame_parms,
@@ -483,7 +483,7 @@ uint8_t generate_dci_top_NB_IoT(NB_IoT_eNB_NPDCCH_t		*npdcch,
   //temporary variable
   uint16_t rnti[2];
   uint8_t  L = 0;
-  uint8_t  *a[2]={dci_alloc[0].dci_pdu,dci_alloc[1].dci_pdu};
+
 
   /* PARAMETERS may not needed
   **e_ptr : store the encoding result, and as a input to modulation
@@ -561,7 +561,7 @@ uint8_t generate_dci_top_NB_IoT(NB_IoT_eNB_NPDCCH_t		*npdcch,
      
    //NB-IoT encoding
       dci_encoding_NB_IoT(
-					a,
+					0,
 					4, // total length (in byte) of a [assume max 2 pdus of  ??]
 					G,
 					npdcch->e,

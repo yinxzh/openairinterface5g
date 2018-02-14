@@ -220,10 +220,16 @@ typedef struct RU_proc_t_s {
 
 
 typedef struct RU_NbIoT_t_s{
+  /// function for NbIoT
+  node_function_t function;
+   // number of NB-IoT RRCs using this RU (number of items in the following list)
+  int num_NbIoT; 
   /// list of NB-IoT RRCs using this RU
   struct PHY_VARS_eNB_NB_IoT_s **NB_IoT_eNB_list;
   /// function pointer to NbIoT entry routine
   void (*NbIoT_top)(struct PHY_VARS_eNB_NB_IoT_s  *NB_IoT_eNB, int frame_rx, int subframe_rx, char *string);
+  /// function pointer to wakeup routine in lte-enb.
+  void (*wakeup_prach_NbIoT)(struct  PHY_VARS_eNB_NB_IoT_s *eNB,struct RU_t_s *ru,int frame,int subframe);
 } RU_NbIoT_t;
 
 

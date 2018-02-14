@@ -126,7 +126,7 @@ static inline void* malloc16_clear( size_t size )
 //#include "impl_defs_lte.h"
 #include "PHY/impl_defs_lte_NB_IoT.h"
 
-#include "PHY/TOOLS/time_meas_NB_IoT.h"
+#include "PHY/TOOLS/time_meas.h"
 //#include "PHY/CODING/defs.h"
 #include "PHY/CODING/defs_NB_IoT.h"
 #include "openair2/PHY_INTERFACE/IF_Module_NB_IoT.h"
@@ -220,7 +220,7 @@ typedef enum  {
   eNodeB_3GPP_BBU_NB_IoT, // eNodeB with NGFI IF5
   NGFI_RCC_IF4p5_NB_IoT,  // NGFI_RCC (NGFI radio cloud center)
   NGFI_RAU_IF4p5_NB_IoT,
-  NGFI_RRU_IF5_Nb_IoT,    // NGFI_RRU (NGFI remote radio-unit,IF5)
+  NGFI_RRU_IF5_NB_IoT,    // NGFI_RRU (NGFI remote radio-unit,IF5)
   NGFI_RRU_IF4p5_NB_IoT   // NGFI_RRU (NGFI remote radio-unit,IF4p5)
 } eNB_func_NB_IoT_t;
 
@@ -255,8 +255,6 @@ typedef struct {
 
 /// Context data structure for RX/TX portion of subframe processing
 typedef struct {
-  /// Component Carrier index
-  uint8_t               CC_id;
   /// timestamp transmitted to HW
   openair0_timestamp    timestamp_tx;
   /// subframe to act upon for transmission
@@ -306,8 +304,6 @@ typedef struct {
 
 /// Context data structure for eNB subframe processing
 typedef struct eNB_proc_NB_IoT_t_s {
-  /// Component Carrier index
-  uint8_t                 CC_id;
   /// thread index
   int                     thread_index;
   /// timestamp received from HW
@@ -410,6 +406,8 @@ typedef struct eNB_proc_NB_IoT_t_s {
   pthread_cond_t          cond_synch;
   /// condition variable for asynch RX/TX thread
   pthread_cond_t          cond_asynch_rxtx;
+  /// mutex for RU access to  processing (NPDSCH/PUSCH)
+  pthread_mutex_t mutex_RU;
   /// mutex for parallel fep thread
   pthread_mutex_t         mutex_fep;
   /// mutex for parallel turbo-decoder thread
@@ -422,8 +420,18 @@ typedef struct eNB_proc_NB_IoT_t_s {
   pthread_mutex_t         mutex_prach;
   // mutex for over-the-air eNB synchronization
   pthread_mutex_t         mutex_synch;
+  /// mutex for RU access to NB-IoT processing (NPRACH)
+  pthread_mutex_t mutex_RU_PRACH;
   /// mutex for asynch RX/TX thread
   pthread_mutex_t         mutex_asynch_rxtx;
+  /// mask for RUs serving nbiot  (NPDSCH/NPUSCH)
+  int RU_mask;
+  /// mask for RUs serving nbiot (PRACH)
+  int RU_mask_prach;
+#ifdef Rel14
+  /// mask for RUs serving eNB (PRACH)
+  int RU_mask_prach_br;
+#endif
   /// parameters for turbo-decoding worker thread
   td_params_NB_IoT        tdp;
   /// parameters for turbo-encoding worker thread
@@ -443,8 +451,6 @@ typedef struct eNB_proc_NB_IoT_t_s {
 typedef struct {
   /// index of the current UE RX/TX proc
   int                   proc_id;
-  /// Component Carrier index
-  uint8_t               CC_id;
   /// timestamp transmitted to HW
   openair0_timestamp    timestamp_tx;
   /// subframe to act upon for transmission
@@ -479,8 +485,6 @@ typedef struct {
 
 /// Context data structure for eNB subframe processing
 typedef struct {
-  /// Component Carrier index
-  uint8_t                 CC_id;
   /// Last RX timestamp
   openair0_timestamp      timestamp_rx;
   /// pthread attributes for main UE thread
@@ -513,7 +517,6 @@ typedef struct {
 typedef struct PHY_VARS_eNB_NB_IoT_s {
   /// Module ID indicator for this instance
   module_id_t                   Mod_id;
-  uint8_t                       CC_id;
   uint8_t                       configured;
   eNB_proc_NB_IoT_t             proc;
   int                           num_RU;
@@ -538,7 +541,7 @@ typedef struct PHY_VARS_eNB_NB_IoT_s {
   void                          (*do_prach)(struct PHY_VARS_eNB_NB_IoT_s *eNB,int frame,int subframe);
   void                          (*fep)(struct PHY_VARS_eNB_NB_IoT_s *eNB,eNB_rxtx_proc_NB_IoT_t *proc);
   int                           (*td)(struct PHY_VARS_eNB_NB_IoT_s *eNB,int UE_id,int harq_pid,int llr8_flag);
-  int                           (*te)(struct PHY_VARS_eNB_NB_IoT_s *,uint8_t *,uint8_t,NB_IoT_eNB_DLSCH_t *,int,uint8_t,time_stats_t_NB_IoT *,time_stats_t_NB_IoT *,time_stats_t_NB_IoT *);
+  int                           (*te)(struct PHY_VARS_eNB_NB_IoT_s *,uint8_t *,uint8_t,NB_IoT_eNB_DLSCH_t *,int,uint8_t,time_stats_t *,time_stats_t *,time_stats_t *);
   void                          (*proc_uespec_rx)(struct PHY_VARS_eNB_NB_IoT_s *eNB,eNB_rxtx_proc_NB_IoT_t *proc,const relaying_type_t_NB_IoT r_type);
   void                          (*proc_tx)(struct PHY_VARS_eNB_NB_IoT_s *eNB,eNB_rxtx_proc_NB_IoT_t *proc,relaying_type_t_NB_IoT r_type,PHY_VARS_RN_NB_IoT *rn);
   void                          (*tx_fh)(struct PHY_VARS_eNB_NB_IoT_s *eNB,eNB_rxtx_proc_NB_IoT_t *proc);
@@ -550,7 +553,6 @@ typedef struct PHY_VARS_eNB_NB_IoT_s {
   uint32_t                      rx_total_gain_dB;
   NB_IoT_DL_FRAME_PARMS         frame_parms;
   PHY_MEASUREMENTS_eNB_NB_IoT   measurements[NUMBER_OF_eNB_SECTORS_MAX_NB_IoT]; /// Measurement variables
-  IF_Module_NB_IoT_t            *if_inst;
   NB_IoT_eNB_COMMON             common_vars;
   NB_IoT_eNB_SRS                srs_vars[NUMBER_OF_UE_MAX_NB_IoT];
   NB_IoT_eNB_PBCH               pbch;
@@ -671,41 +673,41 @@ typedef struct PHY_VARS_eNB_NB_IoT_s {
   ///
   int                                       hw_timing_advance;
   ///
-  time_stats_t_NB_IoT                       phy_proc;
-  time_stats_t_NB_IoT                       phy_proc_tx;
-  time_stats_t_NB_IoT                       phy_proc_rx;
-  time_stats_t_NB_IoT                       rx_prach;
+  time_stats_t                       phy_proc;
+  time_stats_t                       phy_proc_tx;
+  time_stats_t                       phy_proc_rx;
+  time_stats_t                       rx_prach;
 
-  time_stats_t_NB_IoT                       ofdm_mod_stats;
-  time_stats_t_NB_IoT                       dlsch_encoding_stats;
-  time_stats_t_NB_IoT                       dlsch_modulation_stats;
-  time_stats_t_NB_IoT                       dlsch_scrambling_stats;
-  time_stats_t_NB_IoT                       dlsch_rate_matching_stats;
-  time_stats_t_NB_IoT                       dlsch_turbo_encoding_stats;
-  time_stats_t_NB_IoT                       dlsch_interleaving_stats;
+  time_stats_t                       ofdm_mod_stats;
+  time_stats_t                       dlsch_encoding_stats;
+  time_stats_t                       dlsch_modulation_stats;
+  time_stats_t                       dlsch_scrambling_stats;
+  time_stats_t                       dlsch_rate_matching_stats;
+  time_stats_t                       dlsch_turbo_encoding_stats;
+  time_stats_t                       dlsch_interleaving_stats;
 
-  time_stats_t_NB_IoT                       ofdm_demod_stats;
-  time_stats_t_NB_IoT                       rx_dft_stats;
-  time_stats_t_NB_IoT                       ulsch_channel_estimation_stats;
-  time_stats_t_NB_IoT                       ulsch_freq_offset_estimation_stats;
-  time_stats_t_NB_IoT                       ulsch_decoding_stats;
-  time_stats_t_NB_IoT                       ulsch_demodulation_stats;
-  time_stats_t_NB_IoT                       ulsch_rate_unmatching_stats;
-  time_stats_t_NB_IoT                       ulsch_turbo_decoding_stats;
-  time_stats_t_NB_IoT                       ulsch_deinterleaving_stats;
-  time_stats_t_NB_IoT                       ulsch_demultiplexing_stats;
-  time_stats_t_NB_IoT                       ulsch_llr_stats;
-  time_stats_t_NB_IoT                       ulsch_tc_init_stats;
-  time_stats_t_NB_IoT                       ulsch_tc_alpha_stats;
-  time_stats_t_NB_IoT                       ulsch_tc_beta_stats;
-  time_stats_t_NB_IoT                       ulsch_tc_gamma_stats;
-  time_stats_t_NB_IoT                       ulsch_tc_ext_stats;
-  time_stats_t_NB_IoT                       ulsch_tc_intl1_stats;
-  time_stats_t_NB_IoT                       ulsch_tc_intl2_stats;
+  time_stats_t                       ofdm_demod_stats;
+  time_stats_t                       rx_dft_stats;
+  time_stats_t                       ulsch_channel_estimation_stats;
+  time_stats_t                       ulsch_freq_offset_estimation_stats;
+  time_stats_t                       ulsch_decoding_stats;
+  time_stats_t                       ulsch_demodulation_stats;
+  time_stats_t                       ulsch_rate_unmatching_stats;
+  time_stats_t                       ulsch_turbo_decoding_stats;
+  time_stats_t                       ulsch_deinterleaving_stats;
+  time_stats_t                       ulsch_demultiplexing_stats;
+  time_stats_t                       ulsch_llr_stats;
+  time_stats_t                       ulsch_tc_init_stats;
+  time_stats_t                       ulsch_tc_alpha_stats;
+  time_stats_t                       ulsch_tc_beta_stats;
+  time_stats_t                       ulsch_tc_gamma_stats;
+  time_stats_t                       ulsch_tc_ext_stats;
+  time_stats_t                       ulsch_tc_intl1_stats;
+  time_stats_t                       ulsch_tc_intl2_stats;
 
   #ifdef LOCALIZATION
   /// time state for localization
-  time_stats_t_NB_IoT                       localization_stats;
+  time_stats_t                       localization_stats;
   #endif
 
   int32_t                                   pucch1_stats_cnt[NUMBER_OF_UE_MAX_NB_IoT][10];
@@ -761,7 +763,7 @@ typedef struct PHY_VARS_eNB_NB_IoT_s {
   //TODO: check what should be NUMBER_OF_UE_MAX_NB_IoT value
   NB_IoT_eNB_NPBCH_t        *npbch;
   NB_IoT_eNB_NPDCCH_t       *npdcch[NUMBER_OF_UE_MAX_NB_IoT];
-  NB_IoT_eNB_NDLSCH_t       *ndlsch[NUMBER_OF_UE_MAX_NB_IoT];
+  NB_IoT_eNB_NDLSCH_t       *ndlsch[NUMBER_OF_UE_MAX_NB_IoT][2];
   NB_IoT_eNB_NULSCH_t       *nulsch[NUMBER_OF_UE_MAX_NB_IoT+1]; //nulsch[0] contains the RAR
   NB_IoT_eNB_NDLSCH_t       *ndlsch_SI,*ndlsch_ra, *ndlsch_SIB1;
 
@@ -779,8 +781,6 @@ typedef struct PHY_VARS_eNB_NB_IoT_s {
 typedef struct {
   /// \brief Module ID indicator for this instance
   uint8_t                       Mod_id;
-  /// \brief Component carrier ID for this PHY instance
-  uint8_t                       CC_id;
   /// \brief Mapping of CC_id antennas to cards
   openair0_rf_map               rf_map;
   //uint8_t local_flag;
@@ -824,25 +824,9 @@ typedef struct {
   /// \brief Frame parame before ho used to recover if ho fails.
   NB_IoT_DL_FRAME_PARMS         frame_parms_before_ho;
   NB_IoT_UE_COMMON              common_vars;
-/*
-  LTE_UE_PDSCH     *pdsch_vars[2][NUMBER_OF_CONNECTED_eNB_MAX+1]; // two RxTx Threads
-  LTE_UE_PDSCH_FLP *pdsch_vars_flp[NUMBER_OF_CONNECTED_eNB_MAX+1];
-  LTE_UE_PDSCH     *pdsch_vars_SI[NUMBER_OF_CONNECTED_eNB_MAX+1];
-  LTE_UE_PDSCH     *pdsch_vars_ra[NUMBER_OF_CONNECTED_eNB_MAX+1];
-  LTE_UE_PDSCH     *pdsch_vars_p[NUMBER_OF_CONNECTED_eNB_MAX+1];
-  LTE_UE_PDSCH     *pdsch_vars_MCH[NUMBER_OF_CONNECTED_eNB_MAX];
-  LTE_UE_PBCH      *pbch_vars[NUMBER_OF_CONNECTED_eNB_MAX];
-  LTE_UE_PDCCH     *pdcch_vars[2][NUMBER_OF_CONNECTED_eNB_MAX];
-  LTE_UE_PRACH     *prach_vars[NUMBER_OF_CONNECTED_eNB_MAX];
-  LTE_UE_DLSCH_t   *dlsch[2][NUMBER_OF_CONNECTED_eNB_MAX][2]; // two RxTx Threads
-  LTE_UE_ULSCH_t   *ulsch[NUMBER_OF_CONNECTED_eNB_MAX];
-  LTE_UE_DLSCH_t   *dlsch_SI[NUMBER_OF_CONNECTED_eNB_MAX];
-  LTE_UE_DLSCH_t   *dlsch_ra[NUMBER_OF_CONNECTED_eNB_MAX];
-  LTE_UE_DLSCH_t   *dlsch_p[NUMBER_OF_CONNECTED_eNB_MAX];
-  LTE_UE_DLSCH_t   *dlsch_MCH[NUMBER_OF_CONNECTED_eNB_MAX];
-  // This is for SIC in the UE, to store the reencoded data
-  LTE_eNB_DLSCH_t  *dlsch_eNB[NUMBER_OF_CONNECTED_eNB_MAX];
-*/
+
+  NB_IoT_UE_PDSCH     *pdsch_vars[2][NUMBER_OF_CONNECTED_eNB_MAX+1]; // two RxTx Threads
+  NB_IoT_UE_DLSCH_t   *dlsch[2][NUMBER_OF_CONNECTED_eNB_MAX][2]; // two RxTx Threads
   //Paging parameters
   uint32_t                        IMSImod1024;
   uint32_t                        PF;
@@ -1041,81 +1025,8 @@ typedef struct {
 } PHY_VARS_UE_NB_IoT;
 
 
-/*
-void exit_fun(const char* s);
-
-static inline int wait_on_condition(pthread_mutex_t *mutex,pthread_cond_t *cond,int *instance_cnt,char *name) {
-
-  // lock the mutex, if lock successfully, it would return the 0, the other value means failed
-  if (pthread_mutex_lock(mutex) != 0) {
-    LOG_E( PHY, "[SCHED][eNB] error locking mutex for %s\n",name);
-    exit_fun("nothing to add");
-    return(-1);
-  }
-
-  while (*instance_cnt < 0) {
-    // most of the time the thread is waiting here
-    // proc->instance_cnt_rxtx is -1
-    pthread_cond_wait(cond,mutex); // this unlocks mutex_rxtx while waiting and then locks it again
-  }
-
-  if (pthread_mutex_unlock(mutex) != 0) {
-    LOG_E(PHY,"[SCHED][eNB] error unlocking mutex for %s\n",name);
-    exit_fun("nothing to add");
-    return(-1);
-  }
-  return(0);
-}
-
-static inline int wait_on_busy_condition(pthread_mutex_t *mutex,pthread_cond_t *cond,int *instance_cnt,char *name) {
-
-  if (pthread_mutex_lock(mutex) != 0) {
-    LOG_E( PHY, "[SCHED][eNB] error locking mutex for %s\n",name);
-    exit_fun("nothing to add");
-    return(-1);
-  }
-
-  while (*instance_cnt == 0) {
-    // most of the time the thread will skip this
-    // waits only if proc->instance_cnt_rxtx is 0
-    pthread_cond_wait(cond,mutex); // this unlocks mutex_rxtx while waiting and then locks it again
-  }
-
-  if (pthread_mutex_unlock(mutex) != 0) {
-    LOG_E(PHY,"[SCHED][eNB] error unlocking mutex for %s\n",name);
-    exit_fun("nothing to add");
-    return(-1);
-  }
-  return(0);
-}
-
-static inline int release_thread(pthread_mutex_t *mutex,int *instance_cnt,char *name) {
-
-  if (pthread_mutex_lock(mutex) != 0) {
-    LOG_E( PHY, "[SCHED][eNB] error locking mutex for %s\n",name);
-    exit_fun("nothing to add");
-    return(-1);
-  }
-
-  *instance_cnt=*instance_cnt-1;
-
-  if (pthread_mutex_unlock(mutex) != 0) {
-    LOG_E( PHY, "[SCHED][eNB] error unlocking mutex for %s\n",name);
-    exit_fun("nothing to add");
-    return(-1);
-  }
-  return(0);
-}
-
-*/
 
 #include "PHY/INIT/defs_NB_IoT.h"
 #include "PHY/LTE_REFSIG/defs_NB_IoT.h"
-//#include "PHY/MODULATION/defs.h"
-//#include "PHY/LTE_TRANSPORT/proto.h"
 #include "PHY/LTE_TRANSPORT/proto_NB_IoT.h"
-//#include "PHY/LTE_ESTIMATION/defs.h"
-
-//#include "SIMULATION/ETH_TRANSPORT/defs.h"
-//#endif
 #endif //  __PHY_DEFS__H__

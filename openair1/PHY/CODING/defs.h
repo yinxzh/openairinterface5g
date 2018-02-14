@@ -48,6 +48,10 @@
 /** @addtogroup _PHY_CODING_BLOCKS_
  * @{
 */
+/** \fn load_codinglib(void)
+\brief This function loads the encoder/decoder shared lib, it uses the shared lib loader
+*/
+extern int load_codinglib(void);
 
 /** \fn lte_segmentation(uint8_t *input_buffer,
               uint8_t **output_buffers,

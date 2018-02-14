@@ -58,17 +58,17 @@ int lte_dl_cell_spec_NB_IoT(PHY_VARS_eNB_NB_IoT   *phy_vars_eNB,
   }
 
   // testing if the total number of RBs is even or odd 
-  bandwidth_even_odd = phy_vars_eNB->frame_parms.N_RB_DL % 2;    // 0 even, 1 odd
+  bandwidth_even_odd = phy_vars_eNB->frame_parms.LTE_N_RB_DL % 2;    // 0 even, 1 odd
   
   //mprime = 0; 										// mprime = 0,1 for NB_IoT //  for LTE , maximum number of resources blocks (110) - the total number of RB in the selected bandwidth (.... 15 , 25 , 50, 100)
   k = (nu + phy_vars_eNB->frame_parms.nushift)%6;
 
-  if(RB_IoT_ID < (phy_vars_eNB->frame_parms.N_RB_DL/2))
+  if(RB_IoT_ID < (phy_vars_eNB->frame_parms.LTE_N_RB_DL/2))
   {																																//XXX this mod operation is not valid since the second member is not an integer but double (for the moment i put a cast)
-		NB_IoT_start = phy_vars_eNB->frame_parms.ofdm_symbol_size - 12*(phy_vars_eNB->frame_parms.N_RB_DL/2) - (bandwidth_even_odd*6) + 12*(RB_IoT_ID%((int)(ceil(phy_vars_eNB->frame_parms.N_RB_DL/(float)2))));
+		NB_IoT_start = phy_vars_eNB->frame_parms.ofdm_symbol_size - 12*(phy_vars_eNB->frame_parms.LTE_N_RB_DL/2) - (bandwidth_even_odd*6) + 12*(RB_IoT_ID%((int)(ceil(phy_vars_eNB->frame_parms.LTE_N_RB_DL/(float)2))));
   } else {
 	  	  	  	  	  	  	  	  	  	  	  	  	 //XXX invalid mod operation (put a cast for the moment)
-		NB_IoT_start = (bandwidth_even_odd*6) + 12*(RB_IoT_ID%((int)(ceil(phy_vars_eNB->frame_parms.N_RB_DL/(float)2))));
+		NB_IoT_start = (bandwidth_even_odd*6) + 12*(RB_IoT_ID%((int)(ceil(phy_vars_eNB->frame_parms.LTE_N_RB_DL/(float)2))));
   }
    
   k+=NB_IoT_start;

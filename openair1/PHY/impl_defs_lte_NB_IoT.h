@@ -280,6 +280,101 @@ typedef struct {
   int32_t eNb_id;
 } NB_IoT_UE_COMMON;
 
+typedef struct {
+  /// \brief Received frequency-domain signal after extraction.
+  /// - first index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
+  /// - second index: ? [0..168*N_RB_DL[
+  int32_t **rxdataF_ext;
+  /// \brief Received frequency-domain ue specific pilots.
+  /// - first index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
+  /// - second index: ? [0..12*N_RB_DL[
+  int32_t **rxdataF_uespec_pilots;
+  /// \brief Received frequency-domain signal after extraction and channel compensation.
+  /// - first index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
+  /// - second index: ? [0..168*N_RB_DL[
+  int32_t **rxdataF_comp0;
+  /// \brief Received frequency-domain signal after extraction and channel compensation for the second stream. For the SIC receiver we need to store the history of this for each harq process and round
+  /// - first index: ? [0..7] (hard coded) accessed via \c harq_pid
+  /// - second index: ? [0..7] (hard coded) accessed via \c round
+  /// - third index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
+  /// - fourth index: ? [0..168*N_RB_DL[
+  int32_t **rxdataF_comp1[8][8];
+  /// \brief Downlink channel estimates extracted in PRBS.
+  /// - first index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
+  /// - second index: ? [0..168*N_RB_DL[
+  int32_t **dl_ch_estimates_ext;
+  /// \brief Downlink cross-correlation of MIMO channel estimates (unquantized PMI) extracted in PRBS. For the SIC receiver we need to store the history of this for each harq process and round
+  /// - first index: ? [0..7] (hard coded) accessed via \c harq_pid
+  /// - second index: ? [0..7] (hard coded) accessed via \c round
+  /// - third index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
+  /// - fourth index: ? [0..168*N_RB_DL[
+  int32_t **dl_ch_rho_ext[8][8];
+  /// \brief Downlink beamforming channel estimates in frequency domain.
+  /// - first index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
+  /// - second index: samples? [0..symbols_per_tti*(ofdm_symbol_size+LTE_CE_FILTER_LENGTH)[
+  int32_t **dl_bf_ch_estimates;
+  /// \brief Downlink beamforming channel estimates.
+  /// - first index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
+  /// - second index: ? [0..168*N_RB_DL[
+  int32_t **dl_bf_ch_estimates_ext;
+  /// \brief Downlink cross-correlation of MIMO channel estimates (unquantized PMI) extracted in PRBS.
+  /// - first index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
+  /// - second index: ? [0..168*N_RB_DL[
+  int32_t **dl_ch_rho2_ext;
+  /// \brief Downlink PMIs extracted in PRBS and grouped in subbands.
+  /// - first index: ressource block [0..N_RB_DL[
+  uint8_t *pmi_ext;
+  /// \brief Magnitude of Downlink Channel first layer (16QAM level/First 64QAM level).
+  /// - first index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
+  /// - second index: ? [0..168*N_RB_DL[
+  int32_t **dl_ch_mag0;
+  /// \brief Magnitude of Downlink Channel second layer (16QAM level/First 64QAM level).
+  /// - first index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
+  /// - second index: ? [0..168*N_RB_DL[
+  int32_t **dl_ch_mag1[8][8];
+  /// \brief Magnitude of Downlink Channel, first layer (2nd 64QAM level).
+  /// - first index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
+  /// - second index: ? [0..168*N_RB_DL[
+  int32_t **dl_ch_magb0;
+  /// \brief Magnitude of Downlink Channel second layer (2nd 64QAM level).
+  /// - first index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
+  /// - second index: ? [0..168*N_RB_DL[
+  int32_t **dl_ch_magb1[8][8];
+  /// \brief Cross-correlation of two eNB signals.
+  /// - first index: rx antenna [0..nb_antennas_rx[
+  /// - second index: symbol [0..]
+  int32_t **rho;
+  /// never used... always send dl_ch_rho_ext instead...
+  int32_t **rho_i;
+  /// \brief Pointers to llr vectors (2 TBs).
+  /// - first index: ? [0..1] (hard coded)
+  /// - second index: ? [0..1179743] (hard coded)
+  int16_t *llr[2];
+  /// \f$\log_2(\max|H_i|^2)\f$
+  int16_t log2_maxh;
+    /// \f$\log_2(\max|H_i|^2)\f$ //this is for TM3-4 layer1 channel compensation
+  int16_t log2_maxh0;
+    /// \f$\log_2(\max|H_i|^2)\f$ //this is for TM3-4 layer2 channel commpensation
+  int16_t log2_maxh1;
+  /// \brief LLR shifts for subband scaling.
+  /// - first index: ? [0..168*N_RB_DL[
+  uint8_t *llr_shifts;
+  /// \brief Pointer to LLR shifts.
+  /// - first index: ? [0..168*N_RB_DL[
+  uint8_t *llr_shifts_p;
+  /// \brief Pointers to llr vectors (128-bit alignment).
+  /// - first index: ? [0..0] (hard coded)
+  /// - second index: ? [0..]
+  int16_t **llr128;
+  /// \brief Pointers to llr vectors (128-bit alignment).
+  /// - first index: ? [0..0] (hard coded)
+  /// - second index: ? [0..]
+  int16_t **llr128_2ndstream;
+  //uint32_t *rb_alloc;
+  //uint8_t Qm[2];
+  //MIMO_mode_t mimo_mode;
+} NB_IoT_UE_PDSCH;
+
 /// NPRACH-ParametersList-NB-r13 from 36.331 RRC spec
 typedef struct NPRACH_Parameters_NB_IoT{
   /// the period time for nprach
@@ -394,23 +489,18 @@ typedef struct {
 	uint16_t	 dl_GapDurationCoeff;
 } DL_GapConfig_NB_IoT;
 
+#define NBIOT_INBAND_LTEPCI 0
+#define NBIOT_INBAND_IOTPCI 1
+#define NBIOT_INGUARD       2
+#define NBIOT_STANDALONE    3
+
 
 typedef struct {
-
-  /// Frame type (0 FDD, 1 TDD)
-  NB_IoT_frame_type_t frame_type;
-  /// Number of resource blocks (RB) in DL of the LTE (for knowing the bandwidth)
-  uint8_t N_RB_DL;
-  /// Number of resource blocks (RB) in UL of the LTE ((for knowing the bandwidth)
-  uint8_t N_RB_UL;
-  /// TDD subframe assignment (0-7) (default = 3) (254=RX only, 255=TX only)
-  uint8_t tdd_config;
+  /// for inband, lte bandwidth
+  uint8_t LTE_N_RB_DL;
+  uint8_t LTE_N_RB_UL;
   /// Cell ID
   uint16_t Nid_cell;
-  /// Cyclic Prefix for DL (0=Normal CP, 1=Extended CP)
-  NB_IoT_prefix_type_t Ncp;
-  /// Cyclic Prefix for UL (0=Normal CP, 1=Extended CP)
-  NB_IoT_prefix_type_t Ncp_UL;
   /// shift of pilot position in one RB
   uint8_t nushift;
   /// indicates if node is a UE (NODE=2) or eNB (PRIMARY_CH=0).
@@ -492,7 +582,6 @@ typedef struct {
    * 3 =stand alone
    */
   uint16_t operating_mode;
-
   /*
    * Only for In-band operating mode with same PCI
    * its measured in number of OFDM symbols
@@ -509,60 +598,52 @@ typedef struct {
    */
   uint16_t eutra_NumCRS_ports;
 
+  /* Subcarrier bandwidth
+  0 -> 3.75 kHz
+  1 -> 15 kHz
+  */
+  uint8_t subcarrier_spacing; 
 
 } NB_IoT_DL_FRAME_PARMS;
 
 typedef struct {
-  /// \brief Holds the transmit data in time domain.
-  /// For IFFT_FPGA this points to the same memory as PHY_vars->rx_vars[a].RX_DMA_BUFFER.
-  /// - first index: eNB id [0..2] (hard coded)
-  /// - second index: tx antenna [0..nb_antennas_tx[
-  /// - third index:
-  int32_t **txdata[3];
+  /// \brief Pointers (dynamic) to the received data in the time domain.
+  /// - first index: rx antenna [0..nb_antennas_rx]
+  /// - second index: ? [0..2*ofdm_symbol_size*frame_parms->symbols_per_tti]
+  int32_t **rxdata;
+  /// \brief Pointers (dynamic) to the received data in the frequency domain.
+  /// - first index: rx antenna [0..nb_antennas_rx[
+  /// - second index: ? [0..2*ofdm_symbol_size*frame_parms->symbols_per_tti]
+  int32_t **rxdataF;
   /// \brief holds the transmit data in the frequency domain.
   /// For IFFT_FPGA this points to the same memory as PHY_vars->rx_vars[a].RX_DMA_BUFFER. //?
   /// - first index: eNB id [0..2] (hard coded)
   /// - second index: tx antenna [0..14[ where 14 is the total supported antenna ports.
   /// - third index: sample [0..]
-  int32_t **txdataF[3];
-  /// \brief holds the transmit data after beamforming in the frequency domain.
-  /// For IFFT_FPGA this points to the same memory as PHY_vars->rx_vars[a].RX_DMA_BUFFER. //?
-  /// - first index: eNB id [0..2] (hard coded)
-  /// - second index: tx antenna [0..nb_antennas_tx[
-  /// - third index: sample [0..]
-  int32_t **txdataF_BF[3];
-  /// \brief Holds the received data in time domain.
-  /// Should point to the same memory as PHY_vars->rx_vars[a].RX_DMA_BUFFER.
-  /// - first index: sector id [0..2] (hard coded)
-  /// - second index: rx antenna [0..nb_antennas_rx[
-  /// - third index: sample [0..]
+  int32_t **txdataF; 
+} NB_IoT_eNB_COMMON;
+
+typedef struct {
+  /// \brief Holds the transmit data in the frequency domain.
+  /// - first index: rx antenna [0..nb_antennas_rx[
+  /// - second index: ? [0..2*ofdm_symbol_size*frame_parms->symbols_per_tti[
+  int32_t **txdata;
+  /// \brief Holds the receive data in the frequency domain.
+  /// - first index: rx antenna [0..nb_antennas_rx[
+  /// - second index: ? [0..2*ofdm_symbol_size*frame_parms->symbols_per_tti[
   int32_t **rxdata[3];
   /// \brief Holds the last subframe of received data in time domain after removal of 7.5kHz frequency offset.
-  /// - first index: secotr id [0..2] (hard coded)
-  /// - second index: rx antenna [0..nb_antennas_rx[
-  /// - third index: sample [0..samples_per_tti[
+  /// - first index: rx antenna [0..nb_antennas_rx[
+  /// - second index: sample [0..samples_per_tti[
   int32_t **rxdata_7_5kHz[3];
   /// \brief Holds the received data in the frequency domain.
-  /// - first index: sector id [0..2] (hard coded)
-  /// - second index: rx antenna [0..nb_antennas_rx[
-  /// - third index: ? [0..2*ofdm_symbol_size*frame_parms->symbols_per_tti[
+  /// - first index: rx antenna [0..nb_antennas_rx[
+  /// - second index: ? [0..2*ofdm_symbol_size*frame_parms->symbols_per_tti[
   int32_t **rxdataF[3];
   /// \brief Holds output of the sync correlator.
-  /// - first index: sector id [0..2] (hard coded)
-  /// - second index: sample [0..samples_per_tti*10[
+  /// - first index: sample [0..samples_per_tti*10[
   uint32_t *sync_corr[3];
-  /// \brief Holds the beamforming weights
-  /// - first index: eNB id [0..2] (hard coded)
-  /// - second index: eNB antenna port index (hard coded)
-  /// - third index: tx antenna [0..nb_antennas_tx[
-  /// - fourth index: sample [0..]
-  int32_t **beam_weights[3][15];
-  /// \brief Holds the tdd reciprocity calibration coefficients
-  /// - first index: eNB id [0..2] (hard coded)
-  /// - second index: tx antenna [0..nb_antennas_tx[
-  /// - third index: frequency [0..]
-  int32_t **tdd_calib_coeffs[3];
-} NB_IoT_eNB_COMMON;
+} NB_IoT_RU_COMMON;
 
 typedef struct {
   /// \brief Hold the channel estimates in frequency domain based on SRS.

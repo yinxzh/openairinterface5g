@@ -12,7 +12,7 @@
 //#include "PHY/vars.h"
 #include "PHY/vars_NB_IoT.h"
 #include "PHY/INIT/defs_NB_IoT.h"
-
+#include "SCHED/extern_NB_IoT.h"
 
 void handle_nfapi_dlsch_pdu_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,
 						  		   eNB_rxtx_proc_NB_IoT_t *proc,
@@ -44,7 +44,7 @@ void handle_nfapi_dlsch_pdu_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,
 	   * From spec. TS 36.321 v14.2.o pag 31 --> there is an HARQ process for all the broadcast (so we consider it also for SIB1-NB)
 	   *
 	   */
-
+            
 	  	ndlsch= eNB->ndlsch_SIB1;
 	  	ndlsch->ndlsch_type = SIB1;
 
@@ -144,8 +144,8 @@ void handle_nfapi_dlsch_pdu_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,
                       LOG_E(PHY, "handle_nfapi_dlsch_pdu_NB_IoT: UE_id %d invalid, should be (0-%d)\n", UE_id ,NUMBER_OF_UE_MAX_NB_IoT); 
                       return;
                   }
-	  	  ndlsch = eNB->ndlsch[UE_id];
-	  	  ndlsch_harq     = eNB->ndlsch[(uint8_t)UE_id]->harq_process;
+	  	  ndlsch = eNB->ndlsch[UE_id][0];
+	  	  ndlsch_harq     = ndlsch->harq_process;
 	  	  AssertFatal(ndlsch_harq!=NULL,"dlsch_harq for ue specific is null\n");
 
 	  	  ndlsch->npdsch_start_symbol = rel13->start_symbol;
@@ -171,7 +171,6 @@ void handle_nfapi_dlsch_pdu_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB,
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-// do the schedule response and trigger the TX
 void schedule_response_NB_IoT(Sched_Rsp_NB_IoT_t *Sched_INFO)
 {
 
@@ -210,9 +209,9 @@ void schedule_response_NB_IoT(Sched_Rsp_NB_IoT_t *Sched_INFO)
   {
 	  if(eNB->ndlsch[i])
 	  {
-		  eNB->ndlsch[i]->harq_process->round=0; // may not needed
+		  eNB->ndlsch[i][0]->harq_process->round=0; // may not needed
 		  /*clear previous allocation information for all UEs*/
-		  eNB->ndlsch[i]->subframe_tx[subframe] = 0;
+		  eNB->ndlsch[i][0]->subframe_tx[subframe] = 0;
 	  }
 
 	  /*clear the DCI allocation maps for new subframe*/

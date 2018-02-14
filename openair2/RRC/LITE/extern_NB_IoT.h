@@ -62,7 +62,7 @@ extern uint16_t 							T310_NB_IoT[8];
 extern uint16_t 							T311_NB_IoT[8];
 extern uint16_t 							N310_NB_IoT[8];
 extern uint16_t 							N311_NB_IoT[8];
-
+extern uint8_t *get_NB_IoT_MIB(struct eNB_RRC_INST_NB_IoT_s *nb_iot_rrc);
 #endif
 
 

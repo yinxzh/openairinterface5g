@@ -53,6 +53,15 @@ int generate_sss_NB_IoT(int32_t                **txdataF,
                         unsigned short         frame_number,        // new attribute (Get value from higher layer), it does not exist for LTE
                         unsigned short         RB_IoT_ID);          // new attribute (values are between 0.. Max_RB_number-1), it does not exist for LTE
 
+//*****************Vincent part for Cell ID estimation from NSSS ******************// 
+
+int rx_nsss_NB_IoT(PHY_VARS_UE_NB_IoT *ue,int32_t *tot_metric); 
+
+int nsss_extract_NB_IoT(PHY_VARS_UE_NB_IoT *ue,
+            NB_IoT_DL_FRAME_PARMS *frame_parms,
+            int32_t **nsss_ext,
+            int l);
+
 //NRS
 
 void generate_pilots_NB_IoT(PHY_VARS_eNB_NB_IoT  *phy_vars_eNB,
@@ -206,9 +215,9 @@ int32_t dlsch_encoding_NB_IoT(unsigned char              *a,
                               NB_IoT_eNB_DLSCH_t         *dlsch,
                               uint8_t                    Nsf,        // number of subframes required for npdsch pdu transmission calculated from Isf (3GPP spec table)
                               unsigned int               G,          // G (number of available RE) is implicitly multiplied by 2 (since only QPSK modulation)
-                              time_stats_t_NB_IoT        *rm_stats,
-                              time_stats_t_NB_IoT        *te_stats,
-                              time_stats_t_NB_IoT        *i_stats);
+                              time_stats_t               *rm_stats,
+                              time_stats_t               *te_stats,
+                              time_stats_t               *i_stats);
 
 
 void rx_ulsch_NB_IoT(PHY_VARS_eNB_NB_IoT      *phy_vars_eNB,
@@ -218,10 +227,13 @@ void rx_ulsch_NB_IoT(PHY_VARS_eNB_NB_IoT      *phy_vars_eNB,
                      NB_IoT_eNB_NULSCH_t      **ulsch,
                      uint8_t                  cooperation_flag);
 
+
+
+
 void ulsch_extract_rbs_single_NB_IoT(int32_t                **rxdataF,
                                      int32_t                **rxdataF_ext,
                                      // uint32_t               first_rb, 
-                                     uint32_t               UL_RB_ID_NB_IoT, // index of UL NB_IoT resource block 
+                                     //uint32_t               UL_RB_ID_NB_IoT, // index of UL NB_IoT resource block 
                                      uint8_t                N_sc_RU, // number of subcarriers in UL
 				     uint32_t               I_sc, // subcarrier indication field
                                      uint32_t               nb_rb,
@@ -251,5 +263,100 @@ uint16_t get_UL_sc_start_NB_IoT(uint16_t I_sc);
 void generate_grouphop_NB_IoT(NB_IoT_DL_FRAME_PARMS *frame_parms); 
 
 void init_ul_hopping_NB_IoT(NB_IoT_DL_FRAME_PARMS *frame_parms); 
+
+void rotate_single_carrier_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB, 
+                                  NB_IoT_DL_FRAME_PARMS *frame_parms,
+                                  int32_t **rxdataF_comp, 
+                                  uint8_t UE_id,
+                                  uint8_t symbol, 
+                                  uint8_t Qm); 
+
+void fill_rbs_zeros_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB, 
+                                  NB_IoT_DL_FRAME_PARMS *frame_parms,
+                                  int32_t **rxdataF_comp, 
+                                  uint8_t UE_id,
+                                  uint8_t symbol); 
+
+int32_t ulsch_bpsk_llr_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB, 
+                              NB_IoT_DL_FRAME_PARMS *frame_parms,
+                              int32_t **rxdataF_comp,
+                              int16_t *ulsch_llr,
+                              uint8_t symbol, 
+                              uint8_t uint8_t, 
+                              int16_t **llrp); 
+
+
+int32_t ulsch_qpsk_llr_NB_IoT(
+                              NB_IoT_DL_FRAME_PARMS *frame_parms,
+                              int32_t **rxdataF_comp,
+                              int16_t *ulsch_llr, 
+                              uint8_t symbol, 
+                              uint8_t nb_rb, 
+                              int16_t **llrp); 
+
+void rotate_bpsk_NB_IoT(PHY_VARS_eNB_NB_IoT *eNB, 
+                        NB_IoT_DL_FRAME_PARMS *frame_parms,
+                        int32_t **rxdataF_comp, 
+                        uint8_t UE_id,
+                        uint8_t symbol); 
+//************************************************************// 
+
 //************************************************************//
+//*****************Vincent part for DLSCH demodulation ******************//
+
+int rx_npdsch_NB_IoT(PHY_VARS_UE_NB_IoT *ue,
+                      unsigned char eNB_id,
+                      unsigned char eNB_id_i, //if this == ue->n_connected_eNB, we assume MU interference
+                      uint32_t frame,
+                      uint8_t subframe,
+                      unsigned char symbol,
+                      unsigned char first_symbol_flag,
+                      unsigned char i_mod,
+                      unsigned char harq_pid); 
+
+unsigned short dlsch_extract_rbs_single_NB_IoT(int **rxdataF,
+                                        int **dl_ch_estimates,
+                                        int **rxdataF_ext,
+                                        int **dl_ch_estimates_ext,
+                                        unsigned short pmi,
+                                        unsigned char *pmi_ext,
+                                        unsigned int *rb_alloc,
+                                        unsigned char symbol,
+                                        unsigned char subframe,
+                                        uint32_t frame,
+                                        uint32_t high_speed_flag,
+                                        NB_IoT_DL_FRAME_PARMS *frame_parms); 
+
+void dlsch_channel_level_NB_IoT(int **dl_ch_estimates_ext,
+                                NB_IoT_DL_FRAME_PARMS *frame_parms,
+                                int32_t *avg,
+                                uint8_t symbol,
+                                unsigned short nb_rb); 
+
+void dlsch_channel_compensation_NB_IoT(int **rxdataF_ext,
+                                        int **dl_ch_estimates_ext,
+                                        int **dl_ch_mag,
+                                        int **dl_ch_magb,
+                                        int **rxdataF_comp,
+                                        int **rho,
+                                        NB_IoT_DL_FRAME_PARMS *frame_parms,
+                                        unsigned char symbol,
+                                        uint8_t first_symbol_flag,
+                                        unsigned char mod_order,
+                                        unsigned short nb_rb,
+                                        unsigned char output_shift,
+                                        PHY_MEASUREMENTS_NB_IoT *measurements); 
+
+int dlsch_qpsk_llr_NB_IoT(NB_IoT_DL_FRAME_PARMS *frame_parms,
+                           int32_t **rxdataF_comp,
+                           int16_t *dlsch_llr,
+                           uint8_t symbol,
+                           uint8_t first_symbol_flag,
+                           uint16_t nb_rb,
+                           int16_t **llr32p,
+                           uint8_t beamforming_mode); 
+
+//************************************************************//
+
+
 #endif

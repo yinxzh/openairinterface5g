@@ -1003,24 +1003,27 @@ set(SECU_CN_SRC
 add_library(SECU_CN ${SECU_CN_SRC})
 
 # Scheduler
-################################"
+################################
+set(SCHED_NBIOT_SRC
+  ${OPENAIR1_DIR}/SCHED/phy_procedures_lte_eNb_NB_IoT.c
+  ${OPENAIR1_DIR}/SCHED/phy_procedures_lte_common_NB_IoT.c
+  ${OPENAIR1_DIR}/SCHED/IF_Module_L1_primitives_NB_IoT.c
+  ${OPENAIR1_DIR}/SCHED/pusch_pc_NB_IoT.c
+)
+
 set(SCHED_SRC
   ${OPENAIR1_DIR}/SCHED/fapi_l1.c
-  ${OPENAIR1_DIR}/SCHED/IF_Module_L1_primitives_NB_IoT.c
   ${OPENAIR1_DIR}/SCHED/phy_procedures_lte_eNb.c
-  ${OPENAIR1_DIR}/SCHED/phy_procedures_lte_eNb_NB_IoT.c
   ${OPENAIR1_DIR}/SCHED/phy_procedures_lte_ue.c
   ${OPENAIR1_DIR}/SCHED/phy_procedures_lte_common.c
-  ${OPENAIR1_DIR}/SCHED//phy_procedures_lte_common_NB_IoT.c
   ${OPENAIR1_DIR}/SCHED/ru_procedures.c
 #  ${OPENAIR1_DIR}/SCHED/phy_mac_stub.c
   ${OPENAIR1_DIR}/SCHED/pucch_pc.c
   ${OPENAIR1_DIR}/SCHED/pusch_pc.c
-  ${OPENAIR1_DIR}/SCHED/pusch_pc_NB_IoT.c
   ${OPENAIR1_DIR}/SCHED/srs_pc.c
 )
 add_library(SCHED_LIB ${SCHED_SRC})
-
+add_library(SCHED_NBIOT_LIB ${SCHED_NBIOT_SRC})
 # Layer 1
 #############################
 set(PHY_TURBOSRC
@@ -1848,6 +1851,7 @@ add_executable(lte-softmodem
   ${OPENAIR_TARGETS}/RT/USER/rt_wrapper.c
   ${OPENAIR_TARGETS}/RT/USER/lte-ue.c
   ${OPENAIR_TARGETS}/RT/USER/lte-enb.c
+  ${OPENAIR_TARGETS}/RT/USER/nbiot-enb.c
   ${OPENAIR_TARGETS}/RT/USER/lte-ru.c
   ${OPENAIR_TARGETS}/RT/USER/lte-softmodem.c
   ${OPENAIR1_DIR}/SIMULATION/TOOLS/taus.c
@@ -1867,10 +1871,10 @@ add_executable(lte-softmodem
   ${SHLIB_LOADER_SOURCES}
   )
 
-target_link_libraries (lte-softmodem -ldl 
+target_link_libraries (lte-softmodem
   -Wl,--start-group
-  RRC_LIB S1AP_LIB S1AP_ENB GTPV1U SECU_CN SECU_OSA UTIL HASHTABLE SCTP_CLIENT UDP SCHED_LIB PHY LFDS L2 ${MSC_LIB} ${RAL_LIB} ${NAS_UE_LIB} ${ITTI_LIB} ${MIH_LIB} ${FLPT_MSG_LIB} ${ASYNC_IF_LIB} ${FLEXRAN_AGENT_LIB} LFDS7
-  -Wl,--end-group )
+  RRC_LIB S1AP_LIB S1AP_ENB GTPV1U SECU_CN SECU_OSA UTIL HASHTABLE SCTP_CLIENT UDP SCHED_LIB PHY SCHED_NBIOT_LIB LFDS L2 ${MSC_LIB} ${RAL_LIB} ${NAS_UE_LIB} ${ITTI_LIB} ${MIH_LIB} ${FLPT_MSG_LIB} ${ASYNC_IF_LIB} ${FLEXRAN_AGENT_LIB} LFDS7
+  -Wl,--end-group  -ldl)
 
 target_link_libraries (lte-softmodem ${LIBXML2_LIBRARIES})
 target_link_libraries (lte-softmodem pthread m ${CONFIG_LIBRARIES} rt crypt ${CRYPTO_LIBRARIES} ${OPENSSL_LIBRARIES} ${NETTLE_LIBRARIES} sctp  ${XFORMS_LIBRARIES} ${PROTOBUF_LIB}  ${CMAKE_DL_LIBS} ${LIBYAML_LIBRARIES})
@@ -1904,7 +1908,7 @@ add_executable(lte-softmodem-nos1
   )
 target_link_libraries (lte-softmodem-nos1
   -Wl,--start-group
-  RRC_LIB SECU_CN SECU_OSA UTIL HASHTABLE SCHED_LIB PHY LFDS L2 ${MSC_LIB} ${RAL_LIB} ${ITTI_LIB} ${MIH_LIB} ${FLPT_MSG_LIB} ${ASYNC_IF_LIB} ${FLEXRAN_AGENT_LIB} LFDS7
+  RRC_LIB SECU_CN SECU_OSA UTIL HASHTABLE SCHED_LIB SCHED_NBIOT_LIB PHY LFDS L2 ${MSC_LIB} ${RAL_LIB} ${ITTI_LIB} ${MIH_LIB} ${FLPT_MSG_LIB} ${ASYNC_IF_LIB} ${FLEXRAN_AGENT_LIB} LFDS7
   -Wl,--end-group )
 
 target_link_libraries (lte-softmodem-nos1 ${LIBXML2_LIBRARIES})

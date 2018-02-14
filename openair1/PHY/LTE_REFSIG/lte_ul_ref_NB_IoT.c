@@ -38,18 +38,18 @@
 #include "PHY/LTE_REFSIG/defs_NB_IoT.h"
 #include "PHY/defs_L1_NB_IoT.h"
 
-uint16_t dftsizes[33] = {12,24,36,48,60,72,96,108,120,144,180,192,216,240,288,300,324,360,384,432,480,540,576,600,648,720,864,900,960,972,1080,1152,1200};
+uint16_t nbiot_dftsizes[33] = {12,24,36,48,60,72,96,108,120,144,180,192,216,240,288,300,324,360,384,432,480,540,576,600,648,720,864,900,960,972,1080,1152,1200};
 
-uint16_t ref_primes[33] = {11,23,31,47,59,71,89,107,113,139,179,191,211,239,283,293,317,359,383,431,479,523,571,599,647,719,863,887,953,971,1069,1151,1193};
+uint16_t nbiot_ref_primes[33] = {11,23,31,47,59,71,89,107,113,139,179,191,211,239,283,293,317,359,383,431,479,523,571,599,647,719,863,887,953,971,1069,1151,1193};
 
-uint16_t sequence_length[4] = {2048,3,6,12}; //the "32" value corresponds to the max gold sequence length 
+uint16_t nbiot_sequence_length[4] = {2048,3,6,12}; //the "32" value corresponds to the max gold sequence length 
 
 // int16_t *ul_ref_sigs[30][33];
-int16_t *ul_ref_sigs_rx[30][4]; //these contain the sequences in repeated format and quantized to QPSK ifdef IFFT_FPGA
-uint16_t u_max[4] = {16,12,14,30}; // maximum u value, see 36.211, Section 10.1.4
+int16_t *nbiot_ul_ref_sigs_rx[30][4]; //these contain the sequences in repeated format and quantized to QPSK ifdef IFFT_FPGA
+uint16_t nbiot_u_max[4] = {16,12,14,30}; // maximum u value, see 36.211, Section 10.1.4
 
 /* 36.211 table 5.5.1.2-1 */
-char ref12[360] = {-1,1,3,-3,3,3,1,1,3,1,-3,3,1,1,3,3,3,-1,1,-3,-3,1,-3,3,1,1,-3,-3,-3,-1,-3,-3,1,-3,1,-1,-1,1,1,1,1,-1,-3,-3,1,-3,3,-1,-1,3,1,-1,1,-1,-3,-1,1,-1,1,3,1,-3,3,-1,-1,1,1,-1,-1,3,-3,1,-1,3,-3,-3,-3,3,1,-1,3,3,-3,1,-3,-1,-1,-1,1,-3,3,-1,1,-3,3,1,1,-3,3,1,-1,-1,-1,1,1,3,-1,1,1,-3,-1,3,3,-1,-3,1,1,1,1,1,-1,3,-1,1,1,-3,-3,-1,-3,-3,3,-1,3,1,-1,-1,3,3,-3,1,3,1,3,3,1,-3,1,1,-3,1,1,1,-3,-3,-3,1,3,3,-3,3,-3,1,1,3,-1,-3,3,3,-3,1,-1,-3,-1,3,1,3,3,3,-1,1,3,-1,1,-3,-1,-1,1,1,3,1,-1,-3,1,3,1,-1,1,3,3,3,-1,-1,3,-1,-3,1,1,3,-3,3,-3,-3,3,1,3,-1,-3,3,1,1,-3,1,-3,-3,-1,-1,1,-3,-1,3,1,3,1,-1,-1,3,-3,-1,-3,-1,-1,-3,1,1,1,1,3,1,-1,1,-3,-1,-1,3,-1,1,-3,-3,-3,-3,-3,1,-1,-3,1,1,-3,-3,-3,-3,-1,3,-3,1,-3,3,1,1,-1,-3,-1,-3,1,-1,1,3,-1,1,1,1,3,1,3,3,-1,1,-1,-3,-3,1,1,-3,3,3,1,3,3,1,-3,-1,-1,3,1,3,-3,-3,3,-3,1,-1,-1,3,-1,-3,-3,-1,-3,-1,-3,3,1,-1,1,3,-3,-3,-1,3,-3,3,-1,3,3,-3,3,3,-1,-1,3,-3,-3,-1,-1,-3,-1,3,-3,3,1,-1};
+char nbiot_ref12[360] = {-1,1,3,-3,3,3,1,1,3,1,-3,3,1,1,3,3,3,-1,1,-3,-3,1,-3,3,1,1,-3,-3,-3,-1,-3,-3,1,-3,1,-1,-1,1,1,1,1,-1,-3,-3,1,-3,3,-1,-1,3,1,-1,1,-1,-3,-1,1,-1,1,3,1,-3,3,-1,-1,1,1,-1,-1,3,-3,1,-1,3,-3,-3,-3,3,1,-1,3,3,-3,1,-3,-1,-1,-1,1,-3,3,-1,1,-3,3,1,1,-3,3,1,-1,-1,-1,1,1,3,-1,1,1,-3,-1,3,3,-1,-3,1,1,1,1,1,-1,3,-1,1,1,-3,-3,-1,-3,-3,3,-1,3,1,-1,-1,3,3,-3,1,3,1,3,3,1,-3,1,1,-3,1,1,1,-3,-3,-3,1,3,3,-3,3,-3,1,1,3,-1,-3,3,3,-3,1,-1,-3,-1,3,1,3,3,3,-1,1,3,-1,1,-3,-1,-1,1,1,3,1,-1,-3,1,3,1,-1,1,3,3,3,-1,-1,3,-1,-3,1,1,3,-3,3,-3,-3,3,1,3,-1,-3,3,1,1,-3,1,-3,-3,-1,-1,1,-3,-1,3,1,3,1,-1,-1,3,-3,-1,-3,-1,-1,-3,1,1,1,1,3,1,-1,1,-3,-1,-1,3,-1,1,-3,-3,-3,-3,-3,1,-1,-3,1,1,-3,-3,-3,-3,-1,3,-3,1,-3,3,1,1,-1,-3,-1,-3,1,-1,1,3,-1,1,1,1,3,1,3,3,-1,1,-1,-3,-3,1,1,-3,3,3,1,3,3,1,-3,-1,-1,3,1,3,-3,-3,3,-3,1,-1,-1,3,-1,-3,-3,-1,-3,-1,-3,3,1,-1,1,3,-3,-3,-1,3,-3,3,-1,3,3,-3,3,3,-1,-1,3,-3,-3,-1,-1,-3,-1,3,-3,3,1,-1};
 
 /* 36.211 table 5.5.1.2-2 */
 // char ref24[720] = {
@@ -57,14 +57,14 @@ char ref12[360] = {-1,1,3,-3,3,3,1,1,3,1,-3,3,1,1,3,3,3,-1,1,-3,-3,1,-3,3,1,1,-3
 // }; 
 
 // 36.211, Section 10.1.4.1.2, Table 10.1.4.1.2-1 
-char ref3[36] = {1,  -3,  -3, 1, -3,  -1, 1, -3,  3, 1, -1,  -1, 1, -1,  1, 1, -1,  3, 1, 1, -3, 1, 1, -1, 1, 1, 3, 1, 3, -1, 1, 3, 1, 1, 3, 3 }; 
+char nbiot_ref3[36] = {1,  -3,  -3, 1, -3,  -1, 1, -3,  3, 1, -1,  -1, 1, -1,  1, 1, -1,  3, 1, 1, -3, 1, 1, -1, 1, 1, 3, 1, 3, -1, 1, 3, 1, 1, 3, 3 }; 
 
 // 36.211, Section 10.1.4.1.2, Table 10.1.4.1.2-2 
-char ref6[84] = {1,  1, 1, 1, 3, -3, 1, 1, 3, 1, -3,  3, 1, -1,  -1,  -1,  1, -3, 1, -1,  3, -3,  -1,  -1, 1, 3, 1, -1,  -1,  3, 1, -3,  -3,  1, 3, 1, -1,  -1,  1, -3,  -3,  -1, 
+char nbiot_ref6[84] = {1,  1, 1, 1, 3, -3, 1, 1, 3, 1, -3,  3, 1, -1,  -1,  -1,  1, -3, 1, -1,  3, -3,  -1,  -1, 1, 3, 1, -1,  -1,  3, 1, -3,  -3,  1, 3, 1, -1,  -1,  1, -3,  -3,  -1, 
                 -1,  -1,  -1,  3, -3,  -1, 3, -1,  1, -3,  -3,  3, 3, -1,  3, -3,  -1,  1, 3, -3,  3, -1,  3, 3, -3,  1, 3, 1, -3,  -1, -3,  1, -3,  3, -3,  -1, -3,  3, -3,  1, 1, -3};
 
 // NB-IoT: 36.211, Section 10.1.4.1.1, Table 10.1.4.1.1-1
-int16_t w_n[256] = {
+int16_t nbiot_w_n[256] = {
   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
   1,-1, 1,-1, 1,-1, 1,-1, 1,-1, 1,-1, 1,-1, 1,-1,
   1, 1,-1,-1, 1, 1,-1,-1, 1, 1,-1,-1, 1, 1,-1,-1,
@@ -157,7 +157,7 @@ void generate_ul_ref_sigs_rx_NB_IoT(void)
   int16_t  a;
   int16_t   qpsk[2]; 
   unsigned int x1, x2=35; // NB-IoT: defined in 36.211, Section 10.1.4.1.1
-  int16_t ref_sigs_sc1[2*sequence_length[0]]; 
+  int16_t ref_sigs_sc1[2*nbiot_sequence_length[0]]; 
   uint32_t s; 
 
   a = (ONE_OVER_SQRT2_Q15_NB_IoT)>>15;
@@ -166,23 +166,23 @@ void generate_ul_ref_sigs_rx_NB_IoT(void)
   s = lte_gold_generic_NB_IoT(&x1, &x2, 1);
 
   for (index_Nsc_RU=0; index_Nsc_RU<4; index_Nsc_RU++) {
-    for (u=0; u<u_max[index_Nsc_RU]; u++) { 
-      // ul_ref_sigs_rx[u][index_Nsc_RU] = (int16_t*)malloc16(2*sizeof(int16_t)*sequence_length[index_Nsc_RU]); 
+    for (u=0; u<nbiot_u_max[index_Nsc_RU]; u++) { 
+      // ul_ref_sigs_rx[u][index_Nsc_RU] = (int16_t*)malloc16(2*sizeof(int16_t)*nbiot_sequence_length[index_Nsc_RU]); 
       switch (index_Nsc_RU){
         case 0: // 36.211, Section 10.1.4.1.1
-          ul_ref_sigs_rx[u][index_Nsc_RU] = (int16_t*)malloc16(sizeof(int16_t)*(2*sequence_length[index_Nsc_RU]*12+24)); // *12 is mandatory to fit channel estimation functions
+          nbiot_ul_ref_sigs_rx[u][index_Nsc_RU] = (int16_t*)malloc16(sizeof(int16_t)*(2*nbiot_sequence_length[index_Nsc_RU]*12+24)); // *12 is mandatory to fit channel estimation functions
           // NB-IoT: for same reason, +24 is added in order to fit the possible subcarrier start shift when index_Nsc_RU = 0, 1, 2 --> see ul_sc_start in channel estimation function
-          for (n=0; n<sequence_length[index_Nsc_RU]; n++) {
-            ref_sigs_sc1[n<<1]    = qpsk[(s>>n)&1]*w_n[16*u+n%16]; 
+          for (n=0; n<nbiot_sequence_length[index_Nsc_RU]; n++) {
+            ref_sigs_sc1[n<<1]    = qpsk[(s>>n)&1]*nbiot_w_n[16*u+n%16]; 
             // ref_sigs_sc1[1+(n<<1)] = qpsk[(s>>n)&1]*w_n[16*u+n%16];
             ref_sigs_sc1[1+(n<<1)] = ref_sigs_sc1[n<<1];  
           }
           if (npusch_format==1){
-            for (n=0; n<sequence_length[index_Nsc_RU]; n++) {
+            for (n=0; n<nbiot_sequence_length[index_Nsc_RU]; n++) {
               // ul_ref_sigs_rx[u][index_Nsc_RU][n<<1]    = ref_sigs_sc1[n<<1];
               // ul_ref_sigs_rx[u][index_Nsc_RU][1+(n<<1)]= ref_sigs_sc1[1+(n<<1)];
-              ul_ref_sigs_rx[u][index_Nsc_RU][12*(n<<1)+24]    = ref_sigs_sc1[n<<1]; // ul_ref_sigs_rx is filled every 12 RE, real part
-              ul_ref_sigs_rx[u][index_Nsc_RU][1+12*(n<<1)+24]= ref_sigs_sc1[1+(n<<1)]; // ul_ref_sigs_rx is filled every 12 RE, imaginary part    
+              nbiot_ul_ref_sigs_rx[u][index_Nsc_RU][12*(n<<1)+24]    = ref_sigs_sc1[n<<1]; // ul_ref_sigs_rx is filled every 12 RE, real part
+              nbiot_ul_ref_sigs_rx[u][index_Nsc_RU][1+12*(n<<1)+24]= ref_sigs_sc1[1+(n<<1)]; // ul_ref_sigs_rx is filled every 12 RE, imaginary part    
             }
           }
           if (npusch_format==2){// NB-IoT: to be implemented
@@ -190,28 +190,28 @@ void generate_ul_ref_sigs_rx_NB_IoT(void)
           }
           break; 
         case 1: // 36.211, Section 10.1.4.1.2
-          ul_ref_sigs_rx[u][index_Nsc_RU] = (int16_t*)malloc16(sizeof(int16_t)*(2*12+24)); // *12 is mandatory to fit channel estimation functions
-          for (n=0; n<sequence_length[index_Nsc_RU]; n++) {
+          nbiot_ul_ref_sigs_rx[u][index_Nsc_RU] = (int16_t*)malloc16(sizeof(int16_t)*(2*12+24)); // *12 is mandatory to fit channel estimation functions
+          for (n=0; n<nbiot_sequence_length[index_Nsc_RU]; n++) {
             // ul_ref_sigs_rx[u][index_Nsc_RU][n<<1]    = (int16_t)(floor(32767*cos(M_PI*ref3[(u*3) + n]/4 + alpha3[threetnecyclicshift])));
             // ul_ref_sigs_rx[u][index_Nsc_RU][1+(n<<1)]= (int16_t)(floor(32767*sin(M_PI*ref3[(u*3) + n]/4 + alpha3[threetnecyclicshift]))); 
-            ul_ref_sigs_rx[u][index_Nsc_RU][(n<<1)+24]    = (int16_t)(floor(32767*cos(M_PI*ref3[(u*3) + n]/4 )));
-            ul_ref_sigs_rx[u][index_Nsc_RU][1+(n<<1)+24]= (int16_t)(floor(32767*sin(M_PI*ref3[(u*3) + n]/4 )));
+            nbiot_ul_ref_sigs_rx[u][index_Nsc_RU][(n<<1)+24]    = (int16_t)(floor(32767*cos(M_PI*nbiot_ref3[(u*3) + n]/4 )));
+            nbiot_ul_ref_sigs_rx[u][index_Nsc_RU][1+(n<<1)+24]= (int16_t)(floor(32767*sin(M_PI*nbiot_ref3[(u*3) + n]/4 )));
           }
           break; 
         case 2:
-          ul_ref_sigs_rx[u][index_Nsc_RU] = (int16_t*)malloc16(sizeof(int16_t)*(2*12+24)); // *12 is mandatory to fit channel estimation functions
-          for (n=0; n<sequence_length[index_Nsc_RU]; n++) {
-            // ul_ref_sigs_rx[u][index_Nsc_RU][n<<1]    = (int16_t)(floor(32767*cos(M_PI*ref6[(u*6) + n]/4 + alpha6[sixtonecyclichift])));
-            // ul_ref_sigs_rx[u][index_Nsc_RU][1+(n<<1)]= (int16_t)(floor(32767*sin(M_PI*ref6[(u*6) + n]/4 + alpha6[sixtonecyclichift])));
-            ul_ref_sigs_rx[u][index_Nsc_RU][(n<<1)+24]    = (int16_t)(floor(32767*cos(M_PI*ref6[(u*6) + n]/4 )));
-            ul_ref_sigs_rx[u][index_Nsc_RU][1+(n<<1)+24]= (int16_t)(floor(32767*sin(M_PI*ref6[(u*6) + n]/4 )));
+          nbiot_ul_ref_sigs_rx[u][index_Nsc_RU] = (int16_t*)malloc16(sizeof(int16_t)*(2*12+24)); // *12 is mandatory to fit channel estimation functions
+          for (n=0; n<nbiot_sequence_length[index_Nsc_RU]; n++) {
+            // ul_ref_sigs_rx[u][index_Nsc_RU][n<<1]    = (int16_t)(floor(32767*cos(M_PI*nbiot_ref6[(u*6) + n]/4 + alpha6[sixtonecyclichift])));
+            // ul_ref_sigs_rx[u][index_Nsc_RU][1+(n<<1)]= (int16_t)(floor(32767*sin(M_PI*nbiot_ref6[(u*6) + n]/4 + alpha6[sixtonecyclichift])));
+            nbiot_ul_ref_sigs_rx[u][index_Nsc_RU][(n<<1)+24]    = (int16_t)(floor(32767*cos(M_PI*nbiot_ref6[(u*6) + n]/4 )));
+            nbiot_ul_ref_sigs_rx[u][index_Nsc_RU][1+(n<<1)+24]= (int16_t)(floor(32767*sin(M_PI*nbiot_ref6[(u*6) + n]/4 )));
           }
           break; 
         case 3:
-          ul_ref_sigs_rx[u][index_Nsc_RU] = (int16_t*)malloc16(sizeof(int16_t)*(2*12+24)); // *12 is mandatory to fit channel estimation functions
-          for (n=0; n<sequence_length[index_Nsc_RU]; n++) {
-            ul_ref_sigs_rx[u][index_Nsc_RU][n<<1]    = (int16_t)(floor(32767*cos(M_PI*ref12[(u*12) + n]/4)));
-            ul_ref_sigs_rx[u][index_Nsc_RU][1+(n<<1)]= (int16_t)(floor(32767*sin(M_PI*ref12[(u*12) + n]/4)));
+          nbiot_ul_ref_sigs_rx[u][index_Nsc_RU] = (int16_t*)malloc16(sizeof(int16_t)*(2*12+24)); // *12 is mandatory to fit channel estimation functions
+          for (n=0; n<nbiot_sequence_length[index_Nsc_RU]; n++) {
+            nbiot_ul_ref_sigs_rx[u][index_Nsc_RU][n<<1]    = (int16_t)(floor(32767*cos(M_PI*nbiot_ref12[(u*12) + n]/4)));
+            nbiot_ul_ref_sigs_rx[u][index_Nsc_RU][1+(n<<1)]= (int16_t)(floor(32767*sin(M_PI*nbiot_ref12[(u*12) + n]/4)));
           }
           break; 
       }
@@ -228,24 +228,13 @@ void free_ul_ref_sigs_NB_IoT(void)
 
   for (index_Nsc_RU=0; index_Nsc_RU<4; index_Nsc_RU++) {
     for (u=0; u<30; u++) {
-        if (ul_ref_sigs_rx[u][index_Nsc_RU])
-          free16(ul_ref_sigs_rx[u][index_Nsc_RU],4*sizeof(int16_t)*sequence_length[index_Nsc_RU]);
+        if (nbiot_ul_ref_sigs_rx[u][index_Nsc_RU])
+          free16(nbiot_ul_ref_sigs_rx[u][index_Nsc_RU],4*sizeof(int16_t)*nbiot_sequence_length[index_Nsc_RU]);
     }
   }
 }
 
-// void free_ul_ref_sigs(void)
-// {
 
-//   unsigned int u,index_Nsc_RU;
-
-//   for (index_Nsc_RU=0; index_Nsc_RU<4; index_Nsc_RU++) {
-//     for (u=0; u<30; u++) {
-//         if (ul_ref_sigs_rx[u][index_Nsc_RU])
-//           free16(ul_ref_sigs_rx[u][index_Nsc_RU],4*sizeof(int16_t)*sequence_length[index_Nsc_RU]);
-//     }
-//   }
-// }
 
 #ifdef MAIN
 main()
