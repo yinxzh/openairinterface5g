@@ -369,7 +369,7 @@ class SSHConnection():
 				eth_interface = result.group('eth_interface')
 				logging.debug('\u001B[1m Launching tshark on interface ' + eth_interface + '\u001B[0m')
 				self.command('echo ' + self.EPCPassword + ' | sudo -S rm -f /tmp/enb_' + SSH.testCase_id + '_s1log.pcap', '\$', 5)
-				self.command('echo $USER; nohup sudo tshark -f "host ' + self.eNBIPAddress +'" -i ' + eth_interface + ' -w /tmp/enb_' + SSH.testCase_id + '_s1log.pcap > /tmp/tshark.log 2>&1 &', self.EPCUserName, 5)
+				self.command('echo $USER; nohup sudo tshark -f "host ' + self.eNBIPAddress +' or host 192.168.106.12 or host 2.2.2.2" -i ' + eth_interface + ' -w /tmp/enb_' + SSH.testCase_id + '_s1log.pcap > /tmp/tshark.log 2>&1 &', self.EPCUserName, 5)
 			self.close()
 		self.open(self.eNBIPAddress, self.eNBUserName, self.eNBPassword)
 		self.command('cd ' + self.eNBSourceCodePath, '\$', 5)
