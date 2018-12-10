@@ -18,6 +18,7 @@
 # * For more information about the OpenAirInterface (OAI) Software Alliance:
 # *      contact@openairinterface.org
 # */
+#
 BEGIN{max=0;min=10000}
 {
     if ($0 ~/Mbits/) {
