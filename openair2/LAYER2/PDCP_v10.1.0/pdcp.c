@@ -46,10 +46,12 @@
 #include "common/utils/LOG/log.h"
 #include <inttypes.h>
 #include "platform_constants.h"
+#include "nfapi/oai_integration/vendor_ext.h"
 #include "common/utils/LOG/vcd_signal_dumper.h"
 #include "msc.h"
 #include "common/ngran_types.h"
 #include "targets/COMMON/openairinterface5g_limits.h"
+#include "targets/RT/USER/lte-softmodem.h"
 #include "SIMULATION/ETH_TRANSPORT/proto.h"
 #include "UTIL/OSA/osa_defs.h"
 #include "openair2/RRC/NAS/nas_config.h"
@@ -60,9 +62,8 @@
 #  include "gtpv1u.h"
 
 #include "ENB_APP/enb_config.h"
-#ifndef UETARGET
-#include "LAYER2/PROTO_AGENT/proto_agent.h"
-#endif
+
+
 
 extern int otg_enabled;
 extern uint8_t nfapi_mode;
@@ -83,7 +84,7 @@ hash_table_t  *pdcp_coll_p = NULL;
 
 
 /* pdcp module parameters and related functions*/
-static pdcp_params_t pdcp_params= {0};
+static pdcp_params_t pdcp_params= {0,NULL};
 
 uint64_t get_pdcp_optmask(void) {
   return pdcp_params.optmask;
@@ -190,22 +191,9 @@ boolean_t pdcp_data_req(
                                   sdu_buffer_sizeP);
         LOG_UI(PDCP, "Before rlc_data_req 1, srb_flagP: %d, rb_idP: %d \n", srb_flagP, rb_idP);
       }
-#ifndef UETARGET
-      if (NODE_IS_CU(RC.rrc[ctxt_pP->module_id]->node_type)) {
-        /* currently, there is no support to send also the source/destinationL2Id */
-        proto_agent_send_rlc_data_req(ctxt_pP, srb_flagP, MBMS_FLAG_NO, rb_idP, muiP,
-                                      confirmP, sdu_buffer_sizeP, pdcp_pdu_p);
-        /* assume good status */
-        rlc_status = RLC_OP_STATUS_OK;
+      rlc_status = pdcp_params.send_rlc_data_req_func(ctxt_pP, srb_flagP, NODE_IS_CU(RC.rrc[ctxt_pP->module_id]->node_type)?MBMS_FLAG_NO:MBMS_FLAG_YES, rb_idP, muiP,
+                                                      confirmP, sdu_buffer_sizeP, pdcp_pdu_p,NULL,NULL);
 
-      } else
-#endif
-      {
-        rlc_status = rlc_data_req(ctxt_pP, srb_flagP, MBMS_FLAG_YES, rb_idP, muiP,
-                                  confirmP, sdu_buffer_sizeP, pdcp_pdu_p
-                                  ,NULL, NULL
-                                  );
-      }
     } else {
       rlc_status = RLC_OP_STATUS_OUT_OF_RESSOURCES;
       LOG_E(PDCP,PROTOCOL_CTXT_FMT" PDCP_DATA_REQ SDU DROPPED, OUT OF MEMORY \n",
@@ -368,30 +356,15 @@ boolean_t pdcp_data_req(
     if ((pdcp_pdu_p!=NULL) && (srb_flagP == 0) && (ctxt_pP->enb_flag == 1))
     {
 
-#ifndef UETARGET
        LOG_D(PDCP, "pdcp data req on drb %d, size %d, rnti %x, node_type %d \n", 
             rb_idP, pdcp_pdu_size, ctxt_pP->rnti, RC.rrc[ctxt_pP->module_id]->node_type);
-
-       if (NODE_IS_CU(RC.rrc[ctxt_pP->module_id]->node_type)) {
-         /* currently, there is no support to send also the source/destinationL2Id */
-         proto_agent_send_rlc_data_req(ctxt_pP, srb_flagP, MBMS_FLAG_NO, rb_idP, muiP,
-                                       confirmP, pdcp_pdu_size, pdcp_pdu_p);
-         /* assume good status */
-         rlc_status = RLC_OP_STATUS_OK;
-         ret = TRUE;
-         LOG_D(PDCP, "proto_agent_send_rlc_data_req for UE RNTI %x, rb %d, pdu size %d \n", 
-               ctxt_pP->rnti, rb_idP, pdcp_pdu_size);
-
-      } else if (NODE_IS_DU(RC.rrc[ctxt_pP->module_id]->node_type)){
-        LOG_E(PDCP, "Can't be DU, bad node type %d \n", RC.rrc[ctxt_pP->module_id]->node_type);
-        ret=FALSE;
-      } else
-#endif
-      {
-        rlc_status = rlc_data_req(ctxt_pP, srb_flagP, MBMS_FLAG_NO, rb_idP, muiP,
-                                  confirmP, pdcp_pdu_size, pdcp_pdu_p, sourceL2Id,
-                                  destinationL2Id
-                             );
+       if (ctxt_pP->enb_flag == ENB_FLAG_YES && NODE_IS_DU(RC.rrc[ctxt_pP->module_id]->node_type)){
+         LOG_E(PDCP, "Can't be DU, bad node type %d \n", RC.rrc[ctxt_pP->module_id]->node_type);
+         ret=FALSE;
+       } else {
+         rlc_status = pdcp_params.send_rlc_data_req_func(ctxt_pP, srb_flagP, MBMS_FLAG_NO, rb_idP, muiP,
+                                                         confirmP, pdcp_pdu_size, pdcp_pdu_p,sourceL2Id,
+                                                         destinationL2Id);
           switch (rlc_status) {
             case RLC_OP_STATUS_OK:
               LOG_D(PDCP, "Data sending request over RLC succeeded!\n");
@@ -423,8 +396,7 @@ boolean_t pdcp_data_req(
     else // SRB
     {
 
-#ifndef UETARGET
-      if (NODE_IS_CU(RC.rrc[ctxt_pP->module_id]->node_type)) {
+      if (ctxt_pP->enb_flag == ENB_FLAG_YES && NODE_IS_CU(RC.rrc[ctxt_pP->module_id]->node_type)) {
         // DL transfer
         MessageDef                            *message_p;
         // Note: the acyual task must be TASK_PDCP_ENB, but this task is not created
@@ -444,7 +416,6 @@ boolean_t pdcp_data_req(
         ret=TRUE;
 
       } else
-#endif
       {
         rlc_status = rlc_data_req(ctxt_pP
                                   , srb_flagP
@@ -1083,15 +1054,7 @@ pdcp_data_ind(
     //util_print_hex_octets(PDCP, &new_sdu_p->data[sizeof (pdcp_data_ind_header_t)], sdu_buffer_sizeP - payload_offset);
     //util_flush_hex_octets(PDCP, &new_sdu_p->data[sizeof (pdcp_data_ind_header_t)], sdu_buffer_sizeP - payload_offset);
 
-#if defined(STOP_ON_IP_TRAFFIC_OVERLOAD)
-    /* This was an "orphan else" in tag 2019.w07 and discovered during merge.
-     * Commenting so it could be reintegrated. */
-    //else {
-    //  AssertFatal(0, PROTOCOL_PDCP_CTXT_FMT" PDCP_DATA_IND SDU DROPPED, OUT OF MEMORY \n",
-    //              PROTOCOL_PDCP_CTXT_ARGS(ctxt_pP, pdcp_p));
-    //}
 
-#endif
   }
 
   /* Update PDCP statistics */
@@ -2186,6 +2149,16 @@ rrc_pdcp_config_req (
   }
 }
 
+pdcp_data_ind_func_t get_pdcp_data_ind_func(){
+   return pdcp_params.pdcp_data_ind_func;
+}
+
+void pdcp_set_rlc_funcptr(send_rlc_data_req_func_t send_rlc_data_req,
+                          pdcp_data_ind_func_t pdcp_data_ind){
+  pdcp_params.send_rlc_data_req_func = send_rlc_data_req;
+  pdcp_params.pdcp_data_ind_func = pdcp_data_ind;
+}
+
 uint64_t pdcp_module_init( uint64_t pdcp_optmask ) {
   /* temporary enforce netlink when UE_NAS_USE_TUN is set,
      this is while switching from noS1 as build option
@@ -2214,7 +2187,8 @@ uint64_t pdcp_module_init( uint64_t pdcp_optmask ) {
       netlink_init();
     }
   }
-
+/* default interface with rlc (will be modified if CU) */
+  pdcp_set_rlc_funcptr((send_rlc_data_req_func_t)rlc_data_req,(pdcp_data_ind_func_t)pdcp_data_ind);
   return pdcp_params.optmask ;
 }
 

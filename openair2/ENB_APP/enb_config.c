@@ -54,7 +54,7 @@
 #include "common/config/config_userapi.h"
 #include "RRC_config_tools.h"
 #include "enb_paramdef.h"
-
+#include "proto_agent.h"
 #define RRC_INACTIVITY_THRESH 0
 
 extern uint16_t sf_ahead;
@@ -2618,6 +2618,10 @@ void read_config_and_init(void)
     RCconfig_RRC(enb_id, RC.rrc[enb_id],macrlc_has_f1[enb_id]);
   }
 
-  if (!NODE_IS_DU(RC.rrc[0]->node_type))
+  if (!NODE_IS_DU(RC.rrc[0]->node_type)) {
     pdcp_layer_init();
+    if ( NODE_IS_CU(RC.rrc[0]->node_type) ) {
+      pdcp_set_rlc_funcptr((send_rlc_data_req_func_t)proto_agent_send_rlc_data_req, (pdcp_data_ind_func_t)proto_agent_send_pdcp_data_ind);
+    }
+  }
 }

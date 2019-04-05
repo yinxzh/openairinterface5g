@@ -599,34 +599,31 @@ void rlc_data_ind     (
         rb_idP,
         sdu_sizeP);
   rlc_util_print_hex_octets(RLC, (unsigned char *)sdu_pP->data, sdu_sizeP);
+
+  if (ctxt_pP->enb_flag) {
 #if T_TRACER
 
-  if (ctxt_pP->enb_flag)
+
     T(T_ENB_RLC_UL, T_INT(ctxt_pP->module_id), T_INT(ctxt_pP->rnti), T_INT(rb_idP), T_INT(sdu_sizeP));
 
 #endif
 
-#ifndef UETARGET
-  const ngran_node_t type = RC.rrc[ctxt_pP->module_id]->node_type;
-  AssertFatal(type != ngran_eNB_CU && type != ngran_ng_eNB_CU && type != ngran_gNB_CU,
+    const ngran_node_t type = RC.rrc[ctxt_pP->module_id]->node_type;
+    AssertFatal(type != ngran_eNB_CU && type != ngran_ng_eNB_CU && type != ngran_gNB_CU,
               "Can't be CU, bad node type %d\n", type);
 
-  if (NODE_IS_DU(type)) {
-     if (srb_flagP == 1) {
-       MessageDef *msg = itti_alloc_new_message(TASK_RLC_ENB, F1AP_UL_RRC_MESSAGE);
-       F1AP_UL_RRC_MESSAGE(msg).rnti = ctxt_pP->rnti;
-       F1AP_UL_RRC_MESSAGE(msg).srb_id = rb_idP;
-       F1AP_UL_RRC_MESSAGE(msg).rrc_container = sdu_pP->data;
-       F1AP_UL_RRC_MESSAGE(msg).rrc_container_length = sdu_sizeP;
-       itti_send_msg_to_task(TASK_DU_F1, ENB_MODULE_ID_TO_INSTANCE(ctxt_pP->module_id), msg);
-     } else {
-       proto_agent_send_pdcp_data_ind (ctxt_pP, srb_flagP, MBMS_flagP, rb_idP, sdu_sizeP, sdu_pP);
-     }
-  } else
-#endif
-  { // case monolithic eNodeB or UE
-    pdcp_data_ind(ctxt_pP, srb_flagP, MBMS_flagP, rb_idP, sdu_sizeP, sdu_pP);
-  }
+    if (NODE_IS_DU(type) && srb_flagP == 1) {
+      MessageDef *msg = itti_alloc_new_message(TASK_RLC_ENB, F1AP_UL_RRC_MESSAGE);
+      F1AP_UL_RRC_MESSAGE(msg).rnti = ctxt_pP->rnti;
+      F1AP_UL_RRC_MESSAGE(msg).srb_id = rb_idP;
+      F1AP_UL_RRC_MESSAGE(msg).rrc_container = sdu_pP->data;
+      F1AP_UL_RRC_MESSAGE(msg).rrc_container_length = sdu_sizeP;
+      itti_send_msg_to_task(TASK_DU_F1, ENB_MODULE_ID_TO_INSTANCE(ctxt_pP->module_id), msg);
+      return;
+    }
+  } // case monolithic eNodeB or UE
+  get_pdcp_data_ind_func()(ctxt_pP, srb_flagP, MBMS_flagP, rb_idP, sdu_sizeP, sdu_pP,NULL,NULL);
+  
 }
 //-----------------------------------------------------------------------------
 void rlc_data_conf     (const protocol_ctxt_t *const ctxt_pP,

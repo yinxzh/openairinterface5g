@@ -171,8 +171,8 @@ void proto_agent_stop(mod_id_t mod_id)
 //}
 
 
-void
-proto_agent_send_rlc_data_req(const protocol_ctxt_t* const ctxt_pP,
+
+rlc_op_status_t  proto_agent_send_rlc_data_req(const protocol_ctxt_t* const ctxt_pP,
         const srb_flag_t srb_flagP, const MBMS_flag_t MBMS_flagP,
         const rb_id_t rb_idP, const mui_t muiP,
         confirm_t confirmP, sdu_size_t sdu_sizeP, mem_block_t *sdu_pP)
@@ -206,10 +206,10 @@ proto_agent_send_rlc_data_req(const protocol_ctxt_t* const ctxt_pP,
 
   free_mem_block(sdu_pP, __func__);
   
-  return;
+  return 0;
 error:
   LOG_E(PROTO_AGENT, "PROTO_AGENT there was an error\n");
-  return;
+  return -1;
   
 }
 
