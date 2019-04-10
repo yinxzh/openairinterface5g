@@ -697,22 +697,28 @@ void *UE_thread(void *arg) {
         decoded_frame_rx=tmp->proc.decoded_frame_rx;
     }
 
-    while (nbSlotProcessing >= RX_NB_TH && (res=tryPullTpool(&nf, Tpool)) != NULL ) {
+    if ((res=tryPullTpool(&nf, Tpool)) != NULL ) //previous thread finished
+    {    
       nbSlotProcessing--;
       processingData_t *tmp=(processingData_t *)res->msgData;
 
       if (tmp->proc.decoded_frame_rx != -1)
         decoded_frame_rx=tmp->proc.decoded_frame_rx;
 
-      usleep(200);
+
+      if (  decoded_frame_rx != proc->frame_rx &&
+	    ((decoded_frame_rx+1) % MAX_FRAME_NUMBER) != proc->frame_rx )
+	LOG_W(PHY,"Decoded frame index (%d) is not compatible with current context (%d), UE should go back to synch mode\n",
+	      decoded_frame_rx,  proc->frame_rx);
     }
 
-    if (  decoded_frame_rx != proc->frame_rx &&
-          ((decoded_frame_rx+1) % MAX_FRAME_NUMBER) != proc->frame_rx )
-      LOG_D(PHY,"Decoded frame index (%d) is not compatible with current context (%d), UE should go back to synch mode\n",
-            decoded_frame_rx,  proc->frame_rx);
-
-    pushTpool(Tpool, processingMsg[thread_idx]);
+    if (nbSlotProcessing >= 1/*RX_NB_TH*/) { //we have a real-time problem
+      LOG_W(PHY,"previous slot not finished, skipping this slot %d (nbSlotProcessing %d)\n",slot_nr,nbSlotProcessing);
+    }
+    else {
+      pushTpool(Tpool, processingMsg[thread_idx]);
+      nbSlotProcessing++;
+    }
   } // while !oai_exit
 
   return NULL;
