@@ -117,6 +117,7 @@ int lfds611_queue_dequeue( struct lfds611_queue_state *qs, void **user_data )
   state = LFDS611_QUEUE_STATE_UNKNOWN,
   finished_flag = LOWERED;
 
+
   assert( qs != NULL );
   assert( user_data != NULL );
 

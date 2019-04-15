@@ -47,7 +47,7 @@ int create_tasks(uint32_t enb_nb, uint32_t ue_nb)
     LOG_E(PDCP, "Create task for L2L1 failed\n");
     return -1;
   }
-
+printf("L2L1 created!\n");
   if (enb_nb > 0) {
     /* Last task to create, others task must be ready before its start */
     if (itti_create_task (TASK_ENB_APP, eNB_app_task, NULL) < 0) {
@@ -60,7 +60,7 @@ int create_tasks(uint32_t enb_nb, uint32_t ue_nb)
 # ifdef OPENAIR2
   {
 #   if defined(ENABLE_USE_MME)
-    {
+   {
       if (enb_nb > 0) {
         if (itti_create_task (TASK_SCTP, sctp_eNB_task, NULL) < 0) {
           LOG_E(SCTP, "Create task for SCTP failed\n");
@@ -94,7 +94,7 @@ int create_tasks(uint32_t enb_nb, uint32_t ue_nb)
         }
       }
 #      endif
-    }
+   }
 #   endif
 
     if (enb_nb > 0) {
@@ -102,10 +102,8 @@ int create_tasks(uint32_t enb_nb, uint32_t ue_nb)
         LOG_E(RRC, "Create task for RRC eNB failed\n");
         return -1;
       }
-
 #   if ENABLE_RAL
 
-      if (itti_create_task (TASK_RAL_ENB, eRAL_task, NULL) < 0) {
         LOG_E(RAL_ENB, "Create task for RAL eNB failed\n");
         return -1;
       }
@@ -127,6 +125,7 @@ int create_tasks(uint32_t enb_nb, uint32_t ue_nb)
       }
 
 #   endif
+
     }
   }
 # endif // openair2: NN: should be openair3

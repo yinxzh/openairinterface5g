@@ -584,6 +584,7 @@ static inline void itti_receive_msg_internal_event_fd(task_id_t task_id, uint8_t
     /* In polling mode we set the timeout to 0 causing epoll_wait to return
      * immediately.
      */
+    
     epoll_timeout = 0;
   } else {
     /* timeout = -1 causes the epoll_wait to wait indefinitely.

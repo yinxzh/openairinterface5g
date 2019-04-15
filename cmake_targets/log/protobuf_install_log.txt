@@ -1,0 +1,66 @@
+Downloading protobuf
+--2018-07-11 14:43:11--  https://github.com/google/protobuf/releases/download/v2.6.1/protobuf-2.6.1.tar.gz
+Resolving github.com (github.com)... 52.74.223.119, 13.229.188.59, 13.250.177.223
+Connecting to github.com (github.com)|52.74.223.119|:443... connected.
+HTTP request sent, awaiting response... 302 Found
+Location: https://github-production-release-asset-2e65be.s3.amazonaws.com/23357588/0a2433bc-5a29-11e4-8e74-fbea8721fcc7?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20180711%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20180711T064312Z&X-Amz-Expires=300&X-Amz-Signature=6ce9185aafe076829ee0d07f2a3c75e3b49d2c627fca4d1db2f7433419930a52&X-Amz-SignedHeaders=host&actor_id=0&response-content-disposition=attachment%3B%20filename%3Dprotobuf-2.6.1.tar.gz&response-content-type=application%2Foctet-stream [following]
+--2018-07-11 14:43:12--  https://github-production-release-asset-2e65be.s3.amazonaws.com/23357588/0a2433bc-5a29-11e4-8e74-fbea8721fcc7?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20180711%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20180711T064312Z&X-Amz-Expires=300&X-Amz-Signature=6ce9185aafe076829ee0d07f2a3c75e3b49d2c627fca4d1db2f7433419930a52&X-Amz-SignedHeaders=host&actor_id=0&response-content-disposition=attachment%3B%20filename%3Dprotobuf-2.6.1.tar.gz&response-content-type=application%2Foctet-stream
+Resolving github-production-release-asset-2e65be.s3.amazonaws.com (github-production-release-asset-2e65be.s3.amazonaws.com)... 52.216.224.240
+Connecting to github-production-release-asset-2e65be.s3.amazonaws.com (github-production-release-asset-2e65be.s3.amazonaws.com)|52.216.224.240|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 2641426 (2.5M) [application/octet-stream]
+Saving to: ‘protobuf-2.6.1.tar.gz’
+
+     0K .......... .......... .......... .......... ..........  1% 41.0K 62s
+    50K .......... .......... .......... .......... ..........  3% 51.1K 54s
+   100K .......... .......... .......... .......... ..........  5% 64.6K 48s
+   150K .......... .......... .......... .......... ..........  7% 70.4K 44s
+   200K .......... .......... .......... .......... ..........  9%  102K 39s
+   250K .......... .......... .......... .......... .......... 11% 96.1K 36s
+   300K .......... .......... .......... .......... .......... 13%  103K 33s
+   350K .......... .......... .......... .......... .......... 15%  205K 30s
+   400K .......... .......... .......... .......... .......... 17%  199K 27s
+   450K .......... .......... .......... .......... .......... 19% 96.6K 26s
+   500K .......... .......... .......... .......... .......... 21%  196K 24s
+   550K .......... .......... .......... .......... .......... 23%  215K 22s
+   600K .......... .......... .......... .......... .......... 25%  220K 20s
+   650K .......... .......... .......... .......... .......... 27%  216K 19s
+   700K .......... .......... .......... .......... .......... 29%  205K 18s
+   750K .......... .......... .......... .......... .......... 31%  201K 17s
+   800K .......... .......... .......... .......... .......... 32%  194K 16s
+   850K .......... .......... .......... .......... .......... 34%  192K 15s
+   900K .......... .......... .......... .......... .......... 36%  193K 14s
+   950K .......... .......... .......... .......... .......... 38%  206K 14s
+  1000K .......... .......... .......... .......... .......... 40%  211K 13s
+  1050K .......... .......... .......... .......... .......... 42%  103K 13s
+  1100K .......... .......... .......... .......... .......... 44% 96.2K 12s
+  1150K .......... .......... .......... .......... .......... 46%  100K 12s
+  1200K .......... .......... .......... .......... .......... 48%  106K 12s
+  1250K .......... .......... .......... .......... .......... 50%  201K 11s
+  1300K .......... .......... .......... .......... .......... 52%  195K 10s
+  1350K .......... .......... .......... .......... .......... 54%  192K 10s
+  1400K .......... .......... .......... .......... .......... 56%  199K 9s
+  1450K .......... .......... .......... .......... .......... 58%  221K 9s
+  1500K .......... .......... .......... .......... .......... 60%  224K 8s
+  1550K .......... .......... .......... .......... .......... 62%  214K 8s
+  1600K .......... .......... .......... .......... .......... 63% 89.0M 7s
+  1650K .......... .......... .......... .......... .......... 65%  204K 7s
+  1700K .......... .......... .......... .......... .......... 67%  194K 6s
+  1750K .......... .......... .......... .......... .......... 69%  192K 6s
+  1800K .......... .......... .......... .......... .......... 71%  100K 5s
+  1850K .......... .......... .......... .......... .......... 73%  157M 5s
+  1900K .......... .......... .......... .......... .......... 75%  106K 5s
+  1950K .......... .......... .......... .......... .......... 77% 66.3K 4s
+  2000K .......... .......... .......... .......... .......... 79%  144K 4s
+  2050K .......... .......... .......... .......... .......... 81%  123K 4s
+  2100K .......... .......... .......... .......... .          83%  175K=16s
+
+2018-07-11 14:58:29 (133 KB/s) - Read error at byte 2192968/2641426 (Success). Retrying.
+
+--2018-07-11 14:58:30--  (try: 2)  https://github-production-release-asset-2e65be.s3.amazonaws.com/23357588/0a2433bc-5a29-11e4-8e74-fbea8721fcc7?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20180711%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20180711T064312Z&X-Amz-Expires=300&X-Amz-Signature=6ce9185aafe076829ee0d07f2a3c75e3b49d2c627fca4d1db2f7433419930a52&X-Amz-SignedHeaders=host&actor_id=0&response-content-disposition=attachment%3B%20filename%3Dprotobuf-2.6.1.tar.gz&response-content-type=application%2Foctet-stream
+Connecting to github-production-release-asset-2e65be.s3.amazonaws.com (github-production-release-asset-2e65be.s3.amazonaws.com)|52.216.224.240|:443... failed: Connection timed out.
+Resolving github-production-release-asset-2e65be.s3.amazonaws.com (github-production-release-asset-2e65be.s3.amazonaws.com)... 52.216.0.240
+Connecting to github-production-release-asset-2e65be.s3.amazonaws.com (github-production-release-asset-2e65be.s3.amazonaws.com)|52.216.0.240|:443... connected.
+HTTP request sent, awaiting response... 403 Forbidden
+2018-07-11 15:00:39 ERROR 403: Forbidden.
+

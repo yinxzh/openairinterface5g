@@ -1207,7 +1207,7 @@ main (int argc, char **argv)
   print_current_directory();
 
   start_background_system();
-
+/*
 #ifdef SMBV
   // Rohde&Schwarz SMBV100A vector signal generator
   strcpy(smbv_ip,DEFAULT_SMBV_IP);
@@ -1232,9 +1232,10 @@ main (int argc, char **argv)
       sprintf(command_line, "while ip rule del table %d; do true; done",i+201);
       /* we don't care about return value from system(), but let's the
        * compiler be silent, so let's do "if (XX);"
-       */
-      if (system(command_line)) /* nothing */;
+       /
+      if (system(command_line)) /* nothing /;
   }
+  */
   // start thread for log gen
   log_thread_init ();
 
@@ -1242,7 +1243,7 @@ main (int argc, char **argv)
 
   // get command-line options
   get_simulation_options (argc, argv); //Command-line options
-
+/*
 #if T_TRACER
   T_init(T_port, T_wait, T_dont_fork);
 #endif
@@ -1274,6 +1275,7 @@ main (int argc, char **argv)
   }
 
 #endif
+*/
   // configure oaisim with OCG
   oaisim_config (); // config OMG and OCG, OPT, OTG, OLG
 
@@ -1286,10 +1288,11 @@ main (int argc, char **argv)
   pthread_cond_init(&sync_cond,NULL);
   pthread_mutex_init(&sync_mutex, NULL);
   pthread_mutex_init(&subframe_mutex, NULL);
-
+/*
 #ifdef OPENAIR2
   init_omv ();
 #endif
+*/
   //Before this call, NB_UE_INST and NB_eNB_INST are not set correctly
   check_and_adjust_params ();
 
@@ -1298,7 +1301,7 @@ main (int argc, char **argv)
   init_otg_pdcp_buffer ();
 
   init_seed (set_seed);
-
+/*
   init_openair1 ();
 
   init_openair2 ();
@@ -1307,7 +1310,7 @@ main (int argc, char **argv)
   init_openair0();
 
   init_ocm ();
-
+*/
 #if defined(ENABLE_ITTI)
   // Note: Cannot handle both RRU/RAU and eNB at the same time, if the first "eNB" is an RRU/RAU, no NAS
   if (oai_emulation.info.node_function[0] < NGFI_RAU_IF4p5) { 
@@ -1330,7 +1333,7 @@ main (int argc, char **argv)
   sync_var=0;
   pthread_cond_broadcast(&sync_cond);
   pthread_mutex_unlock(&sync_mutex);
-
+/*
 #ifdef SMBV
   // Rohde&Schwarz SMBV100A vector signal generator
   smbv_init_config(smbv_fname, smbv_nframes);
@@ -1339,7 +1342,7 @@ main (int argc, char **argv)
 
   /* #if defined (FLEXRAN_AGENT_SB_IF)
   flexran_agent_start();
-  #endif */ 
+  #endif / 
 
   // add events to future event list: Currently not used
   //oai_emulation.info.oeh_enabled = 1;
@@ -1357,7 +1360,7 @@ main (int argc, char **argv)
   init_slot_isr ();
 
   t = clock ();
-
+*/
   LOG_N(EMU,
         ">>>>>>>>>>>>>>>>>>>>>>>>>>> OAIEMU initialization done <<<<<<<<<<<<<<<<<<<<<<<<<<\n\n");
 
